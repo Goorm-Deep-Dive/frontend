@@ -1,0 +1,13 @@
+#!/bin/sh
+# 커밋 메시지 본문 가져오기
+commit_msg=$(cat "$1")
+
+# 정규표현식: type: description (#12) 형식
+pattern="^(feat|fix|style|refactor|docs|perf|chore): .+\(#[0-9]+\)$"
+
+if ! echo "$commit_msg" | grep -iqE "$pattern"; then
+  echo "❌ 커밋 오류: 커밋 메시지 형식이 올바르지 않습니다."
+  echo "올바른 형식: 'type: description (#issue_number)'"
+  echo "예시: 'feat: 로그인 기능 추가 (#41)'"
+  exit 1
+fi
