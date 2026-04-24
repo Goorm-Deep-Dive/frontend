@@ -39,7 +39,7 @@ export default function BottomNavigation() {
             className="flex flex-1 flex-col items-center gap-2 pb-10"
           >
             <Image src={menu.icon} alt={menu.name} width={24} height={24} />
-            <span className="text-[14px] text-black">{menu.name}</span>
+            <span className="text-sm text-black">{menu.name}</span>
           </Link>
         ))}
       </div>
