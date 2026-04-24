@@ -1,10 +1,17 @@
+import { loadEnvConfig } from "@next/env";
 import { defineConfig } from "orval";
+
+loadEnvConfig(process.cwd());
+
+const OPENAPI_TARGET =
+  process.env.NEXT_PUBLIC_ORVAL_OPENAPI_URL ??
+  "http://localhost:8090/v3/api-docs";
 
 export default defineConfig({
   api: {
     input: {
       // API 명세서(Swagger/OpenAPI)의 경로
-      target: "http://3.37.170.214:8090/v3/api-docs",
+      target: OPENAPI_TARGET,
       override: {
         transformer: (openapi) => {
           if (openapi?.components?.securitySchemes?.["BearerAuth"]) {
