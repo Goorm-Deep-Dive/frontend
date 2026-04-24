@@ -8,9 +8,13 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "orval": "orval --config orval.config.mjs",
+    "orval:watch": "orval --config orval.config.mjs --watch"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.1",
+    "axios": "^1.15.2",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -24,6 +28,7 @@
     "eslint-config-next": "16.2.4",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
+    "orval": "^8.8.1",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
