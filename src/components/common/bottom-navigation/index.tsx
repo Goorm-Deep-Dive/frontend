@@ -5,23 +5,23 @@ export default function BottomNavigation() {
   const MENUS = [
     {
       name: "진행상황",
-      icon: "/icons/process.svg",
+      icon: "/icons/bottom-navigation/process.svg",
       path: "/progress",
     },
     {
       name: "체크리스트",
-      icon: "/icons/check.svg",
+      icon: "/icons/bottom-navigation/check.svg",
 
       path: "/checklist",
     },
     {
       name: "스케줄링",
-      icon: "/icons/schedule.svg",
+      icon: "/icons/bottom-navigation/schedule.svg",
       path: "/schedule",
     },
     {
       name: "마이페이지",
-      icon: "/icons/mypage.svg",
+      icon: "/icons/bottom-navigation/mypage.svg",
       path: "/mypage",
     },
   ];
