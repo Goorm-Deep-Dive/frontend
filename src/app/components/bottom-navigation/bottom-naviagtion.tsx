@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,7 +28,10 @@ export default function ButtonNavigation() {
 
   return (
     <>
-      <nav className="fixed bottom-0 w-full rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4">
+      <nav
+        aria-label="바텀 네비게이션"
+        className="fixed bottom-0 w-full rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4"
+      >
         <div className="flex items-center">
           {menus.map((menu) => (
             <Link
