@@ -19,7 +19,7 @@ export default defineConfig({
       },
     },
     output: {
-      // 결과물이 저장될 메인 파일 경로 (kebab-case 준수)
+      // 결과물이 저장될 메인 파일 경로
       target: "src/apis/generated/api-client.ts",
       // TypeScript 타입(Interfaces)만 따로 모아둘 폴더 경로
       schemas: "src/apis/generated/model",
@@ -59,6 +59,9 @@ export default defineConfig({
           },
         },
       },
+    },
+    hooks: {
+      afterAllFilesWrite: "prettier --write",
     },
   },
 });
