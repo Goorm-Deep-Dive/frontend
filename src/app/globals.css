@@ -44,31 +44,31 @@
 
 @layer components {
   .h1 {
-    @apply text-3xl font-semibold tracking-[-0.125em];
+    @apply text-3xl font-semibold tracking-[-0.02em];
   }
 
   .h2 {
-    @apply text-[1.375rem] font-semibold tracking-[-0.125em];
+    @apply text-[1.375rem] font-semibold tracking-[-0.02em];
   }
 
   .h3 {
-    @apply text-xl leading-normal font-medium tracking-[-0.125em];
+    @apply text-xl leading-normal font-medium tracking-[-0.02em];
   }
 
   .h4 {
-    @apply text-lg leading-normal font-semibold tracking-[-0.125em];
+    @apply text-lg leading-normal font-semibold tracking-[-0.02em];
   }
 
   .body {
-    @apply text-base leading-normal font-normal tracking-[-0.125em];
+    @apply text-base leading-normal font-normal tracking-[-0.02em];
   }
 
   .label {
-    @apply text-[0.9375rem] font-semibold tracking-[-0.125em];
+    @apply text-[0.9375rem] font-semibold tracking-[-0.02em];
   }
 
   .caption {
-    @apply text-sm leading-normal font-normal tracking-[-0.125em];
+    @apply text-sm leading-normal font-normal tracking-[-0.02em];
   }
 }
 
