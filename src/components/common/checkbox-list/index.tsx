@@ -20,6 +20,10 @@ export default function CheckboxList({ items, value, onChange }: Props) {
     <div className="flex w-full flex-col gap-1.25">
       {items.map((item) => {
         const isChecked = value === item.value;
+        const inputId = `checkbox-${item.value}`;
+        const descriptionId = item.description
+          ? `checkbox-description-${item.value}`
+          : undefined;
 
         return (
           <label
@@ -27,10 +31,11 @@ export default function CheckboxList({ items, value, onChange }: Props) {
             className={cn(
               "flex w-full cursor-pointer items-center justify-start gap-5 rounded-2xl border border-gray-300 bg-white px-5 py-2.5",
               isChecked ? "bg-primary-bg border-primary-2" : "border-gray-300",
+              "focus-within:ring-primary-1 focus-within:ring-2 focus-within:ring-offset-2",
             )}
             aria-label={item.label}
-            aria-describedby={item.description}
-            htmlFor={item.value}
+            aria-describedby={descriptionId}
+            htmlFor={inputId}
           >
             <div
               className={cn(
@@ -51,32 +56,33 @@ export default function CheckboxList({ items, value, onChange }: Props) {
               )}
             </div>
             <div className="flex flex-col">
-              <label
+              <span
                 className={cn(
                   "h4",
                   isChecked ? "text-primary-1" : "text-gray-900",
                 )}
               >
                 {item.label}
-              </label>
+              </span>
               {item.description && (
-                <p
+                <span
+                  id={descriptionId}
                   className={cn(
                     "caption",
                     isChecked ? "text-primary-1" : "text-gray-700",
                   )}
                 >
                   {item.description}
-                </p>
+                </span>
               )}
             </div>
 
             <input
-              id={item.value}
+              id={inputId}
               type="checkbox"
               value={item.value}
               onChange={() => onChange(item.value)}
-              hidden
+              className="sr-only"
             />
           </label>
         );
