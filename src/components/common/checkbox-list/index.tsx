@@ -25,7 +25,7 @@ export default function CheckboxList({ items, value, onChange }: Props) {
           <label
             key={item.value}
             className={cn(
-              "flex w-full items-center justify-start gap-5 rounded-2xl border border-gray-300 bg-white px-5 py-2.5",
+              "flex w-full cursor-pointer items-center justify-start gap-5 rounded-2xl border border-gray-300 bg-white px-5 py-2.5",
               isChecked ? "bg-primary-bg border-primary-2" : "border-gray-300",
             )}
             aria-label={item.label}
