@@ -15,6 +15,8 @@
   --color-gray-500: #858585;
   --color-gray-700: #4a4a4a;
   --color-gray-900: #171717;
+
+  --app-max-width: 480px;
 }
 
 @theme inline {
