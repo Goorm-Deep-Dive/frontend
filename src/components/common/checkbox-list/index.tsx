@@ -83,6 +83,7 @@ export default function CheckboxList({ items, value, onChange }: Props) {
               value={item.value}
               onChange={() => onChange(item.value)}
               className="sr-only"
+              checked={isChecked}
             />
           </label>
         );
