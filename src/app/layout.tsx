@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { pretendard } from "@/styles/fonts";
+import AlertRenderer from "@/components/common/alert/alert-renderer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="ko" className={`${pretendard.variable} h-full`}>
       <body className="flex min-h-full flex-col font-sans antialiased">
         {children}
+        <AlertRenderer />
       </body>
     </html>
   );
