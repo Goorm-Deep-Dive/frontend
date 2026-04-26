@@ -1,3 +1,4 @@
+import { cn } from "@/lib/cn";
 import Image from "next/image";
 
 const SNS_CONFIG = {
@@ -20,20 +21,24 @@ const SNS_CONFIG = {
 
 type SnsType = keyof typeof SNS_CONFIG;
 
-interface SnsLoginButtonProps {
+interface Props {
   sns: SnsType;
   onClick?: () => void;
 }
 
-export default function SnsLoginButton({ sns, onClick }: SnsLoginButtonProps) {
+export default function SnsLoginButton({ sns, onClick }: Props) {
   const { name, icon, className } = SNS_CONFIG[sns];
 
   return (
     <button
-      className={`flex w-full items-center justify-center gap-2 rounded-full py-2.5 shadow-md ${className}`}
+      className={cn(
+        "flex w-full items-center justify-center gap-2 rounded-full py-2.5 shadow-md",
+        className,
+      )}
+      onClick={onClick}
     >
       <Image src={icon} alt={name} width={18} height={18} />
-      <span className="text-sm font-semibold">{name}</span>
+      <span className="h4 font-semibold">{name}</span>
     </button>
   );
 }
