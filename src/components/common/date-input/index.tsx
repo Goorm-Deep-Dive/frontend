@@ -12,6 +12,7 @@ export default function DateInput() {
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [date, setDate] = useState<Date | undefined>();
+  const [open, setOpen] = useState(false);
 
   const formatDate = (input: string) => {
     const numbers = input.replace(/\D/g, "").slice(0, 8);
@@ -59,7 +60,7 @@ export default function DateInput() {
             className="text-primary-1 w-full bg-transparent outline-none"
           />
 
-          <Popover>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <button type="button">
                 <Image
@@ -93,6 +94,7 @@ export default function DateInput() {
                   onClick={() => {
                     if (!date) return;
                     console.log(format(date, "yyyy-MM-dd"));
+                    setOpen(false);
                   }}
                 >
                   {date ? `${format(date, "yyyy-MM-dd")} 선택하기` : "선택하기"}
