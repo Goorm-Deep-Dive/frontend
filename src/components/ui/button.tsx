@@ -5,17 +5,22 @@ import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-lg transition-all disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center rounded-[10px] transition-all disabled:pointer-events-none ",
   {
     variants: {
       variant: {
-        primary: "bg-primary-1 text-white ",
-        outline: "border border-primary-1 text-primary-1 bg-transparent",
+        primary: `
+        bg-primary-1 text-white
+        disabled:bg-gray-300 disabled:text-[#444444]
+      `,
+        secondary: `
+          disabled:bg-gray-300 disabled:text-gray-900
+        `,
       },
       size: {
-        register: "w-[350px] h-14 p-2.5",
-        day: "w-[280px] h-14 ",
-        save: "px-2 py-1 text-xs",
+        register: "h4 px-38 py-2.5",
+        day: "h4 py-2.5 px-14",
+        save: "label px-2.5 py-1 rounded-[20px]",
       },
     },
     defaultVariants: {
