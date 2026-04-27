@@ -60,6 +60,7 @@ const Header = ({
         <button
           className="flex h-11 w-11 items-center justify-center pt-2 transition-transform active:scale-95"
           onClick={handleToggle}
+          aria-controls="checklist-header-panel"
           aria-expanded={isOpen}
           aria-label="메뉴 토글"
         >
@@ -71,6 +72,9 @@ const Header = ({
             <button
               className="bg-primary-10 active:bg-primary-20 flex w-full items-center justify-between gap-4 rounded-lg px-2.5 py-2.5 transition-colors"
               onClick={handleToggle}
+              aria-controls="checklist-header-panel"
+              aria-expanded={isOpen}
+              aria-label="메뉴 토글"
             >
               <div className="flex items-center gap-2.5">
                 <span className="h2 text-primary-1 font-semibold tracking-[-0.02em]">
