@@ -34,7 +34,7 @@ const Root = ({
   children,
 }: CommonAccordionRootProps) => {
   return (
-    <section className="w-full max-w-[560px] overflow-hidden rounded-2xl border border-gray-300 bg-white">
+    <section className="w-full max-w-[560px] overflow-hidden rounded-2xl border border-border bg-card">
       <Accordion
         type="single"
         collapsible
@@ -51,11 +51,11 @@ const Root = ({
 
 const Header = ({ children, description }: CommonAccordionHeaderProps) => {
   return (
-    <AccordionTrigger className="px-5 py-2.5 text-gray-900 [&>svg]:mt-1 [&>svg]:h-9 [&>svg]:w-9">
+    <AccordionTrigger className="px-5 py-2.5 text-foreground [&>svg]:mt-1 [&>svg]:h-9 [&>svg]:w-9">
       <span className="flex flex-col gap-1 text-left">
         <span className="h4 font-semibold">{children}</span>
         {description ? (
-          <span className="body text-gray-700">{description}</span>
+          <span className="body text-muted-foreground">{description}</span>
         ) : null}
       </span>
     </AccordionTrigger>
@@ -65,13 +65,13 @@ const Header = ({ children, description }: CommonAccordionHeaderProps) => {
 const Content = ({ children }: { children: React.ReactNode }) => {
   return (
     <AccordionContent>
-      <div className="rounded-sm bg-gray-200 p-5">{children}</div>
+      <div className="rounded-sm bg-muted p-5">{children}</div>
     </AccordionContent>
   );
 };
 
 const Description = ({ children }: CommonAccordionDescriptionProps) => {
-  return <p className="caption pb-6 text-center text-gray-700">{children}</p>;
+  return <p className="caption pb-6 text-center text-muted-foreground">{children}</p>;
 };
 
 const NextButton = ({ children, onClick }: CommonAccordionNextButtonProps) => {
@@ -81,7 +81,7 @@ const NextButton = ({ children, onClick }: CommonAccordionNextButtonProps) => {
         type="button"
         onClick={onClick}
         className={cn(
-          "label cursor-pointer rounded-full bg-gray-300 px-2.5 py-1 text-gray-900",
+          "label cursor-pointer rounded-full bg-muted px-2.5 py-1 text-foreground",
         )}
       >
         {children}
