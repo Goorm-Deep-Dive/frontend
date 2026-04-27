@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "prepare": "husky",
     "orval": "orval --config orval.config.mjs",
-    "orval:watch": "orval --config orval.config.mjs --watch"
+    "orval:watch": "orval --config orval.config.mjs --watch",
+    "generate:icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.1",
@@ -22,6 +23,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@svgr/core": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
