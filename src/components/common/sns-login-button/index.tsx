@@ -32,7 +32,7 @@ export default function SnsLoginButton({ sns, onClick }: Props) {
   return (
     <button
       className={cn(
-        "flex w-full items-center justify-center gap-2 rounded-full py-2.5 shadow-md",
+        "flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-2.5 shadow-md",
         className,
       )}
       onClick={onClick}
