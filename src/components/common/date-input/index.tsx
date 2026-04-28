@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 export default function DateInput() {
   const [value, setValue] = useState("");
@@ -88,7 +89,8 @@ export default function DateInput() {
                     }}
                   />
                 </div>
-                <button
+                <Button
+                  size="small"
                   disabled={!date}
                   className="bg-primary-1 w-full rounded-lg py-3 text-white disabled:opacity-50"
                   onClick={() => {
@@ -98,7 +100,7 @@ export default function DateInput() {
                   }}
                 >
                   {date ? `${format(date, "yyyy-MM-dd")} 선택하기` : "선택하기"}
-                </button>
+                </Button>
               </div>
             </PopoverContent>
           </Popover>
