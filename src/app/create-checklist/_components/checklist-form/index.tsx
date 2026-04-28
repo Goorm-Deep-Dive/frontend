@@ -8,11 +8,12 @@ import ChecklistFormSkeleton from "./skeleton";
 import BottomCTA from "@/components/common/bottom-cta";
 import { SurveyQuestionRes } from "@/apis/generated/model";
 
-export default function ChecklistForm() {
-  const [value, setValue] = useState<string>("");
+type AnswerMap = Record<string, string | string[]>;
 
+export default function ChecklistForm() {
   const { data: surveyRes } = useGetSurveyListSuspense();
   const surveys = surveyRes?.surveys;
+  const [answers, setAnswers] = useState<AnswerMap>({});
 
   const getDescription = (q: SurveyQuestionRes) => {
     return `해당 사항을 선택하세요. (${q.requirementType === "REQUIRED" ? "필수 항목" : "선택 항목"}${q.questionType === "MULTIPLE" ? " / 복수 선택 가능" : ""})`;
@@ -40,8 +41,25 @@ export default function ChecklistForm() {
                           value: String(a.surveyAnswerId),
                         })) ?? []
                       }
-                      value={value}
-                      onChange={setValue}
+                      value={
+                        answers[String(q.surveyQuestionId)] ??
+                        (q.questionType === "MULTIPLE" ? [] : "")
+                      }
+                      multiple={q.questionType === "MULTIPLE"}
+                      onChange={(nextValue) => {
+                        const key = String(q.surveyQuestionId);
+                        setAnswers((prev) => ({
+                          ...prev,
+                          [key]:
+                            q.questionType === "MULTIPLE"
+                              ? Array.isArray(nextValue)
+                                ? nextValue
+                                : [nextValue]
+                              : Array.isArray(nextValue)
+                                ? (nextValue[0] ?? "")
+                                : nextValue,
+                        }));
+                      }}
                     />
                   </CommonAccordion.Content>
                 </CommonAccordion>
