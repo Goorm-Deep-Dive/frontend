@@ -9,8 +9,8 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "orval": "orval --config orval.config.mjs",
-    "orval:watch": "orval --config orval.config.mjs --watch"
+    "gen:api": "orval --config orval.config.mjs",
+    "api:watch": "orval --config orval.config.mjs --watch"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
