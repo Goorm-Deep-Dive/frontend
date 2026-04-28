@@ -11,21 +11,17 @@ const buttonVariants = cva(
       variant: {
         primary: `
         bg-primary-1 text-white
-        disabled:bg-gray-300 disabled:text-[#444444]
+        disabled:bg-gray-300 disabled:text-gray-900
       `,
-        secondary: `
-          disabled:bg-gray-300 disabled:text-gray-900
-        `,
       },
       size: {
-        register: "h4 px-38 py-2.5",
-        day: "h4 py-2.5 px-14",
-        save: "label px-2.5 py-1 rounded-[20px]",
+        large: "h4 px-38 py-2.5",
+        small: "label py-1 px-2.5",
       },
     },
     defaultVariants: {
       variant: "primary",
-      size: "register",
+      size: "large",
     },
   },
 );
