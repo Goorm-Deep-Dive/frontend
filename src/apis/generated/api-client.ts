@@ -32,12 +32,17 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  ApiResponseChecklistCategoryProcedureRes,
   ApiResponseChecklistCategoryRes,
+  ApiResponseChecklistOverallProgressRes,
+  ApiResponseChecklistProcedureDetailRes,
   ApiResponseDeceasedProfileRes,
   ApiResponseListDeceasedProfileListRes,
+  ApiResponseSurveyListRes,
   ApiResponseTokenRes,
   ApiResponseUserProfileRes,
   ApiResponseVoid,
+  ChecklistCheckReq,
   DeceasedProfileCreateReq,
   DeceasedProfileUpdateReq,
   LinkGoogleParams,
@@ -45,8 +50,88 @@ import type {
 } from "./model";
 
 import { customInstance } from "../instance";
-import { customQueryOptions } from "../config/query-options";
 import { customMutationOptions } from "../config/mutation-options";
+import { customQueryOptions } from "../config/query-options";
+
+/**
+ * 설문조사를 건너뛰고 전체 체크리스트를 생성합니다.
+ * @summary 설문조사 스킵
+ */
+export const skipSurvey = (signal?: AbortSignal) => {
+  return customInstance<ApiResponseVoid>({
+    url: `/api/v1/surveys/skip`,
+    method: "POST",
+    signal,
+  });
+};
+
+export const useSkipSurveyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof skipSurvey>>,
+    TError,
+    void,
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof skipSurvey>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["skipSurvey"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof skipSurvey>>,
+    void
+  > = () => {
+    return skipSurvey();
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type SkipSurveyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof skipSurvey>>
+>;
+
+export type SkipSurveyMutationError = unknown;
+
+/**
+ * @summary 설문조사 스킵
+ */
+export const useSkipSurvey = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof skipSurvey>>,
+      TError,
+      void,
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof skipSurvey>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(useSkipSurveyMutationOptions(options), queryClient);
+};
 
 /**
  * 로그인한 사용자의 고인 목록을 조회합니다.
@@ -972,6 +1057,188 @@ export const useChangeActiveDeceasedProfile = <
 };
 
 /**
+ * 각 절차의 체크리스트 상태를 변경합니다.
+ * @summary 과업 체크리스트 is_checked 상태 변경
+ */
+export const modifyProcedureCheck = (
+  userProcedureChecklistId: number,
+  checklistCheckReq: ChecklistCheckReq,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseVoid>({
+    url: `/api/v1/checklists/procedures/${userProcedureChecklistId}`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: checklistCheckReq,
+    signal,
+  });
+};
+
+export const useModifyProcedureCheckMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof modifyProcedureCheck>>,
+    TError,
+    { userProcedureChecklistId: number; data: ChecklistCheckReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof modifyProcedureCheck>>,
+  TError,
+  { userProcedureChecklistId: number; data: ChecklistCheckReq },
+  TContext
+> => {
+  const mutationKey = ["modifyProcedureCheck"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof modifyProcedureCheck>>,
+    { userProcedureChecklistId: number; data: ChecklistCheckReq }
+  > = (props) => {
+    const { userProcedureChecklistId, data } = props ?? {};
+
+    return modifyProcedureCheck(userProcedureChecklistId, data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type ModifyProcedureCheckMutationResult = NonNullable<
+  Awaited<ReturnType<typeof modifyProcedureCheck>>
+>;
+export type ModifyProcedureCheckMutationBody = ChecklistCheckReq;
+export type ModifyProcedureCheckMutationError = unknown;
+
+/**
+ * @summary 과업 체크리스트 is_checked 상태 변경
+ */
+export const useModifyProcedureCheck = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof modifyProcedureCheck>>,
+      TError,
+      { userProcedureChecklistId: number; data: ChecklistCheckReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof modifyProcedureCheck>>,
+  TError,
+  { userProcedureChecklistId: number; data: ChecklistCheckReq },
+  TContext
+> => {
+  return useMutation(
+    useModifyProcedureCheckMutationOptions(options),
+    queryClient,
+  );
+};
+
+/**
+ * 각 문서의 체크리스트 상태를 변경합니다.
+ * @summary 문서 체크리스트 is_checked 상태 변경
+ */
+export const modifyDocumentCheck = (
+  procedureDocumentId: number,
+  checklistCheckReq: ChecklistCheckReq,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseVoid>({
+    url: `/api/v1/checklists/documents/${procedureDocumentId}`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: checklistCheckReq,
+    signal,
+  });
+};
+
+export const useModifyDocumentCheckMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof modifyDocumentCheck>>,
+    TError,
+    { procedureDocumentId: number; data: ChecklistCheckReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof modifyDocumentCheck>>,
+  TError,
+  { procedureDocumentId: number; data: ChecklistCheckReq },
+  TContext
+> => {
+  const mutationKey = ["modifyDocumentCheck"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof modifyDocumentCheck>>,
+    { procedureDocumentId: number; data: ChecklistCheckReq }
+  > = (props) => {
+    const { procedureDocumentId, data } = props ?? {};
+
+    return modifyDocumentCheck(procedureDocumentId, data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type ModifyDocumentCheckMutationResult = NonNullable<
+  Awaited<ReturnType<typeof modifyDocumentCheck>>
+>;
+export type ModifyDocumentCheckMutationBody = ChecklistCheckReq;
+export type ModifyDocumentCheckMutationError = unknown;
+
+/**
+ * @summary 문서 체크리스트 is_checked 상태 변경
+ */
+export const useModifyDocumentCheck = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof modifyDocumentCheck>>,
+      TError,
+      { procedureDocumentId: number; data: ChecklistCheckReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof modifyDocumentCheck>>,
+  TError,
+  { procedureDocumentId: number; data: ChecklistCheckReq },
+  TContext
+> => {
+  return useMutation(
+    useModifyDocumentCheckMutationOptions(options),
+    queryClient,
+  );
+};
+
+/**
  * 로그인한 사용자의 정보를 조회합니다.
  * @summary 내 프로필 조회
  */
@@ -1762,6 +2029,386 @@ export function useLinkGoogleSuspenseInfinite<
 }
 
 /**
+ * 전체 설문 질문과 답변 선택지를 조회합니다.
+ * @summary 설문조사 목록 조회
+ */
+export const getSurveyList = (signal?: AbortSignal) => {
+  return customInstance<ApiResponseSurveyListRes>({
+    url: `/api/v1/surveys`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetSurveyListQueryKey = () => {
+  return [`/api/v1/surveys`] as const;
+};
+
+export const getGetSurveyListInfiniteQueryKey = () => {
+  return ["infinite", `/api/v1/surveys`] as const;
+};
+
+export const useGetSurveyListQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getSurveyList>>, TError, TData>
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSurveyListQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSurveyList>>> = ({
+    signal,
+  }) => getSurveyList(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getSurveyList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetSurveyListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSurveyList>>
+>;
+export type GetSurveyListQueryError = unknown;
+
+export function useGetSurveyList<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSurveyList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSurveyList>>,
+          TError,
+          Awaited<ReturnType<typeof getSurveyList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSurveyList<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSurveyList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSurveyList>>,
+          TError,
+          Awaited<ReturnType<typeof getSurveyList>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSurveyList<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSurveyList>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 설문조사 목록 조회
+ */
+
+export function useGetSurveyList<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSurveyList>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetSurveyListQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetSurveyListSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getSurveyList>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSurveyListQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSurveyList>>> = ({
+    signal,
+  }) => getSurveyList(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getSurveyList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetSurveyListSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSurveyList>>
+>;
+export type GetSurveyListSuspenseQueryError = unknown;
+
+export function useGetSurveyListSuspense<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSurveyListSuspense<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSurveyListSuspense<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 설문조사 목록 조회
+ */
+
+export function useGetSurveyListSuspense<
+  TData = Awaited<ReturnType<typeof getSurveyList>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetSurveyListSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetSurveyListSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getSurveyList>>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseInfiniteQueryOptions<
+      Awaited<ReturnType<typeof getSurveyList>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSurveyListInfiniteQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSurveyList>>> = ({
+    signal,
+  }) => getSurveyList(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getSurveyList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetSurveyListSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSurveyList>>
+>;
+export type GetSurveyListSuspenseInfiniteQueryError = unknown;
+
+export function useGetSurveyListSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getSurveyList>>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSurveyListSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getSurveyList>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetSurveyListSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getSurveyList>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 설문조사 목록 조회
+ */
+
+export function useGetSurveyListSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getSurveyList>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSurveyList>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetSurveyListSuspenseInfiniteQueryOptions(options);
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
  * 로그인한 사용자의 현재 고인 정보를 조회합니다.
  * @summary 현재 고인 정보 조회
  */
@@ -2166,7 +2813,843 @@ export function useGetActiveDeceasedProfileSuspenseInfinite<
 }
 
 /**
- * 체크리스트의 카테고리 목록을 조회합니다.
+ * 전체 진행률 및 카테고리별 진행률을 조회합니다.
+ * @summary 전체 진행률 조회
+ */
+export const getOverallProgress = (signal?: AbortSignal) => {
+  return customInstance<ApiResponseChecklistOverallProgressRes>({
+    url: `/api/v1/checklists/progress`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetOverallProgressQueryKey = () => {
+  return [`/api/v1/checklists/progress`] as const;
+};
+
+export const getGetOverallProgressInfiniteQueryKey = () => {
+  return ["infinite", `/api/v1/checklists/progress`] as const;
+};
+
+export const useGetOverallProgressQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getOverallProgress>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetOverallProgressQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getOverallProgress>>
+  > = ({ signal }) => getOverallProgress(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getOverallProgress>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetOverallProgressQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOverallProgress>>
+>;
+export type GetOverallProgressQueryError = unknown;
+
+export function useGetOverallProgress<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOverallProgress>>,
+          TError,
+          Awaited<ReturnType<typeof getOverallProgress>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOverallProgress<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOverallProgress>>,
+          TError,
+          Awaited<ReturnType<typeof getOverallProgress>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOverallProgress<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 전체 진행률 조회
+ */
+
+export function useGetOverallProgress<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetOverallProgressQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetOverallProgressSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getOverallProgress>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetOverallProgressQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getOverallProgress>>
+  > = ({ signal }) => getOverallProgress(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getOverallProgress>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetOverallProgressSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOverallProgress>>
+>;
+export type GetOverallProgressSuspenseQueryError = unknown;
+
+export function useGetOverallProgressSuspense<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOverallProgressSuspense<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOverallProgressSuspense<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 전체 진행률 조회
+ */
+
+export function useGetOverallProgressSuspense<
+  TData = Awaited<ReturnType<typeof getOverallProgress>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetOverallProgressSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetOverallProgressSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getOverallProgress>>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseInfiniteQueryOptions<
+      Awaited<ReturnType<typeof getOverallProgress>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetOverallProgressInfiniteQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getOverallProgress>>
+  > = ({ signal }) => getOverallProgress(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getOverallProgress>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetOverallProgressSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOverallProgress>>
+>;
+export type GetOverallProgressSuspenseInfiniteQueryError = unknown;
+
+export function useGetOverallProgressSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getOverallProgress>>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOverallProgressSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getOverallProgress>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetOverallProgressSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getOverallProgress>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 전체 진행률 조회
+ */
+
+export function useGetOverallProgressSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getOverallProgress>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getOverallProgress>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions =
+    useGetOverallProgressSuspenseInfiniteQueryOptions(options);
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 각 카테고리의 체크리스트 상세 정보를 조회합니다.
+ * @summary 카테고리별 체크리스트 상세 정보 조회
+ */
+export const getProcedureDetail = (
+  procedureId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseChecklistProcedureDetailRes>({
+    url: `/api/v1/checklists/procedures/${procedureId}`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetProcedureDetailQueryKey = (procedureId: number) => {
+  return [`/api/v1/checklists/procedures/${procedureId}`] as const;
+};
+
+export const getGetProcedureDetailInfiniteQueryKey = (procedureId: number) => {
+  return ["infinite", `/api/v1/checklists/procedures/${procedureId}`] as const;
+};
+
+export const useGetProcedureDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProcedureDetailQueryKey(procedureId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProcedureDetail>>
+  > = ({ signal }) => getProcedureDetail(procedureId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getProcedureDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProcedureDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProcedureDetail>>
+>;
+export type GetProcedureDetailQueryError = unknown;
+
+export function useGetProcedureDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProcedureDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getProcedureDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProcedureDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getProcedureDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카테고리별 체크리스트 상세 정보 조회
+ */
+
+export function useGetProcedureDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetProcedureDetailQueryOptions(procedureId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetProcedureDetailSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetProcedureDetailQueryKey(procedureId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProcedureDetail>>
+  > = ({ signal }) => getProcedureDetail(procedureId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getProcedureDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProcedureDetailSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProcedureDetail>>
+>;
+export type GetProcedureDetailSuspenseQueryError = unknown;
+
+export function useGetProcedureDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카테고리별 체크리스트 상세 정보 조회
+ */
+
+export function useGetProcedureDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDetail>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetProcedureDetailSuspenseQueryOptions(
+    procedureId,
+    options,
+  );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetProcedureDetailSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDetail>>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetProcedureDetailInfiniteQueryKey(procedureId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProcedureDetail>>
+  > = ({ signal }) => getProcedureDetail(procedureId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getProcedureDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProcedureDetailSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProcedureDetail>>
+>;
+export type GetProcedureDetailSuspenseInfiniteQueryError = unknown;
+
+export function useGetProcedureDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDetail>>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDetail>>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDetail>>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카테고리별 체크리스트 상세 정보 조회
+ */
+
+export function useGetProcedureDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDetail>>>,
+  TError = unknown,
+>(
+  procedureId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetProcedureDetailSuspenseInfiniteQueryOptions(
+    procedureId,
+    options,
+  );
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 각 절차의 카테고리 목록을 조회합니다.
  * @summary 카테고리 목록 조회
  */
 export const getCategories = (signal?: AbortSignal) => {
@@ -2534,6 +4017,448 @@ export function useGetCategoriesSuspenseInfinite<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = useGetCategoriesSuspenseInfiniteQueryOptions(options);
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 각 카테고리의 체크리스트 목록을 조회합니다.
+ * @summary 카테고리별 체크리스트 조회
+ */
+export const getCategoryProcedures = (
+  categoryId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseChecklistCategoryProcedureRes>({
+    url: `/api/v1/checklists/categories/${categoryId}/procedures`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetCategoryProceduresQueryKey = (categoryId: number) => {
+  return [`/api/v1/checklists/categories/${categoryId}/procedures`] as const;
+};
+
+export const getGetCategoryProceduresInfiniteQueryKey = (
+  categoryId: number,
+) => {
+  return [
+    "infinite",
+    `/api/v1/checklists/categories/${categoryId}/procedures`,
+  ] as const;
+};
+
+export const useGetCategoryProceduresQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCategoryProceduresQueryKey(categoryId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCategoryProcedures>>
+  > = ({ signal }) => getCategoryProcedures(categoryId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getCategoryProcedures>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCategoryProceduresQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCategoryProcedures>>
+>;
+export type GetCategoryProceduresQueryError = unknown;
+
+export function useGetCategoryProcedures<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCategoryProcedures>>,
+          TError,
+          Awaited<ReturnType<typeof getCategoryProcedures>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryProcedures<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCategoryProcedures>>,
+          TError,
+          Awaited<ReturnType<typeof getCategoryProcedures>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryProcedures<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카테고리별 체크리스트 조회
+ */
+
+export function useGetCategoryProcedures<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetCategoryProceduresQueryOptions(
+    categoryId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetCategoryProceduresSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCategoryProceduresQueryKey(categoryId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCategoryProcedures>>
+  > = ({ signal }) => getCategoryProcedures(categoryId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getCategoryProcedures>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCategoryProceduresSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCategoryProcedures>>
+>;
+export type GetCategoryProceduresSuspenseQueryError = unknown;
+
+export function useGetCategoryProceduresSuspense<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryProceduresSuspense<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryProceduresSuspense<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카테고리별 체크리스트 조회
+ */
+
+export function useGetCategoryProceduresSuspense<
+  TData = Awaited<ReturnType<typeof getCategoryProcedures>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetCategoryProceduresSuspenseQueryOptions(
+    categoryId,
+    options,
+  );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetCategoryProceduresSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getCategoryProcedures>>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetCategoryProceduresInfiniteQueryKey(categoryId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getCategoryProcedures>>
+  > = ({ signal }) => getCategoryProcedures(categoryId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getCategoryProcedures>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCategoryProceduresSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCategoryProcedures>>
+>;
+export type GetCategoryProceduresSuspenseInfiniteQueryError = unknown;
+
+export function useGetCategoryProceduresSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getCategoryProcedures>>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryProceduresSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getCategoryProcedures>>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryProceduresSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getCategoryProcedures>>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 카테고리별 체크리스트 조회
+ */
+
+export function useGetCategoryProceduresSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getCategoryProcedures>>>,
+  TError = unknown,
+>(
+  categoryId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getCategoryProcedures>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetCategoryProceduresSuspenseInfiniteQueryOptions(
+    categoryId,
+    options,
+  );
 
   const query = useSuspenseInfiniteQuery(
     queryOptions,
