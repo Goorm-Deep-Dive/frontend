@@ -9,13 +9,26 @@ const __dirname = path.dirname(__filename);
 const ICONS_DIR = path.resolve(__dirname, "../public/icons");
 const OUTPUT_DIR = path.resolve(__dirname, "../src/components/icons");
 
-// SVG 파일명을 React 컴포넌트명(PascalCase)으로 변환
-const toPascalCase = (fileName) =>
-  fileName
-    .replace(".svg", "")
-    .split(/[-_\s]+/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+// SVG 파일명을 유효한 JS 식별자 기반 PascalCase 컴포넌트명으로 변환
+const toPascalCase = (fileName) => {
+  const baseName = fileName.replace(/\.svg$/i, "");
+  const normalized = baseName.replace(/[^a-zA-Z0-9]+/g, " ").trim();
+
+  const pascal = normalized
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join("");
+
+  // 비어 있으면 fallback, 숫자로 시작하면 prefix 추가
+  const withPrefix = pascal || "IconSvg";
+  const safeIdentifier = /^[0-9]/.test(withPrefix)
+    ? `Icon${withPrefix}`
+    : withPrefix;
+
+  // 첫 글자는 영문 대문자 또는 "_"가 되도록 보장
+  return /^[A-Z_]/.test(safeIdentifier) ? safeIdentifier : "_IconSvg";
+};
 
 // 컴포넌트명을 파일 규칙(kebab-case)으로 변환
 const toKebabCase = (name) =>
