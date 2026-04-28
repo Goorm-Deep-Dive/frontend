@@ -16,7 +16,7 @@ const buttonVariants = cva(
       },
       size: {
         large: "h4 px-38 py-2.5 w-full",
-        small: "label py-1 px-2.5 w-full",
+        small: "label py-1 px-2.5 w-max",
       },
     },
     defaultVariants: {
