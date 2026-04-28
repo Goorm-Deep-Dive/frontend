@@ -5,7 +5,6 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-
   --color-primary-1: #005b64;
   --color-primary-2: #91b3b7;
   --color-primary-10: #005c6410;
@@ -151,7 +150,6 @@ body {
 /*---break---*/
 
 .dark {
-
   --background: oklch(0.145 0 0);
 
   --foreground: oklch(0.985 0 0);
