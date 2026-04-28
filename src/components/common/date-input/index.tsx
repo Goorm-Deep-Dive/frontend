@@ -7,12 +7,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 
-export default function DateInput() {
-  const [value, setValue] = useState("");
+interface DateInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  date?: Date;
+  onDateChange?: (date?: Date) => void;
+}
+
+export default function DateInput({
+  value,
+  onChange,
+  date,
+  onDateChange,
+}: DateInputProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const [date, setDate] = useState<Date | undefined>();
   const [open, setOpen] = useState(false);
 
   const formatDate = (input: string) => {
@@ -29,7 +38,7 @@ export default function DateInput() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatDate(e.target.value);
-    setValue(formatted);
+    onChange(formatted);
   };
 
   return (
@@ -50,7 +59,7 @@ export default function DateInput() {
           </div>
         )}
 
-        <div className="h3 bg-primary-bg caret-primary-1 $ } flex justify-between rounded-lg px-2.5 py-2.5">
+        <div className="h3 bg-primary-bg caret-primary-1 flex justify-between rounded-lg px-2.5 py-2.5">
           <input
             value={value}
             onChange={handleChange}
@@ -80,19 +89,17 @@ export default function DateInput() {
                     mode="single"
                     selected={date}
                     onSelect={(selectedDate) => {
-                      setDate(selectedDate);
-
+                      onDateChange?.(selectedDate);
                       if (selectedDate) {
                         const formatted = format(selectedDate, "yyyy-MM-dd");
-                        setValue(formatted);
+                        onChange(formatted);
                       }
                     }}
                   />
                 </div>
-                <Button
-                  size="small"
+                <button
                   disabled={!date}
-                  className="bg-primary-1 w-full rounded-lg py-3 text-white disabled:opacity-50"
+                  className={`w-full rounded-lg py-3 ${date ? "bg-primary-1 px-13 text-white" : "body bg-gray-300 text-gray-900"}`}
                   onClick={() => {
                     if (!date) return;
                     console.log(format(date, "yyyy-MM-dd"));
@@ -100,7 +107,7 @@ export default function DateInput() {
                   }}
                 >
                   {date ? `${format(date, "yyyy-MM-dd")} 선택하기` : "선택하기"}
-                </Button>
+                </button>
               </div>
             </PopoverContent>
           </Popover>
