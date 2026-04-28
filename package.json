@@ -11,7 +11,7 @@
     "prepare": "husky",
     "orval": "orval --config orval.config.mjs",
     "orval:watch": "orval --config orval.config.mjs --watch",
-    "generate:icons": "node scripts/generate-icons.js"
+    "gen:icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.1",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
