@@ -11,5 +11,6 @@ export interface Procedure {
   procedureId?: number;
   procedureName?: string;
   remainingDays?: number;
-  isChecked?: boolean;
+  checked?: boolean;
+  priority?: string;
 }

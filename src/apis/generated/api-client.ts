@@ -32,26 +32,118 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  ApiResponseChatRes,
   ApiResponseChecklistCategoryProcedureRes,
   ApiResponseChecklistCategoryRes,
   ApiResponseChecklistOverallProgressRes,
   ApiResponseChecklistProcedureDetailRes,
   ApiResponseDeceasedProfileRes,
   ApiResponseListDeceasedProfileListRes,
+  ApiResponseProcedureDocumentDetailRes,
   ApiResponseSurveyListRes,
+  ApiResponseSurveyTempSaveRes,
   ApiResponseTokenRes,
   ApiResponseUserProfileRes,
   ApiResponseVoid,
+  ChatReq,
   ChecklistCheckReq,
   DeceasedProfileCreateReq,
   DeceasedProfileUpdateReq,
   LinkGoogleParams,
+  SurveyTempSaveReq,
   UserNotificationUpdateReq,
 } from "./model";
 
 import { customInstance } from "../instance";
 import { customMutationOptions } from "../config/mutation-options";
 import { customQueryOptions } from "../config/query-options";
+
+/**
+ * 설문조사를 임시 저장합니다.
+ * @summary 설문조사 임시저장
+ */
+export const saveTempSurvey = (
+  surveyTempSaveReq: SurveyTempSaveReq,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseSurveyTempSaveRes>({
+    url: `/api/v1/surveys/temp`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: surveyTempSaveReq,
+    signal,
+  });
+};
+
+export const useSaveTempSurveyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof saveTempSurvey>>,
+    TError,
+    { data: SurveyTempSaveReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof saveTempSurvey>>,
+  TError,
+  { data: SurveyTempSaveReq },
+  TContext
+> => {
+  const mutationKey = ["saveTempSurvey"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof saveTempSurvey>>,
+    { data: SurveyTempSaveReq }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return saveTempSurvey(data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type SaveTempSurveyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof saveTempSurvey>>
+>;
+export type SaveTempSurveyMutationBody = SurveyTempSaveReq;
+export type SaveTempSurveyMutationError = unknown;
+
+/**
+ * @summary 설문조사 임시저장
+ */
+export const useSaveTempSurvey = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof saveTempSurvey>>,
+      TError,
+      { data: SurveyTempSaveReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof saveTempSurvey>>,
+  TError,
+  { data: SurveyTempSaveReq },
+  TContext
+> => {
+  return useMutation(useSaveTempSurveyMutationOptions(options), queryClient);
+};
 
 /**
  * 설문조사를 건너뛰고 전체 체크리스트를 생성합니다.
@@ -626,6 +718,90 @@ export const useCreateDeceasedProfile = <TError = unknown, TContext = unknown>(
 };
 
 /**
+ * 로그인한 사용자의 메시지를 AI 챗봇 서비스로 전달합니다.
+ * @summary AI 챗봇 메시지 전송[서버 테스트 불가]
+ */
+export const sendMessage = (chatReq: ChatReq, signal?: AbortSignal) => {
+  return customInstance<ApiResponseChatRes>({
+    url: `/api/v1/chats/messages`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: chatReq,
+    signal,
+  });
+};
+
+export const useSendMessageMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof sendMessage>>,
+    TError,
+    { data: ChatReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof sendMessage>>,
+  TError,
+  { data: ChatReq },
+  TContext
+> => {
+  const mutationKey = ["sendMessage"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof sendMessage>>,
+    { data: ChatReq }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return sendMessage(data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type SendMessageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof sendMessage>>
+>;
+export type SendMessageMutationBody = ChatReq;
+export type SendMessageMutationError = unknown;
+
+/**
+ * @summary AI 챗봇 메시지 전송[서버 테스트 불가]
+ */
+export const useSendMessage = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof sendMessage>>,
+      TError,
+      { data: ChatReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof sendMessage>>,
+  TError,
+  { data: ChatReq },
+  TContext
+> => {
+  return useMutation(useSendMessageMutationOptions(options), queryClient);
+};
+
+/**
  * RefreshToken을 검증하여 AccessToken을 재발급합니다.
  * @summary AccessToken 재발급
  */
@@ -1052,6 +1228,97 @@ export const useChangeActiveDeceasedProfile = <
 > => {
   return useMutation(
     useChangeActiveDeceasedProfileMutationOptions(options),
+    queryClient,
+  );
+};
+
+/**
+ * 사용자가 선택(가변) 체크리스트 항목을 삭제합니다.
+ * @summary 선택 체크리스트 항목 제거
+ */
+export const deleteProcedureChecklist = (
+  userProcedureChecklistId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseVoid>({
+    url: `/api/v1/checklists/procedures/${userProcedureChecklistId}`,
+    method: "DELETE",
+    signal,
+  });
+};
+
+export const useDeleteProcedureChecklistMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProcedureChecklist>>,
+    TError,
+    { userProcedureChecklistId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteProcedureChecklist>>,
+  TError,
+  { userProcedureChecklistId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteProcedureChecklist"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteProcedureChecklist>>,
+    { userProcedureChecklistId: number }
+  > = (props) => {
+    const { userProcedureChecklistId } = props ?? {};
+
+    return deleteProcedureChecklist(userProcedureChecklistId);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type DeleteProcedureChecklistMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteProcedureChecklist>>
+>;
+
+export type DeleteProcedureChecklistMutationError = unknown;
+
+/**
+ * @summary 선택 체크리스트 항목 제거
+ */
+export const useDeleteProcedureChecklist = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteProcedureChecklist>>,
+      TError,
+      { userProcedureChecklistId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteProcedureChecklist>>,
+  TError,
+  { userProcedureChecklistId: number },
+  TContext
+> => {
+  return useMutation(
+    useDeleteProcedureChecklistMutationOptions(options),
     queryClient,
   );
 };
@@ -2397,6 +2664,453 @@ export function useGetSurveyListSuspenseInfinite<
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
   const queryOptions = useGetSurveyListSuspenseInfiniteQueryOptions(options);
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 서류별 상세 정보를 조회합니다.
+ * @summary 서류별 상세 조회
+ */
+export const getProcedureDocumentDetail = (
+  procedureDocumentId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseProcedureDocumentDetailRes>({
+    url: `/api/v1/procedures/documents/${procedureDocumentId}`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetProcedureDocumentDetailQueryKey = (
+  procedureDocumentId: number,
+) => {
+  return [`/api/v1/procedures/documents/${procedureDocumentId}`] as const;
+};
+
+export const getGetProcedureDocumentDetailInfiniteQueryKey = (
+  procedureDocumentId: number,
+) => {
+  return [
+    "infinite",
+    `/api/v1/procedures/documents/${procedureDocumentId}`,
+  ] as const;
+};
+
+export const useGetProcedureDocumentDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetProcedureDocumentDetailQueryKey(procedureDocumentId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+  > = ({ signal }) => getProcedureDocumentDetail(procedureDocumentId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProcedureDocumentDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+>;
+export type GetProcedureDocumentDetailQueryError = unknown;
+
+export function useGetProcedureDocumentDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDocumentDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+          TError,
+          Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDocumentDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 서류별 상세 조회
+ */
+
+export function useGetProcedureDocumentDetail<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetProcedureDocumentDetailQueryOptions(
+    procedureDocumentId,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetProcedureDocumentDetailSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetProcedureDocumentDetailQueryKey(procedureDocumentId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+  > = ({ signal }) => getProcedureDocumentDetail(procedureDocumentId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProcedureDocumentDetailSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+>;
+export type GetProcedureDocumentDetailSuspenseQueryError = unknown;
+
+export function useGetProcedureDocumentDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDocumentDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDocumentDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 서류별 상세 조회
+ */
+
+export function useGetProcedureDocumentDetailSuspense<
+  TData = Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetProcedureDocumentDetailSuspenseQueryOptions(
+    procedureDocumentId,
+    options,
+  );
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetProcedureDocumentDetailSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDocumentDetail>>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetProcedureDocumentDetailInfiniteQueryKey(procedureDocumentId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+  > = ({ signal }) => getProcedureDocumentDetail(procedureDocumentId, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProcedureDocumentDetailSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getProcedureDocumentDetail>>
+>;
+export type GetProcedureDocumentDetailSuspenseInfiniteQueryError = unknown;
+
+export function useGetProcedureDocumentDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDocumentDetail>>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDocumentDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDocumentDetail>>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetProcedureDocumentDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDocumentDetail>>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 서류별 상세 조회
+ */
+
+export function useGetProcedureDocumentDetailSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getProcedureDocumentDetail>>>,
+  TError = unknown,
+>(
+  procedureDocumentId: number,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getProcedureDocumentDetail>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions =
+    useGetProcedureDocumentDetailSuspenseInfiniteQueryOptions(
+      procedureDocumentId,
+      options,
+    );
 
   const query = useSuspenseInfiniteQuery(
     queryOptions,

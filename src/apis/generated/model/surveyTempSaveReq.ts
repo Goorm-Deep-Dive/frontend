@@ -5,10 +5,8 @@
  * 동행 서비스 API 입니다.
  * OpenAPI spec version: v1
  */
+import type { SurveyAnswerIdReq } from "./surveyAnswerIdReq";
 
-export interface Document {
-  procedureDocumentId?: number;
-  userDocumentChecklistId?: number;
-  documentName?: string;
-  checked?: boolean;
+export interface SurveyTempSaveReq {
+  answers?: SurveyAnswerIdReq[];
 }

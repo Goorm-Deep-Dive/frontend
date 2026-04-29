@@ -14,11 +14,12 @@ export interface ChecklistProcedureDetailRes {
   procedureId?: number;
   procedureCategoryId?: number;
   procedureName?: string;
+  description?: string;
   dueDateDescription?: string;
   searchScope?: string;
   cautionText?: string;
   channels?: Channel[];
   contacts?: Contact[];
   documents?: Document[];
-  isCheck?: boolean;
+  checked?: boolean;
 }
