@@ -4,17 +4,17 @@ import Image from "next/image";
 const SNS_CONFIG = {
   kakao: {
     name: "카카오 로그인",
-    icon: "/icons/sns-login-button/kakao.svg",
+    icon: "/icons/kakao.svg",
     className: "bg-yellow-300 text-black",
   },
   naver: {
     name: "네이버 로그인",
-    icon: "/icons/sns-login-button/naver.svg",
+    icon: "/icons/naver.svg",
     className: "bg-green-600 text-white",
   },
   google: {
     name: "Sign in with Google",
-    icon: "/icons/sns-login-button/google.svg",
+    icon: "/icons/google.svg",
     className: "bg-white text-black",
   },
 } as const;
