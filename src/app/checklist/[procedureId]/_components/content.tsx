@@ -1,9 +1,15 @@
 "use client";
 
-import { useGetProcedureDetailSuspense } from "@/apis/generated/api-client";
+import {
+  getGetProcedureDetailQueryKey,
+  useGetProcedureDetailSuspense,
+  useModifyProcedureCheck,
+} from "@/apis/generated/api-client";
+import type { ChecklistProcedureDetailRes } from "@/apis/generated/model";
 import DocumentListItem from "./document-list-item";
 import { Button } from "@/components/ui/button";
 import { getChannelLabel } from "../_utils/getChannelLabel";
+import { useQueryClient } from "@tanstack/react-query";
 interface Props {
   procedureId: number;
 }
@@ -12,6 +18,32 @@ export default function Content({ procedureId }: Props) {
   const { data: procedureDetail } = useGetProcedureDetailSuspense(procedureId);
 
   const cautionTextList = procedureDetail?.cautionText?.split(";") ?? [];
+
+  const queryClient = useQueryClient();
+  const { mutateAsync: modifyProcedureCheck } = useModifyProcedureCheck();
+
+  const handleModifyProcedureCheck = async () => {
+    const queryKey = getGetProcedureDetailQueryKey(procedureId);
+    const previousData =
+      queryClient.getQueryData<ChecklistProcedureDetailRes>(queryKey);
+
+    queryClient.setQueryData<ChecklistProcedureDetailRes>(queryKey, (old) =>
+      old ? { ...old, checked: true } : old,
+    );
+
+    try {
+      await modifyProcedureCheck({
+        userProcedureChecklistId: procedureId,
+        data: { isChecked: true },
+      });
+    } catch {
+      if (previousData) {
+        queryClient.setQueryData(queryKey, previousData);
+      }
+    } finally {
+      queryClient.invalidateQueries({ queryKey });
+    }
+  };
 
   return (
     <>
@@ -87,7 +119,9 @@ export default function Content({ procedureId }: Props) {
         </div>
       </div>
       <div className="flex items-center justify-center p-5">
-        <Button>{procedureDetail?.procedureName} 체크 완료하기</Button>
+        <Button onClick={handleModifyProcedureCheck}>
+          {procedureDetail?.procedureName} 체크 완료하기
+        </Button>
       </div>
     </>
   );
