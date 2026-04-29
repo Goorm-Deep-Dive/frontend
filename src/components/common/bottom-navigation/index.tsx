@@ -1,5 +1,5 @@
 import ProcessIcon from "@/components/icons/process-icon";
-import ChecklistIcon from "@/components/icons/check-icon";
+import ChecklistIcon from "@/components/icons/check-list-icon";
 import ScheduleIcon from "@/components/icons/schedule-icon";
 import MyPageIcon from "@/components/icons/mypage-icon";
 import Image from "next/image";
