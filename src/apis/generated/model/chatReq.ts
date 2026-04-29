@@ -6,9 +6,6 @@
  * OpenAPI spec version: v1
  */
 
-export interface Document {
-  procedureDocumentId?: number;
-  userDocumentChecklistId?: number;
-  documentName?: string;
-  checked?: boolean;
+export interface ChatReq {
+  message: string;
 }
