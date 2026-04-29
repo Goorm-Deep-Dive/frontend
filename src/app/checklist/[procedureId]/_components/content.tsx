@@ -2,8 +2,8 @@
 
 import { useGetProcedureDetailSuspense } from "@/apis/generated/api-client";
 import DocumentListItem from "./document-list-item";
-import BottomCTA from "@/components/common/bottom-cta";
 import { Button } from "@/components/ui/button";
+import { getChannelLabel } from "../_utils/getChannelLabel";
 interface Props {
   procedureId: number;
 }
@@ -30,7 +30,7 @@ export default function Content({ procedureId }: Props) {
             <ul className="body list-inside list-disc">
               {procedureDetail?.channels?.map((channel) => (
                 <li key={channel.procedureChannelId}>
-                  {channel.channelType} {channel.description}
+                  {getChannelLabel(channel.channelType)} {channel.description}
                 </li>
               ))}
             </ul>
@@ -67,23 +67,28 @@ export default function Content({ procedureId }: Props) {
           </div>
         </div>
       </div>
+
       <div className="gap flex flex-col gap-5 p-5">
         <span className="h4 pl-5 text-gray-900">필요서류</span>
         <div className="flex flex-col gap-2.5">
-          {procedureDetail?.documents?.map((document, index) => (
-            <DocumentListItem
-              index={index}
-              key={document.userDocumentChecklistId}
-              title={document.documentName ?? ""}
-              checked={document.isChecked}
-            />
-          ))}
+          {procedureDetail?.documents?.map(
+            (document, index) =>
+              document.procedureDocumentId && (
+                <DocumentListItem
+                  index={index}
+                  procedureId={procedureId}
+                  procedureDocumentId={document.procedureDocumentId}
+                  key={document.procedureDocumentId}
+                  title={document.documentName ?? ""}
+                  checked={document.checked ?? false}
+                />
+              ),
+          )}
         </div>
       </div>
-
-      <BottomCTA>
+      <div className="flex items-center justify-center p-5">
         <Button>{procedureDetail?.procedureName} 체크 완료하기</Button>
-      </BottomCTA>
+      </div>
     </>
   );
 }
