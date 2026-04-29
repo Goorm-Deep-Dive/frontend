@@ -1,11 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import Checkbox from "./checkbox";
 import {
   getGetProcedureDetailQueryKey,
   useModifyDocumentCheck,
 } from "@/apis/generated/api-client";
-import { useQueryClient } from "@tanstack/react-query";
 import type { ChecklistProcedureDetailRes } from "@/apis/generated/model";
+import { useQueryClient } from "@tanstack/react-query";
+import Checkbox from "./checkbox";
 
 interface Props {
   procedureId: number;
@@ -13,7 +15,6 @@ interface Props {
   index: number;
   title: string;
   checked?: boolean;
-  link?: string;
 }
 export default function DocumentListItem({
   procedureId,
@@ -75,8 +76,7 @@ export default function DocumentListItem({
           onChange={(documentChecked) =>
             handleModifyDocumentCheck(documentChecked)
           }
-          defaultChecked={checked ?? false}
-        />{" "}
+        />
       </label>
 
       <Link href="#" target="_blank" className="ml-auto">

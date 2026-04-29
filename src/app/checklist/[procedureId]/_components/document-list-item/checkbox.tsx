@@ -5,7 +5,6 @@ interface Props {
   id: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  defaultChecked: boolean;
 }
 export default function Checkbox({ id, checked, onChange }: Props) {
   return (

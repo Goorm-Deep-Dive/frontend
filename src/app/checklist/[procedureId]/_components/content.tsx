@@ -10,6 +10,7 @@ import DocumentListItem from "./document-list-item";
 import { Button } from "@/components/ui/button";
 import { getChannelLabel } from "../_utils/getChannelLabel";
 import { useQueryClient } from "@tanstack/react-query";
+import Header from "@/components/common/header";
 interface Props {
   procedureId: number;
 }
@@ -47,11 +48,15 @@ export default function Content({ procedureId }: Props) {
 
   return (
     <>
+      <Header title={procedureDetail?.procedureName ?? ""} />
+
       <div className="gap flex flex-col gap-5 p-5">
         <div className="flex gap-5">
-          <div>D-100</div>
+          <span>D-100</span>
           <div>
-            <span>{procedureDetail?.dueDateDescription}</span>
+            <span className="body text-gray-900">
+              {procedureDetail?.dueDateDescription}
+            </span>
           </div>
         </div>
 
@@ -92,8 +97,8 @@ export default function Content({ procedureId }: Props) {
           <div className="flex flex-col gap-1">
             <span className="h4 text-gray-900">유의/주의사항</span>
             <ul className="body list-inside list-disc">
-              {cautionTextList.map((text) => (
-                <li key={text}>{text}</li>
+              {cautionTextList.map((text, index) => (
+                <li key={index}>{text}</li>
               ))}
             </ul>
           </div>
