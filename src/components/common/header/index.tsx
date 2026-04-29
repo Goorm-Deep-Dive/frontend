@@ -17,7 +17,7 @@ interface ChecklistDepartmentItem {
 
 interface HeaderProps {
   title?: React.ReactNode;
-  variant?: "default" | "checklist";
+  variant?: "default" | "detail" | "checklist";
   checklistItems?: ChecklistDepartmentItem[];
   defaultOpen?: boolean;
   onToggleOpen?: (isOpen: boolean) => void;
@@ -52,7 +52,20 @@ const Header = ({
     router.back();
   };
 
-  if (variant !== "checklist") {
+  if (variant === "default") {
+    return (
+      <header className="border-bottom sticky top-0 z-50 flex h-19 items-center justify-end border-b border-gray-300 bg-white px-5 py-5">
+        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {title}
+        </span>
+        <button className="cursor-pointer" aria-label="알림 페이지 이동">
+          <NotificationIcon className="h-10 w-10 text-gray-900" />
+        </button>
+      </header>
+    );
+  }
+
+  if (variant === "detail") {
     return (
       <header className="border-bottom sticky top-0 z-50 flex h-19 items-center justify-between border-b border-gray-300 bg-white px-5 py-5">
         <button

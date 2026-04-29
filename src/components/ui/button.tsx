@@ -41,6 +41,7 @@ function Button({
 
   return (
     <Comp
+      type={asChild ? undefined : type}
       className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />
