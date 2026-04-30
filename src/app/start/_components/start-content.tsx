@@ -1,15 +1,17 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import BottomCTA from "../bottom-cta";
-import DateInput from "../date-input";
-import Input from "../input";
+import BottomCTA from "../../../components/common/bottom-cta";
+import DateInput from "../../../components/common/date-input";
+import Input from "../../../components/common/input";
 import { useState } from "react";
 
-export default function Start() {
+export default function StartContent() {
   const [dateValue, setDateValue] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [name, setName] = useState("");
 
-  const isValid = date && name;
+  const isValid = !!date && name.trim().length > 0;
 
   return (
     <>
@@ -36,12 +38,7 @@ export default function Start() {
               등록할 성명 혹은 명칭을 알려주세요.
             </span>
           </div>
-          <Input
-            value={name}
-            onChange={(value) => {
-              setName(value);
-            }}
-          />
+          <Input value={name} onChange={setName} />
         </div>
       </div>
 

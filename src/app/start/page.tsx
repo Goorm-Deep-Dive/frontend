@@ -1,6 +1,4 @@
-"use client";
-
-import Start from "@/components/common/start";
+import Start from "@/app/start/_components/start-content";
 import { Button } from "@/components/ui/button";
 
 export default function StartPage() {
