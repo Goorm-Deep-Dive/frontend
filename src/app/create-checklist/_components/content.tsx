@@ -1,6 +1,4 @@
-import { Suspense } from "react";
-import ChecklistForm from "./checklist-form";
-import ChecklistFormSkeleton from "./checklist-form/skeleton";
+import ChecklistFormClientOnly from "./checklist-form/client-only";
 
 export default function Content() {
   return (
@@ -16,9 +14,7 @@ export default function Content() {
         </div>
       </div>
 
-      <Suspense fallback={<ChecklistFormSkeleton />}>
-        <ChecklistForm />
-      </Suspense>
+      <ChecklistFormClientOnly />
     </>
   );
 }
