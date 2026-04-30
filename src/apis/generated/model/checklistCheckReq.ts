@@ -7,5 +7,5 @@
  */
 
 export interface ChecklistCheckReq {
-  isChecked?: boolean;
+  checked?: boolean;
 }
