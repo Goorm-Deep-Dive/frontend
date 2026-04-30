@@ -18,6 +18,10 @@ const buttonVariants = cva(
         large: "h4 px-38 py-2.5 w-full",
         small: "label py-1 px-2.5 w-max",
       },
+      rounded: {
+        true: "rounded-xl",
+        false: "",
+      },
     },
     defaultVariants: {
       variant: "primary",
@@ -32,6 +36,7 @@ function Button({
   size,
   asChild = false,
   type = "button",
+  rounded,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -41,7 +46,8 @@ function Button({
 
   return (
     <Comp
-      className={cn(buttonVariants({ variant, size }), className)}
+      type={asChild ? undefined : type}
+      className={cn(buttonVariants({ variant, size, rounded }), className)}
       {...props}
     />
   );
