@@ -7,7 +7,7 @@ export default function Input({ value, onChange }: InputProps) {
   const isFilled = value.length > 0;
   return (
     <div className="rounded-lg bg-gray-200 p-5">
-      <div className="bg-primary-10 rounded-lg px-5 py-2.5">
+      <div className="bg-primary-10 rounded-lg border border-white/30 px-5 py-2.5 backdrop-blur-md">
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
