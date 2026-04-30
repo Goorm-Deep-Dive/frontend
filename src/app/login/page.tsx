@@ -1,7 +1,12 @@
+"use client";
+
 import SnsLoginButton from "@/components/common/sns-login-button";
 import Image from "next/image";
+import { useSocialLogin } from "@/hooks/use-social-login";
 
 export default function Page() {
+  const { login } = useSocialLogin();
+
   return (
     <div className="flex h-full flex-col gap-8 pt-36">
       <div className="flex flex-col gap-2 px-5">
@@ -23,9 +28,18 @@ export default function Page() {
               목록 생성 및 알림은 로그인 후 시작 됩니다.
             </span>
           </div>
-          <SnsLoginButton sns="kakao" />
-          <SnsLoginButton sns="google" />
-          <SnsLoginButton sns="naver" />
+          <SnsLoginButton
+            sns="kakao"
+            onClick={() => {
+              login("kakao");
+            }}
+          />
+          <SnsLoginButton
+            sns="google"
+            onClick={() => {
+              console.log("클릭");
+            }}
+          />
         </div>
       </div>
     </div>
