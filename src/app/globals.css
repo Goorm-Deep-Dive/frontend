@@ -21,6 +21,9 @@
   --color-sementic-red: #ff3764;
   --color-sementic-red-bg: #fdede9;
 
+  --color-tab-bg-start: #fafafa;
+  --color-tab-bg-end: #ffffff;
+
   /** App Max Width */
   --app-max-width: 480px;
 
@@ -77,6 +80,9 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-700: var(--color-gray-700);
   --color-gray-900: var(--color-gray-900);
+
+  --color-tab-bg-start: var(--color-tab-bg-start);
+  --color-tab-bg-end: var(--color-tab-bg-end);
 
   /****************************
   * Fonts

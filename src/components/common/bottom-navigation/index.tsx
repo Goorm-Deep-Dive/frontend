@@ -33,7 +33,7 @@ export default function BottomNavigation() {
       <div className="h-25 min-h-25" />
       <nav
         aria-label="바텀 네비게이션"
-        className="fixed bottom-0 z-10 w-(--app-max-width) rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4"
+        className="fixed bottom-0 z-10 w-full max-w-(--app-max-width) rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4"
       >
         <div className="flex items-center">
           {MENUS.map((menu) => {
