@@ -42,7 +42,7 @@ export default function DateInput({
   };
 
   return (
-    <div className="bg-gray-200 px-5 py-4">
+    <div className="rounded-lg bg-gray-200 px-5 py-4">
       <div className="flex flex-col gap-2.5">
         {isFocused && (
           <div className="flex items-center gap-1">
