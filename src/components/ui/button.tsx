@@ -13,10 +13,12 @@ const buttonVariants = cva(
         bg-primary-1 text-white
         disabled:bg-gray-300 disabled:text-gray-900
       `,
+        ghost: "bg-transparent text-gray-900 hover:bg-gray-100",
       },
       size: {
         large: "h4 px-38 py-2.5 w-full",
         small: "label py-1 px-2.5 w-max",
+        icon: "size-8 p-0",
       },
     },
     defaultVariants: {
