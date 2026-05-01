@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${pretendard.variable} h-full`}>
-      <body className="flex h-dvh w-full flex-col overflow-hidden font-sans antialiased">
+      <body className="flex h-dvh w-full flex-col overflow-hidden bg-black font-sans antialiased">
         <QueryClientProvider>
           <div className="mx-auto flex h-dvh w-full max-w-(--app-max-width) flex-col bg-white">
             <main className="flex min-h-0 flex-1 flex-col overflow-y-auto">
