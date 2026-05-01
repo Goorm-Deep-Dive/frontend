@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import QueryClientProvider from "@/app/_providers/query-client-provider";
 import { pretendard } from "@/styles/fonts";
+import AlertRenderer from "@/components/common/alert/alert-renderer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,6 +24,7 @@ export default function RootLayout({
             </main>
           </div>
         </QueryClientProvider>
+        <AlertRenderer />
       </body>
     </html>
   );

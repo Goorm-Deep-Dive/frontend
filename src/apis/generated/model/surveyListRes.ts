@@ -8,5 +8,7 @@
 import type { SurveyQuestionRes } from "./surveyQuestionRes";
 
 export interface SurveyListRes {
+  surveyStatus?: string;
   surveys?: SurveyQuestionRes[];
+  selectedAnswerIds?: number[];
 }
