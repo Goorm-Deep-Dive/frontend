@@ -16,7 +16,7 @@ export const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
+      const token = process.env.MASTER_ACCESS_TOKEN;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
