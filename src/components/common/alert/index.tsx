@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 interface AlertButton {
@@ -21,7 +21,7 @@ export default function Alert({
   buttons,
 }: AlertProps) {
   return (
-    <div className="relative h-[236px] w-[350px] rounded-xl border border-black bg-white">
+    <div className="relative w-[350px] rounded-xl border border-black bg-white">
       <button className="absolute top-4 right-4" onClick={onClose}>
         <Image
           src="/icons/alert/close.svg"
@@ -37,18 +37,15 @@ export default function Alert({
         </div>
         <div className="flex justify-center gap-5">
           {buttons.map((button) => (
-            <button
+            <Button
               key={button.label}
-              className={cn(
-                "h4 rounded-2xl px-5 py-1.5",
-                button.variant === "primary"
-                  ? "bg-primary-1 text-white"
-                  : "bg-gray-700 text-white",
-              )}
+              variant={button.variant}
               onClick={button.onClick}
+              rounded
+              size="small"
             >
               {button.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
