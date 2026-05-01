@@ -36,6 +36,10 @@ const buttonVariants = cva(
         small: "label py-1 px-2.5 w-max",
         icon: "inline-flex size-9 shrink-0 items-center justify-center gap-0 p-0",
       },
+      rounded: {
+        true: "rounded-xl",
+        false: "",
+      },
     },
     defaultVariants: {
       variant: "primary",
@@ -52,6 +56,7 @@ function Button({
   rounded,
   asChild = false,
   type = "button",
+  rounded,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
