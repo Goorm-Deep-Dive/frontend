@@ -10,16 +10,23 @@ interface CheckboxItem {
 }
 
 interface Props {
-  value: string;
-  onChange: (value: string) => void;
+  value: string | string[];
+  onChange: (value: string | string[]) => void;
+  multiple?: boolean;
   items: CheckboxItem[];
 }
 
-export default function CheckboxList({ items, value, onChange }: Props) {
+export default function CheckboxList({
+  items,
+  value,
+  onChange,
+  multiple = false,
+}: Props) {
   return (
     <div className="flex w-full flex-col gap-1.25">
       {items.map((item) => {
-        const isChecked = value === item.value;
+        const selectedValues = Array.isArray(value) ? value : [value];
+        const isChecked = selectedValues.includes(item.value);
         const inputId = `checkbox-${item.value}`;
         const descriptionId = item.description
           ? `checkbox-description-${item.value}`
@@ -81,7 +88,19 @@ export default function CheckboxList({ items, value, onChange }: Props) {
               id={inputId}
               type="checkbox"
               value={item.value}
-              onChange={() => onChange(item.value)}
+              onChange={() => {
+                if (!multiple) {
+                  onChange(item.value);
+                  return;
+                }
+
+                if (isChecked) {
+                  onChange(selectedValues.filter((v) => v !== item.value));
+                  return;
+                }
+
+                onChange([...selectedValues.filter(Boolean), item.value]);
+              }}
               className="sr-only"
               checked={isChecked}
             />

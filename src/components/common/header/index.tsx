@@ -1,8 +1,11 @@
 "use client";
 
+import ArrowLeftIcon from "@/components/icons/arrow-left-icon";
+import NotificationIcon from "@/components/icons/notification-icon";
 import { cn } from "@/lib/cn";
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface ChecklistDepartmentItem {
   id: string;
@@ -14,10 +17,11 @@ interface ChecklistDepartmentItem {
 
 interface HeaderProps {
   title?: React.ReactNode;
-  variant?: "default" | "checklist";
+  variant?: "default" | "detail" | "checklist";
   checklistItems?: ChecklistDepartmentItem[];
   defaultOpen?: boolean;
   onToggleOpen?: (isOpen: boolean) => void;
+  onBack?: () => void;
 }
 const Header = ({
   title,
@@ -25,10 +29,11 @@ const Header = ({
   checklistItems = [],
   defaultOpen = false,
   onToggleOpen,
+  onBack,
 }: HeaderProps) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  // 💡 시니어의 계산 로직: 데이터에 기반한 실시간 현황 파악
   const stats = useMemo(() => {
     const total = checklistItems.length;
     const completed = checklistItems.filter((item) => item.isCompleted).length;
@@ -42,10 +47,42 @@ const Header = ({
     onToggleOpen?.(nextOpen);
   };
 
-  if (variant !== "checklist") {
+  const handleBack = () => {
+    onBack?.();
+    router.back();
+  };
+
+  if (variant === "default") {
     return (
-      <header className="sticky top-0 z-50 flex h-[60px] items-center bg-white px-5 py-4">
-        {title}
+      <header className="border-bottom sticky top-0 z-50 flex h-19 items-center justify-end border-b border-gray-300 bg-white px-5 py-5">
+        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {title}
+        </span>
+        <button className="cursor-pointer" aria-label="알림 페이지 이동">
+          <NotificationIcon className="h-10 w-10 text-gray-900" />
+        </button>
+      </header>
+    );
+  }
+
+  if (variant === "detail") {
+    return (
+      <header className="border-bottom sticky top-0 z-50 flex h-19 items-center justify-between border-b border-gray-300 bg-white px-5 py-5">
+        <button
+          type="button"
+          aria-label="뒤로가기"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#dddddd10]"
+          onClick={handleBack}
+        >
+          <ArrowLeftIcon className="text-gray-900" />
+        </button>
+
+        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {title}
+        </span>
+        <button className="cursor-pointer" aria-label="알림 페이지 이동">
+          <NotificationIcon className="h-10 w-10 text-gray-900" />
+        </button>
       </header>
     );
   }

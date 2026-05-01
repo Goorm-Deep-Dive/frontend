@@ -1,13 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 /*---break---*/
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --color-primary-1: #005b64;
+  /** App Colors */
+  --color-primary-1: #006c76;
   --color-primary-2: #91b3b7;
-  --color-primary-10: #005c6410;
+  --color-primary-10: #009aa910;
   --color-primary-bg: #e5efef;
   --color-tab-bg: #fafafa;
   --color-gray-100: #fafafa;
@@ -15,7 +15,16 @@
   --color-gray-300: #dddddd;
   --color-gray-500: #858585;
   --color-gray-700: #4a4a4a;
-  --color-gray-900: #171717;
+  --color-gray-900: #2d2d2d;
+
+  --color-sementic-info: #006aff;
+  --color-sementic-red: #ff3764;
+  --color-sementic-red-bg: #fdede9;
+
+  /** App Max Width */
+  --app-max-width: 480px;
+
+  /** Shadcn UI Colors */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -48,7 +57,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --app-max-width: 480px;
 }
 
 @theme inline {
@@ -114,6 +122,10 @@
 }
 
 @layer components {
+  .other1 {
+    @apply text-[2.5rem] font-normal tracking-[-0.02em];
+  }
+
   .h1 {
     @apply text-3xl font-semibold tracking-[-0.02em];
   }
@@ -140,6 +152,10 @@
 
   .caption {
     @apply text-sm leading-normal font-normal tracking-[-0.02em];
+  }
+
+  .other2 {
+    @apply text-xs leading-normal font-normal tracking-[-0.02em];
   }
 }
 
