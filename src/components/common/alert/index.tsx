@@ -9,7 +9,7 @@ interface AlertButton {
 
 interface AlertProps {
   title: string | React.ReactNode;
-  description: string;
+  description: string | React.ReactNode;
   onClose: () => void;
   buttons: AlertButton[];
 }
