@@ -6,6 +6,8 @@
  * OpenAPI spec version: v1
  */
 
-export interface SurveyResponseRes {
-  surveyAnswerId?: number;
+export interface SurveySubmitRes {
+  surveyStatus?: string;
+  procedureChecklistCount?: number;
+  documentChecklistCount?: number;
 }

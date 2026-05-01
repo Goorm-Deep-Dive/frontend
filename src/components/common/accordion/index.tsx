@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -33,12 +34,21 @@ const Root = ({
   defaultOpen = true,
   children,
 }: CommonAccordionRootProps) => {
+  const [openValue, setOpenValue] = useState<string | undefined>(
+    defaultOpen ? questionId : undefined,
+  );
+
   return (
-    <section className="w-full max-w-[560px] overflow-hidden rounded-2xl border border-border bg-card">
+    <section
+      className={
+        "border-border bg-card w-full max-w-[560px] overflow-hidden rounded-md border"
+      }
+    >
       <Accordion
         type="single"
         collapsible
-        defaultValue={defaultOpen ? questionId : undefined}
+        value={openValue}
+        onValueChange={(value) => setOpenValue(value || undefined)}
         className="w-full"
       >
         <AccordionItem value={questionId} className="border-none">
@@ -51,11 +61,13 @@ const Root = ({
 
 const Header = ({ children, description }: CommonAccordionHeaderProps) => {
   return (
-    <AccordionTrigger className="px-5 py-2.5 text-foreground [&>svg]:mt-1 [&>svg]:h-9 [&>svg]:w-9">
+    <AccordionTrigger className="group text-foreground px-5 py-2.5 data-[state=closed]:bg-gray-200 data-[state=closed]:text-gray-500 [&>svg]:h-5 [&>svg]:w-5">
       <span className="flex flex-col gap-1 text-left">
         <span className="h4 font-semibold">{children}</span>
         {description ? (
-          <span className="body text-muted-foreground">{description}</span>
+          <span className="body text-muted-foreground group-data-[state=closed]:text-gray-500">
+            {description}
+          </span>
         ) : null}
       </span>
     </AccordionTrigger>
@@ -64,14 +76,16 @@ const Header = ({ children, description }: CommonAccordionHeaderProps) => {
 
 const Content = ({ children }: { children: React.ReactNode }) => {
   return (
-    <AccordionContent>
-      <div className="rounded-sm bg-muted p-5">{children}</div>
+    <AccordionContent className="rounded-br-sm rounded-bl-sm">
+      <div className="bg-muted rounded-br-sm rounded-bl-sm p-5">{children}</div>
     </AccordionContent>
   );
 };
 
 const Description = ({ children }: CommonAccordionDescriptionProps) => {
-  return <p className="caption pb-6 text-center text-muted-foreground">{children}</p>;
+  return (
+    <p className="caption text-muted-foreground pb-6 text-center">{children}</p>
+  );
 };
 
 const NextButton = ({ children, onClick }: CommonAccordionNextButtonProps) => {
@@ -81,7 +95,7 @@ const NextButton = ({ children, onClick }: CommonAccordionNextButtonProps) => {
         type="button"
         onClick={onClick}
         className={cn(
-          "label cursor-pointer rounded-full bg-muted px-2.5 py-1 text-foreground",
+          "label bg-muted text-foreground cursor-pointer rounded-full px-2.5 py-1",
         )}
       >
         {children}

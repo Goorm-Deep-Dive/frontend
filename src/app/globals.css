@@ -83,6 +83,10 @@
 
   --color-tab-bg-start: var(--color-tab-bg-start);
   --color-tab-bg-end: var(--color-tab-bg-end);
+  
+  --color-sementic-info: var(--color-sementic-info);
+  --color-sementic-red: var(--color-sementic-red);
+  --color-sementic-red-bg: var(--color-sementic-red-bg);
 
   /****************************
   * Fonts
@@ -247,4 +251,19 @@ body {
   html {
     @apply font-sans;
   }
+}
+
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+caption,
+other1,
+other2 {
+  @apply text-gray-900;
 }
