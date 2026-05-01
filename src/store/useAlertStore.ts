@@ -1,14 +1,16 @@
 import { create } from "zustand";
 
-export type AlertVariant = "default" | "danger";
+export interface AlertButton {
+  variant: "primary" | "secondary";
+  label: string;
+  onClick: () => void;
+}
 
 export interface AlertItem {
   id: string;
-  date: string;
-  name: string;
-  description?: string;
-  onConfirm?: () => void;
-  onCancel?: () => void;
+  title: string | React.ReactNode;
+  description?: string | React.ReactNode;
+  buttons: AlertButton[];
 }
 
 interface AlertStore {

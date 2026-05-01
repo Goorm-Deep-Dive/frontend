@@ -13,18 +13,10 @@ export default function AlertRenderer() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <Alert
-        date={current.date}
-        name={current.name}
+        title={current.title}
         description={current.description ?? ""}
         onClose={pop}
-        onCancel={() => {
-          current.onCancel?.();
-          pop();
-        }}
-        onConfirm={() => {
-          current.onConfirm?.();
-          pop();
-        }}
+        buttons={current.buttons}
       />
     </div>
   );
