@@ -1,0 +1,226 @@
+"use client";
+
+import ArrowLeftIcon from "@/components/icons/arrow-left-icon";
+import NotificationIcon from "@/components/icons/notification-icon";
+import { cn } from "@/lib/cn";
+import Image from "next/image";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+
+interface ChecklistDepartmentItem {
+  id: string;
+  name: string;
+  isCompleted: boolean;
+  completed: number;
+  total: number;
+}
+
+interface HeaderProps {
+  title?: React.ReactNode;
+  variant?: "default" | "detail" | "checklist";
+  checklistItems?: ChecklistDepartmentItem[];
+  defaultOpen?: boolean;
+  onToggleOpen?: (isOpen: boolean) => void;
+  onBack?: () => void;
+}
+const Header = ({
+  title,
+  variant = "default",
+  checklistItems = [],
+  defaultOpen = false,
+  onToggleOpen,
+  onBack,
+}: HeaderProps) => {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  const stats = useMemo(() => {
+    const total = checklistItems.length;
+    const completed = checklistItems.filter((item) => item.isCompleted).length;
+    const allDone = total > 0 && total === completed;
+    return { total, completed, allDone };
+  }, [checklistItems]);
+
+  const handleToggle = () => {
+    const nextOpen = !isOpen;
+    setIsOpen(nextOpen);
+    onToggleOpen?.(nextOpen);
+  };
+
+  const handleBack = () => {
+    onBack?.();
+    router.back();
+  };
+
+  if (variant === "default") {
+    return (
+      <header className="border-bottom sticky top-0 z-50 flex h-19 items-center justify-end border-b border-gray-300 bg-white px-5 py-5">
+        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {title}
+        </span>
+        <button className="cursor-pointer" aria-label="알림 페이지 이동">
+          <NotificationIcon className="h-10 w-10 text-gray-900" />
+        </button>
+      </header>
+    );
+  }
+
+  if (variant === "detail") {
+    return (
+      <header className="border-bottom sticky top-0 z-50 flex h-19 items-center justify-between border-b border-gray-300 bg-white px-5 py-5">
+        <button
+          type="button"
+          aria-label="뒤로가기"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#dddddd10]"
+          onClick={handleBack}
+        >
+          <ArrowLeftIcon className="text-gray-900" />
+        </button>
+
+        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {title}
+        </span>
+        <button className="cursor-pointer" aria-label="알림 페이지 이동">
+          <NotificationIcon className="h-10 w-10 text-gray-900" />
+        </button>
+      </header>
+    );
+  }
+
+  return (
+    <>
+      <header
+        className={cn(
+          "fixed top-0 z-50 flex w-full items-start justify-between rounded-b-2xl bg-white px-5 pt-2.5 pb-4 shadow-sm transition-all duration-300",
+        )}
+      >
+        <button
+          className="flex h-11 w-11 items-center justify-center pt-2 transition-transform active:scale-95"
+          onClick={handleToggle}
+          aria-controls="checklist-header-panel"
+          aria-expanded={isOpen}
+          aria-label="메뉴 토글"
+        >
+          <Image src="/icons/header/menu.svg" alt="" width={14} height={12} />
+        </button>
+
+        <div className="flex flex-1 flex-col px-2">
+          <div id="checklist-header-panel" className="flex flex-col gap-3">
+            <button
+              className="bg-primary-10 active:bg-primary-20 flex w-full items-center justify-between gap-4 rounded-lg px-2.5 py-2.5 transition-colors"
+              onClick={handleToggle}
+              aria-controls="checklist-header-panel"
+              aria-expanded={isOpen}
+              aria-label="메뉴 토글"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="h2 text-primary-1 font-semibold tracking-[-0.02em]">
+                  체크리스트
+                </span>
+                <Image
+                  src="/icons/header/arrow-up.svg"
+                  alt=""
+                  width={10}
+                  height={10}
+                  className={cn(
+                    "transition-transform duration-300",
+                    !isOpen && "rotate-180",
+                  )}
+                />
+              </div>
+              <span
+                className={cn(
+                  "label h-6.5 min-w-17.5 rounded-2xl px-2.5 leading-6.5 font-bold text-white transition-colors",
+                  stats.allDone ? "bg-primary-1" : "bg-gray-700",
+                )}
+              >
+                {stats.completed}/{stats.total} 완료
+              </span>
+            </button>
+
+            <div
+              className={cn(
+                "grid transition-[grid-template-rows,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                isOpen
+                  ? "mt-0 translate-y-0 grid-rows-[1fr] opacity-100"
+                  : "pointer-events-none mt-0 -translate-y-1 grid-rows-[0fr] opacity-0",
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="flex flex-col gap-3">
+                  {checklistItems.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "flex items-center justify-between gap-4 rounded-lg bg-gray-100 px-2.5 py-2.5 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                        isOpen
+                          ? "translate-y-0 opacity-100"
+                          : "translate-y-1 opacity-0",
+                      )}
+                      style={{
+                        transitionDelay: isOpen ? `${index * 45}ms` : "0ms",
+                      }}
+                    >
+                      <span className="h2 font-semibold tracking-[-0.02em] text-gray-900">
+                        {item.name}
+                      </span>
+
+                      <span
+                        className={cn(
+                          "label h-6.5 min-w-17.5 rounded-2xl px-2.5 leading-6.5 font-bold text-white transition-colors",
+                          item.completed === item.total
+                            ? "bg-primary-1"
+                            : "bg-gray-700",
+                        )}
+                      >
+                        {item.completed}/{item.total} 미완
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  className={cn(
+                    "mx-auto mt-5 flex h-11 w-11 items-center justify-center rounded-full transition-[opacity,transform,background-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-gray-50",
+                    isOpen
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-1 opacity-0",
+                  )}
+                  style={{
+                    transitionDelay: isOpen
+                      ? `${checklistItems.length * 45 + 60}ms`
+                      : "0ms",
+                  }}
+                  onClick={handleToggle}
+                  aria-label="닫기"
+                  tabIndex={isOpen ? 0 : -1}
+                >
+                  <Image
+                    src="/icons/header/close.svg"
+                    alt=""
+                    width={44}
+                    height={44}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button className="flex h-11 w-11 items-center justify-center pt-2 transition-transform active:scale-95">
+          <Image
+            src="/icons/header/bell.svg"
+            alt="알림"
+            width={44}
+            height={44}
+          />
+        </button>
+      </header>
+
+      {/* Fixed 헤더의 높이만큼 공간 확보용 더미 div */}
+      <div className="h-[70px] w-full" aria-hidden="true" />
+    </>
+  );
+};
+
+export default Header;
