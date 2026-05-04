@@ -40,9 +40,13 @@ export default function Alert({
             <Button
               key={button.label}
               variant={button.variant}
-              onClick={button.onClick}
+              onClick={() => {
+                button.onClick();
+                onClose();
+              }}
               rounded
               size="small"
+              className="h-10"
             >
               {button.label}
             </Button>
