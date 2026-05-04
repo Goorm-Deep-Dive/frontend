@@ -1,0 +1,226 @@
+"use client";
+
+import { useCallback, useState } from "react";
+import {
+  type GetSurveyListQueryResult,
+  useGetSurveyList,
+  useSaveTempSurvey,
+  useSkipSurvey,
+  useSubmitSurvey,
+} from "@/apis/generated/api-client";
+import ChecklistFormSkeleton from "./skeleton";
+import BottomCTA from "@/components/common/bottom-cta";
+import { useRouter } from "next/navigation";
+import SurveyQuestionCard from "../survey-question-card";
+import { Button } from "@/components/ui/button";
+
+type AnswerMap = Record<string, string | string[]>;
+
+type SurveyItem = NonNullable<
+  NonNullable<GetSurveyListQueryResult["surveys"]>[number]
+>;
+
+const isSurveyQuestionVisible = (
+  question: SurveyItem,
+  index: number,
+  nextQuestionIds: string[],
+): boolean => {
+  const questionKey = String(question.surveyQuestionId ?? `question-${index}`);
+  if (
+    question.requirementType === "OPTIONAL" &&
+    !nextQuestionIds.includes(questionKey)
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const hasCompletedAnswer = (
+  questionType: string | undefined,
+  answer: string | string[] | undefined,
+): boolean => {
+  if (questionType === "MULTIPLE") {
+    return Array.isArray(answer) && answer.length > 0;
+  }
+  return typeof answer === "string" && answer.trim().length > 0;
+};
+
+export default function ChecklistForm() {
+  const router = useRouter();
+
+  const { data: surveyRes, isPending: isSurveyPending } = useGetSurveyList();
+
+  const { mutateAsync: skipSurvey } = useSkipSurvey();
+  const { mutateAsync: saveTempSurvey } = useSaveTempSurvey();
+  const { mutateAsync: submitSurvey } = useSubmitSurvey();
+
+  const surveys = surveyRes?.surveys;
+
+  const [answers, setAnswers] = useState<AnswerMap>({});
+  const [nextQuestionIds, setNextQuestionIds] = useState<string[]>([]);
+
+  /**
+   * @description 답변 변경 시, 상태 수정
+   */
+  const handleChangeAnswer = useCallback(
+    (
+      questionKey: string,
+      nextValue: string | string[],
+      nextQuestionId?: number,
+    ) => {
+      setAnswers((prev) => ({
+        ...prev,
+        [questionKey]: nextValue,
+      }));
+
+      if (nextQuestionId) {
+        if (nextQuestionIds.includes(String(nextQuestionId))) {
+          setNextQuestionIds((prev) =>
+            prev.filter((id) => id !== String(nextQuestionId)),
+          );
+          return;
+        }
+
+        setNextQuestionIds((prev) => [...prev, String(nextQuestionId)]);
+      }
+    },
+    [nextQuestionIds],
+  );
+
+  /**
+   * @description 설문 문진 건너뛰기
+   */
+  const handleSkipSurvey = async () => {
+    try {
+      await skipSurvey();
+      router.push("/checklist");
+    } catch {}
+  };
+
+  /**
+   * @description 저장 후, 메인 페이지로 이동
+   */
+  const handleNext = async () => {
+    try {
+      await handleSave();
+      router.push("/checklist");
+    } catch {}
+  };
+
+  /**
+   * @description 임시 저장하기
+   */
+  const handleSaveDraft = async () => {
+    try {
+      const filteredAnswer = Object.entries(answers).flatMap(
+        ([_questionId, answer]) =>
+          Array.isArray(answer)
+            ? answer.map((id) => ({ surveyAnswerId: +id }))
+            : [{ surveyAnswerId: +answer }],
+      );
+
+      await saveTempSurvey({
+        data: {
+          answers: filteredAnswer,
+        },
+      });
+    } catch {}
+  };
+
+  /**
+   * @description 저장하기
+   */
+  const handleSave = async () => {
+    try {
+      if (Object.keys(answers).length === 0) {
+        return null;
+      }
+
+      const filteredAnswer = Object.entries(answers).flatMap(
+        ([_questionId, answer]) =>
+          Array.isArray(answer)
+            ? answer.map((id) => ({ surveyAnswerId: +id }))
+            : [{ surveyAnswerId: +answer }],
+      );
+
+      await submitSurvey({
+        data: {
+          answers: filteredAnswer,
+        },
+      });
+    } catch {}
+  };
+
+  const submitButtonDisabled = Boolean(
+    surveys?.some(
+      (q, index) =>
+        q != null &&
+        isSurveyQuestionVisible(q, index, nextQuestionIds) &&
+        !hasCompletedAnswer(
+          q.questionType,
+          answers[String(q.surveyQuestionId ?? `question-${index}`)],
+        ),
+    ),
+  );
+
+  return (
+    <>
+      <div className="flex min-h-39 w-full items-end justify-between border-b border-gray-300 px-6.5 pb-5">
+        <div className="flex flex-col gap-2.5">
+          <span className="h1">체크리스트 생성</span>
+          <span className="body text-gray-700">
+            상황에 맞춰 리스트를 생성합니다.
+          </span>
+        </div>
+        <div className="flex flex-col items-end gap-3.5">
+          <Button size="small" rounded onClick={handleSaveDraft}>
+            임시 저장하기
+          </Button>
+        </div>
+      </div>
+
+      {isSurveyPending ? (
+        <ChecklistFormSkeleton />
+      ) : (
+        <div className="flex flex-col gap-5 p-5">
+          {surveys?.map(
+            (q, index) =>
+              q && (
+                <SurveyQuestionCard
+                  key={String(q.surveyQuestionId ?? `question-${index}`)}
+                  question={q}
+                  index={index}
+                  value={
+                    answers[
+                      String(q.surveyQuestionId ?? `question-${index}`)
+                    ] ?? (q.questionType === "MULTIPLE" ? [] : "")
+                  }
+                  nextQuestionIds={nextQuestionIds}
+                  onChangeAnswer={handleChangeAnswer}
+                />
+              ),
+          )}
+
+          <BottomCTA>
+            <div className="flex w-full flex-col items-center justify-center gap-2.5">
+              <div className="flex flex-col items-center justify-center">
+                <span className="caption text-gray-700">
+                  현재 상황을 정확히 모르시겠나요?
+                </span>
+                <button
+                  className="h4 text-sementic-info cursor-pointer"
+                  onClick={handleSkipSurvey}
+                >
+                  설문 문진 건너뛰기
+                </button>
+              </div>
+              <Button disabled={submitButtonDisabled} onClick={handleNext}>
+                다음으로
+              </Button>
+            </div>
+          </BottomCTA>
+        </div>
+      )}
+    </>
+  );
+}

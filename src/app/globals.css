@@ -1,13 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 /*---break---*/
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --color-primary-1: #005b64;
+  /** App Colors */
+  --color-primary-1: #006c76;
   --color-primary-2: #91b3b7;
-  --color-primary-10: #005c6410;
+  --color-primary-10: #009aa910;
   --color-primary-bg: #e5efef;
   --color-tab-bg: #fafafa;
   --color-gray-100: #fafafa;
@@ -15,7 +15,26 @@
   --color-gray-300: #dddddd;
   --color-gray-500: #858585;
   --color-gray-700: #4a4a4a;
-  --color-gray-900: #171717;
+  --color-gray-900: #2d2d2d;
+
+  --color-sementic-info: #006aff;
+  --color-sementic-red: #ff3764;
+  --color-sementic-red-bg: #fdede9;
+  --color-gr2-bg: linear-gradient(
+    90deg,
+    rgba(191, 239, 243, 0.2) 0%,
+    rgba(0, 162, 154, 0.2) 100%
+  );
+
+  --color-tab-bg-start: #fafafa;
+  --color-tab-bg-end: #ffffff;
+
+  /** App Max Width */
+  --app-max-width: 480px;
+
+  --bottom-nav-reserve: calc(7.75rem + env(safe-area-inset-bottom, 0px));
+
+  /** Shadcn UI Colors */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -48,7 +67,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --app-max-width: 480px;
 }
 
 @theme inline {
@@ -69,6 +87,13 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-700: var(--color-gray-700);
   --color-gray-900: var(--color-gray-900);
+
+  --color-tab-bg-start: var(--color-tab-bg-start);
+  --color-tab-bg-end: var(--color-tab-bg-end);
+
+  --color-sementic-info: var(--color-sementic-info);
+  --color-sementic-red: var(--color-sementic-red);
+  --color-sementic-red-bg: var(--color-sementic-red-bg);
 
   /****************************
   * Fonts
@@ -114,6 +139,10 @@
 }
 
 @layer components {
+  .other1 {
+    @apply text-[2.5rem] font-normal tracking-[-0.02em];
+  }
+
   .h1 {
     @apply text-3xl font-semibold tracking-[-0.02em];
   }
@@ -140,6 +169,16 @@
 
   .caption {
     @apply text-sm leading-normal font-normal tracking-[-0.02em];
+  }
+
+  .other2 {
+    @apply text-xs leading-normal font-normal tracking-[-0.02em];
+  }
+}
+
+@layer utilities {
+  .bg-gr2 {
+    background: linear-gradient(90deg, #bfeff320 0%, #00a29a20 100%);
   }
 }
 
@@ -215,6 +254,49 @@ body {
 
 /*---break---*/
 
+/** 8-dot loading spinner (components/common/loading) */
+/** 스피너 팔레트(연한 회색 → 틸), 8도트 위상차와 맞춤 */
+@keyframes loading-dot-trail {
+  0% {
+    background-color: #f5f5f5;
+  }
+  12.5% {
+    background-color: #eeeeee;
+  }
+  25% {
+    background-color: #e6e6e6;
+  }
+  37.5% {
+    background-color: #dedede;
+  }
+  50% {
+    background-color: #00b0c2;
+  }
+  62.5% {
+    background-color: #0094a3;
+  }
+  75% {
+    background-color: #00747f;
+  }
+  87.5% {
+    background-color: #005b64;
+  }
+  100% {
+    background-color: #f5f5f5;
+  }
+}
+
+.loading-dot-trail-dot {
+  animation: loading-dot-trail 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-dot-trail-dot {
+    animation: none;
+    background-color: #00747f;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -222,7 +304,28 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  body {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  /* 좁은 폭: rem 전역 스케일 소폭 축소(SE·작은 폰) */
+  @media (max-width: 375px) {
+    html {
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 320px) {
+    html {
+      font-size: 14px;
+    }
   }
 }

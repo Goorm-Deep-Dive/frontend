@@ -7,39 +7,75 @@ interface CheckboxItem {
   label: string;
   value: string;
   description?: string;
+  nextQuestionId?: number;
 }
 
 interface Props {
-  value: string;
-  onChange: (value: string) => void;
+  value: string | string[];
+  onChange: (value: string | string[], nextQuestionId?: number) => void;
+  multiple?: boolean;
   items: CheckboxItem[];
+  idPrefix?: string;
 }
 
-export default function CheckboxList({ items, value, onChange }: Props) {
+export default function CheckboxList({
+  items,
+  value,
+  onChange,
+  multiple = false,
+  idPrefix = "checkbox-list",
+}: Props) {
+  const selectedValues = (Array.isArray(value) ? value : [value]).filter(
+    Boolean,
+  );
+
+  const handleToggle = (itemValue: string, nextQuestionId?: number) => {
+    const isChecked = selectedValues.includes(itemValue);
+
+    if (!multiple) {
+      onChange(isChecked ? "" : itemValue, nextQuestionId);
+      return;
+    }
+
+    if (isChecked) {
+      onChange(
+        selectedValues.filter((v) => v !== itemValue),
+        nextQuestionId,
+      );
+      return;
+    }
+
+    onChange([...selectedValues, itemValue], nextQuestionId);
+  };
+
   return (
     <div className="flex w-full flex-col gap-1.25">
       {items.map((item) => {
-        const isChecked = value === item.value;
-        const inputId = `checkbox-${item.value}`;
+        const isChecked = selectedValues.includes(item.value);
+        const inputId = `${idPrefix}-checkbox-${item.value}`;
         const descriptionId = item.description
-          ? `checkbox-description-${item.value}`
+          ? `${idPrefix}-checkbox-description-${item.value}`
           : undefined;
 
         return (
           <label
             key={item.value}
             className={cn(
-              "flex w-full cursor-pointer items-center justify-start gap-5 rounded-2xl border border-gray-300 bg-white px-5 py-2.5",
+              "flex w-full cursor-pointer items-center justify-start gap-5 rounded-md border border-gray-300 bg-white px-5 py-2.5",
               isChecked ? "bg-primary-bg border-primary-2" : "border-gray-300",
               "focus-within:ring-primary-1 focus-within:ring-2 focus-within:ring-offset-2",
             )}
             aria-label={item.label}
             aria-describedby={descriptionId}
             htmlFor={inputId}
+            onClick={(event) => {
+              event.preventDefault();
+              handleToggle(item.value, item.nextQuestionId);
+            }}
           >
             <div
               className={cn(
-                "flex h-5 w-5 items-center justify-center rounded-md border-2 border-gray-900",
+                "flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-md border-2 border-gray-900",
                 isChecked
                   ? "bg-primary-1 border-primary-1"
                   : "border-gray-900 bg-white",
@@ -81,9 +117,10 @@ export default function CheckboxList({ items, value, onChange }: Props) {
               id={inputId}
               type="checkbox"
               value={item.value}
-              onChange={() => onChange(item.value)}
+              onChange={() => {}}
               className="sr-only"
               checked={isChecked}
+              readOnly
             />
           </label>
         );
