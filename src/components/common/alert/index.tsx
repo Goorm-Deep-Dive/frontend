@@ -8,6 +8,7 @@ interface AlertButton {
 }
 
 interface AlertProps {
+  icon?: React.ReactNode;
   title: string | React.ReactNode;
   description: string | React.ReactNode;
   onClose: () => void;
@@ -15,6 +16,7 @@ interface AlertProps {
 }
 
 export default function Alert({
+  icon,
   title,
   description,
   onClose,
@@ -32,6 +34,9 @@ export default function Alert({
       </button>
       <div className="flex flex-col items-center gap-5 py-10">
         <div className="flex flex-col items-center gap-2.5">
+          {icon && (
+            <div className="flex items-center justify-center">{icon}</div>
+          )}
           <h2 className="h2 text-primary-1">{title}</h2>
           <span className="body text-gray-700">{description}</span>
         </div>
