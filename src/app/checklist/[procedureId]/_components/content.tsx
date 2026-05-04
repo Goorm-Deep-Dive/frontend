@@ -35,7 +35,7 @@ export default function Content({ procedureId }: Props) {
     try {
       await modifyProcedureCheck({
         userProcedureChecklistId: procedureId,
-        data: { isChecked: true },
+        data: { checked: true },
       });
     } catch {
       if (previousData) {

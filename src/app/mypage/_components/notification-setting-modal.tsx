@@ -1,27 +1,74 @@
 "use client";
 
-import { useState } from "react";
 import NotificationSettingIcon from "@/components/icons/notification-setting-icon";
 import Switch from "@/components/common/switch";
 import { CircleX } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  getGetMyProfileQueryKey,
+  useGetMyProfile,
+  useUpdateNotification,
+} from "@/apis/generated/api-client";
+import type { UserProfileRes } from "@/apis/generated/model";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
+type NotificationOptimisticContext = {
+  previous: UserProfileRes | undefined;
+};
+
 export default function NotificationSettingModal({ isOpen, onClose }: Props) {
-  const [isChecklistDdayNotificationOn, setIsChecklistDdayNotificationOn] =
-    useState(false);
-  const [isWeeklyScheduleNotificationOn, setIsWeeklyScheduleNotificationOn] =
-    useState(false);
+  const queryClient = useQueryClient();
+  const profileQueryKey = getGetMyProfileQueryKey();
+
+  const { data: myProfile } = useGetMyProfile();
+
+  const { mutate: updateNotificationMutate } = useUpdateNotification<
+    unknown,
+    NotificationOptimisticContext
+  >({
+    mutation: {
+      onMutate: async ({ data }) => {
+        await queryClient.cancelQueries({ queryKey: profileQueryKey });
+
+        const previous =
+          queryClient.getQueryData<UserProfileRes>(profileQueryKey);
+
+        queryClient.setQueryData<UserProfileRes>(profileQueryKey, (old) =>
+          old != null
+            ? { ...old, notificationEnabled: data.notificationEnabled }
+            : { notificationEnabled: data.notificationEnabled },
+        );
+
+        return { previous };
+      },
+      onError: (_err, _variables, context) => {
+        if (context?.previous !== undefined) {
+          queryClient.setQueryData(profileQueryKey, context.previous);
+        }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: profileQueryKey });
+      },
+    },
+  });
+
+  const handleChangeNotification = (checked: boolean) => {
+    updateNotificationMutate({
+      data: { notificationEnabled: checked },
+    });
+  };
+
+  const notificationEnabled = myProfile?.notificationEnabled ?? false;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -43,48 +90,16 @@ export default function NotificationSettingModal({ isOpen, onClose }: Props) {
           </button>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white shadow-[0_2px_2px_0_rgba(0,0,0,0.15)]">
-          <div className="flex items-center gap-4 bg-gray-200 p-2.5">
+        <div className="flex items-center justify-between rounded-2xl bg-gray-200 p-2.5">
+          <div className="flex items-center gap-4 p-2.5">
             <NotificationSettingIcon className="h-7.5 w-7.5" />
             <span className="body">푸시 알림 설정</span>
           </div>
-
-          <div className="border-t border-gray-300 px-2.5 py-2">
-            <div className="flex items-center justify-between">
-              <span className="caption text-gray-700">
-                체크리스트 디데이 알림
-              </span>
-              <Switch
-                checked={isChecklistDdayNotificationOn}
-                onChangeChecked={(checked) =>
-                  setIsChecklistDdayNotificationOn(checked)
-                }
-                ariaLabel="체크리스트 디데이 알림 토글"
-              />
-            </div>
-          </div>
-
-          <div className="border-t border-gray-300 px-2.5 py-2">
-            <div className="flex items-center justify-between">
-              <span className="caption text-gray-700">
-                주간 일정 진행률 알림
-              </span>
-              <Switch
-                checked={isWeeklyScheduleNotificationOn}
-                onChangeChecked={(checked) =>
-                  setIsWeeklyScheduleNotificationOn(checked)
-                }
-                ariaLabel="주간 일정 진행률 알림 토글"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-2.5 flex items-center justify-center gap-5">
-          <Button size="small" onClick={onClose}>
-            취소
-          </Button>
-          <Button size="small">저장하기</Button>
+          <Switch
+            checked={notificationEnabled}
+            onChangeChecked={handleChangeNotification}
+            ariaLabel="푸시 알림 설정 토글"
+          />
         </div>
       </DialogContent>
     </Dialog>

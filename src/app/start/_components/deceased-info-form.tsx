@@ -6,12 +6,25 @@ import DateInput from "../../../components/common/date-input";
 import Input from "../../../components/common/input";
 import { useState } from "react";
 
-export default function StartContent() {
-  const [dateValue, setDateValue] = useState("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [name, setName] = useState("");
+interface Props {
+  defaultValues?: { date: string; name: string };
+  onSubmit?: (data: { date: string; name: string }) => void;
+}
+export default function DeceasedInfoForm({ defaultValues, onSubmit }: Props) {
+  const [dateValue, setDateValue] = useState(defaultValues?.date ?? "");
+  const [date, setDate] = useState<Date | undefined>(
+    defaultValues?.date ? new Date(defaultValues.date) : undefined,
+  );
+  const [name, setName] = useState(defaultValues?.name ?? "");
 
   const isValid = !!date && name.trim().length > 0;
+
+  const handleSubmit = () => {
+    if (!isValid) return;
+    if (onSubmit) {
+      onSubmit({ date: dateValue, name });
+    }
+  };
 
   return (
     <>
@@ -49,6 +62,7 @@ export default function StartContent() {
           className={
             isValid ? "bg-primary-1 text-white" : "bg-gray-300 text-[#444444]"
           }
+          onClick={handleSubmit}
         >
           입력하기
         </Button>

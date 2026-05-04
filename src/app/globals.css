@@ -26,6 +26,9 @@
     rgba(0, 162, 154, 0.2) 100%
   );
 
+  --color-tab-bg-start: #fafafa;
+  --color-tab-bg-end: #ffffff;
+
   /** App Max Width */
   --app-max-width: 480px;
 
@@ -82,6 +85,9 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-700: var(--color-gray-700);
   --color-gray-900: var(--color-gray-900);
+
+  --color-tab-bg-start: var(--color-tab-bg-start);
+  --color-tab-bg-end: var(--color-tab-bg-end);
 
   --color-sementic-info: var(--color-sementic-info);
   --color-sementic-red: var(--color-sementic-red);
@@ -250,23 +256,4 @@ body {
   html {
     @apply font-sans;
   }
-}
-
-@utility bg-gr2 {
-  background: var(--color-gr2-bg);
-}|
-
-span,
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-label,
-caption,
-other1,
-other2 {
-  @apply text-gray-900;
 }
