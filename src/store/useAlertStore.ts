@@ -8,6 +8,7 @@ export interface AlertButton {
 
 export interface AlertItem {
   id: string;
+  icon?: React.ReactNode;
   title: string | React.ReactNode;
   description?: string | React.ReactNode;
   buttons: AlertButton[];

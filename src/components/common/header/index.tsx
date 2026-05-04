@@ -33,7 +33,7 @@ const Header = ({ title, variant = "default", onBack }: HeaderProps) => {
             <NotificationIcon className="h-10 w-10 text-gray-900" />
           </button>
         </header>
-        <div className="h-[70px] w-full" aria-hidden="true" />
+        <div className="h-[70px] min-h-[70px] w-full" aria-hidden="true" />
       </>
     );
   }
@@ -54,14 +54,14 @@ const Header = ({ title, variant = "default", onBack }: HeaderProps) => {
           <ArrowLeftIcon className="text-gray-900" />
         </button>
 
-        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <span className="h2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap">
           {title}
         </span>
         <button className="cursor-pointer" aria-label="알림 페이지 이동">
           <NotificationIcon className="h-10 w-10 text-gray-900" />
         </button>
       </header>
-      <div className="h-[70px] w-full" aria-hidden="true" />
+      <div className="h-[70px] min-h-[70px] w-full" aria-hidden="true" />
     </>
   );
 };

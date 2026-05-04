@@ -2,7 +2,7 @@
 
 import {
   getGetDeceasedProfilesQueryKey,
-  useGetDeceasedProfilesSuspense,
+  useGetDeceasedProfiles,
   useModifyDeceasedProfile,
 } from "@/apis/generated/api-client";
 import DeceasedInfoForm from "@/app/start/_components/deceased-info-form";
@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function EditForm({ id }: { id: string }) {
   const router = useRouter();
-  const { data: deceasedProfiles } = useGetDeceasedProfilesSuspense();
+  const { data: deceasedProfiles, isPending } = useGetDeceasedProfiles();
   const { mutateAsync: modifyDeceasedProfile } = useModifyDeceasedProfile();
 
   const queryClient = useQueryClient();
@@ -19,6 +19,12 @@ export default function EditForm({ id }: { id: string }) {
   const deceasedProfile = deceasedProfiles?.find(
     (profile) => profile.deceasedProfileId === +id,
   );
+
+  if (isPending) {
+    return (
+      <p className="body px-5 py-8 text-center text-gray-500">불러오는 중…</p>
+    );
+  }
 
   const handleUpdateDeceasedProfile = async (data: {
     name: string;

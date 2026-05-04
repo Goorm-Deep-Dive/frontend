@@ -12,7 +12,6 @@ export default function PageSkeleton() {
           </span>
         </div>
         <div className="flex flex-col items-end gap-3.5">
-          <span className="h3">1/3단계</span>
           <Button size="small" rounded>
             임시 저장하기
           </Button>

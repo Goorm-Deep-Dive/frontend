@@ -7,11 +7,12 @@ interface CheckboxItem {
   label: string;
   value: string;
   description?: string;
+  nextQuestionId?: number;
 }
 
 interface Props {
   value: string | string[];
-  onChange: (value: string | string[]) => void;
+  onChange: (value: string | string[], nextQuestionId?: number) => void;
   multiple?: boolean;
   items: CheckboxItem[];
   idPrefix?: string;
@@ -24,22 +25,27 @@ export default function CheckboxList({
   multiple = false,
   idPrefix = "checkbox-list",
 }: Props) {
-  const selectedValues = (Array.isArray(value) ? value : [value]).filter(Boolean);
+  const selectedValues = (Array.isArray(value) ? value : [value]).filter(
+    Boolean,
+  );
 
-  const handleToggle = (itemValue: string) => {
+  const handleToggle = (itemValue: string, nextQuestionId?: number) => {
     const isChecked = selectedValues.includes(itemValue);
 
     if (!multiple) {
-      onChange(isChecked ? "" : itemValue);
+      onChange(isChecked ? "" : itemValue, nextQuestionId);
       return;
     }
 
     if (isChecked) {
-      onChange(selectedValues.filter((v) => v !== itemValue));
+      onChange(
+        selectedValues.filter((v) => v !== itemValue),
+        nextQuestionId,
+      );
       return;
     }
 
-    onChange([...selectedValues, itemValue]);
+    onChange([...selectedValues, itemValue], nextQuestionId);
   };
 
   return (
@@ -64,12 +70,12 @@ export default function CheckboxList({
             htmlFor={inputId}
             onClick={(event) => {
               event.preventDefault();
-              handleToggle(item.value);
+              handleToggle(item.value, item.nextQuestionId);
             }}
           >
             <div
               className={cn(
-                "flex h-5 w-5 items-center justify-center rounded-md border-2 border-gray-900",
+                "flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-md border-2 border-gray-900",
                 isChecked
                   ? "bg-primary-1 border-primary-1"
                   : "border-gray-900 bg-white",

@@ -1,10 +1,16 @@
 "use client";
 
-import { useGetOverallProgressSuspense } from "@/apis/generated/api-client";
+import { useGetOverallProgress } from "@/apis/generated/api-client";
 import CategoryCard from "./category-card";
 
+import CategoryCardsSkeleton from "./category-cards-skeleton";
+
 export default function CategoryCardsPanel() {
-  const { data: progress } = useGetOverallProgressSuspense();
+  const { data: progress, isPending } = useGetOverallProgress();
+
+  if (isPending) {
+    return <CategoryCardsSkeleton />;
+  }
 
   return (
     <div className="grid grid-cols-2 gap-3 pb-6">

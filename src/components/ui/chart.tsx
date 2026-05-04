@@ -14,26 +14,37 @@ export type ChartConfig = Record<
 
 interface ChartContainerProps extends React.ComponentProps<"div"> {
   config: ChartConfig;
+  useResponsiveContainer?: boolean;
   children: React.ComponentProps<
     typeof RechartsPrimitive.ResponsiveContainer
   >["children"];
 }
 
 const ChartContainer = React.forwardRef<HTMLDivElement, ChartContainerProps>(
-  ({ className, children, config, ...props }, ref) => {
+  (
+    { className, children, config, useResponsiveContainer = true, ...props },
+    ref,
+  ) => {
     return (
       <div
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border/50 [&_.recharts-radial-bar-background-sector]:fill-primary-bg [&_.recharts-text]:fill-foreground",
+          useResponsiveContainer && "aspect-video",
+          "[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border/50 [&_.recharts-radial-bar-background-sector]:fill-primary-bg [&_.recharts-text]:fill-foreground flex justify-center text-xs",
           className,
         )}
         {...props}
       >
         <ChartStyle config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        {useResponsiveContainer ? (
+          <RechartsPrimitive.ResponsiveContainer>
+            {children}
+          </RechartsPrimitive.ResponsiveContainer>
+        ) : (
+          <div className="relative h-full min-h-0 w-full min-w-0 shrink-0">
+            {children}
+          </div>
+        )}
       </div>
     );
   },

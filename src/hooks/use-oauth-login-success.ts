@@ -1,11 +1,12 @@
 "use client";
 
 import { getDeceasedProfiles, refresh } from "@/apis/generated/api-client";
+import {
+  STORAGE_ACCESS_TOKEN_KEY,
+  STORAGE_DECEASED_PROFILE_KEY,
+} from "@/constants/storage-keys";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-
-const ACCESS_TOKEN_KEY = "accessToken";
-const DECEASED_PROFILE_KEY = "deceasedProfile";
 
 export const useOAuthLoginSuccess = () => {
   const router = useRouter();
@@ -22,13 +23,13 @@ export const useOAuthLoginSuccess = () => {
         const token = await refresh(ac.signal);
         if (ac.signal.aborted) return;
 
-        localStorage.setItem(ACCESS_TOKEN_KEY, token.accessToken ?? "");
+        localStorage.setItem(STORAGE_ACCESS_TOKEN_KEY, token.accessToken ?? "");
 
         const deceasedProfile = await getDeceasedProfiles(ac.signal);
         if (ac.signal.aborted) return;
 
         localStorage.setItem(
-          DECEASED_PROFILE_KEY,
+          STORAGE_DECEASED_PROFILE_KEY,
           JSON.stringify(deceasedProfile),
         );
 

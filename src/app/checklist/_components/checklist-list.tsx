@@ -2,47 +2,67 @@ import ArrowRightIcon from "@/components/icons/arrow-right-icon";
 import CheckIcon from "@/components/icons/check-icon";
 import ChecklistBadge from "./checklist-list-badge";
 import { cn } from "@/lib/cn";
-
-type Status = "default" | "urgent" | "done";
+import { useRouter } from "next/navigation";
 
 interface Props {
+  procedureId: number;
+  userProcedureChecklistId: number;
   title: string;
   index: number;
-  status: Status;
-  listDate?: string; // D-30
-  onClick?: () => void;
+  listDate?: number; // D-30
+  isDone?: boolean;
 }
 
 export default function ChecklistList({
+  procedureId,
+  userProcedureChecklistId,
   title,
   index,
-  status = "default",
   listDate,
-  onClick,
+  isDone,
 }: Props) {
-  const isDone = status === "done";
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(
+      `/checklist/${procedureId}?userProcedureChecklistId=${userProcedureChecklistId}`,
+    );
+  };
+
+  const showListDate = listDate && listDate > 0 && listDate < 31;
+
   return (
-    <div className="flex justify-between rounded-lg bg-gray-200 px-5 py-3">
+    <button
+      className="flex justify-between rounded-lg bg-gray-200 px-5 py-3"
+      onClick={handleClick}
+    >
       <div className="flex items-center gap-2.5">
         <div
           className={cn(
-            "label flex h-8 w-8 items-center justify-center rounded-full text-white",
+            "label flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-full text-white",
             isDone ? "bg-primary-1" : "bg-gray-900",
           )}
         >
           {isDone ? <CheckIcon width={10} height={8} /> : index}
         </div>
-        <span className="label">{title}</span>
+        <span
+          className={cn(
+            "label text-left wrap-break-word whitespace-pre-line",
+            showListDate && "max-w-31",
+          )}
+        >
+          {title}
+        </span>
       </div>
 
       <div className="flex items-center gap-4">
-        <ChecklistBadge listDate={listDate} status={status} />
+        {showListDate && <ChecklistBadge listDate={`D-${listDate}`} />}
 
-        <button onClick={onClick} className="flex items-center gap-2.5">
+        <span className="flex items-center gap-2.5 whitespace-nowrap">
           <span className="caption">자세히보기</span>
           <ArrowRightIcon width={6} height={10} />
-        </button>
+        </span>
       </div>
-    </div>
+    </button>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import QueryErrorBoundary from "./query-error-boundary";
 import {
   QueryClient,
   QueryClientProvider as TanStackQueryClientProvider,
@@ -13,6 +14,11 @@ const createQueryClient = () =>
         staleTime: 60 * 1000,
         retry: 1,
         refetchOnWindowFocus: false,
+        /**
+         * 클라이언트에서만 Error Boundary로 전파. SSR/빌드 프리렌더 시에는
+         * localStorage·쿠키 없이 API가 401이 나도 정적 생성이 깨지지 않게 함.
+         */
+        throwOnError: () => typeof window !== "undefined",
       },
     },
   });
@@ -26,7 +32,7 @@ export default function QueryClientProvider({
 
   return (
     <TanStackQueryClientProvider client={queryClient}>
-      {children}
+      <QueryErrorBoundary>{children}</QueryErrorBoundary>
     </TanStackQueryClientProvider>
   );
 }

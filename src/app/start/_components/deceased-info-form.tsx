@@ -54,7 +54,7 @@ export default function DeceasedInfoForm({ defaultValues, onSubmit }: Props) {
         </div>
       </div>
       <BottomCTA>
-        <Button type="button" size="large" onClick={() => void handleSubmit()}>
+        <Button type="button" onClick={handleSubmit}>
           저장하기
         </Button>
       </BottomCTA>
