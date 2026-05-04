@@ -20,6 +20,11 @@
   --color-sementic-info: #006aff;
   --color-sementic-red: #ff3764;
   --color-sementic-red-bg: #fdede9;
+  --color-gr2-bg: linear-gradient(
+    90deg,
+    rgba(191, 239, 243, 0.2) 0%,
+    rgba(0, 162, 154, 0.2) 100%
+  );
 
   --color-tab-bg-start: #fafafa;
   --color-tab-bg-end: #ffffff;
@@ -169,6 +174,12 @@
   }
 }
 
+@layer utilities {
+  .bg-gr2 {
+    background: linear-gradient(90deg, #bfeff320 0%, #00a29a20 100%);
+  }
+}
+
 body {
   font-family: var(--font-pretendard), Arial, Helvetica, sans-serif;
 }
@@ -240,6 +251,49 @@ body {
 }
 
 /*---break---*/
+
+/** 8-dot loading spinner (components/common/loading) */
+/** 스피너 팔레트(연한 회색 → 틸), 8도트 위상차와 맞춤 */
+@keyframes loading-dot-trail {
+  0% {
+    background-color: #f5f5f5;
+  }
+  12.5% {
+    background-color: #eeeeee;
+  }
+  25% {
+    background-color: #e6e6e6;
+  }
+  37.5% {
+    background-color: #dedede;
+  }
+  50% {
+    background-color: #00b0c2;
+  }
+  62.5% {
+    background-color: #0094a3;
+  }
+  75% {
+    background-color: #00747f;
+  }
+  87.5% {
+    background-color: #005b64;
+  }
+  100% {
+    background-color: #f5f5f5;
+  }
+}
+
+.loading-dot-trail-dot {
+  animation: loading-dot-trail 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-dot-trail-dot {
+    animation: none;
+    background-color: #00747f;
+  }
+}
 
 @layer base {
   * {
