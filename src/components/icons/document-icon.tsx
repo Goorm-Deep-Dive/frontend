@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const DocumentIcon = (props: SVGProps<SVGSVGElement>) => <svg width="1em" height="1em" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}><rect width={30} height={30} rx={5} fill="#4A4A4A" /><path d="M21.2222 7.8H17.5067C17.1333 6.756 16.1556 6 15 6C13.8444 6 12.8667 6.756 12.4933 7.8H8.77778C7.8 7.8 7 8.61 7 9.6V22.2C7 23.19 7.8 24 8.77778 24H21.2222C22.2 24 23 23.19 23 22.2V9.6C23 8.61 22.2 7.8 21.2222 7.8ZM15 7.8C15.4889 7.8 15.8889 8.205 15.8889 8.7C15.8889 9.195 15.4889 9.6 15 9.6C14.5111 9.6 14.1111 9.195 14.1111 8.7C14.1111 8.205 14.5111 7.8 15 7.8ZM16.7778 20.4H10.5556V18.6H16.7778V20.4ZM19.4444 16.8H10.5556V15H19.4444V16.8ZM19.4444 13.2H10.5556V11.4H19.4444V13.2Z" fill="white" /></svg>;
+export default DocumentIcon;
