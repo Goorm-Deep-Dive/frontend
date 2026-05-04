@@ -3,9 +3,42 @@
 import SnsLoginButton from "@/components/common/sns-login-button";
 import Image from "next/image";
 import { useSocialLogin } from "@/hooks/use-social-login";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { refresh } from "@/apis/generated/api-client";
+import { getDeceasedProfiles } from "@/apis/generated/api-client";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const { login } = useSocialLogin();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const oauth = searchParams.get("oauth");
+
+  useEffect(() => {
+    if (oauth === "success") {
+      refresh();
+      const data = async () => {
+        const token = await refresh();
+        localStorage.setItem("accessToken", token.accessToken ?? "");
+      };
+      data();
+      const profile = async () => {
+        const deceasedProfile = await getDeceasedProfiles();
+        localStorage.setItem(
+          "deceasedProfile",
+          JSON.stringify(deceasedProfile),
+        );
+        if (deceasedProfile.length > 0) {
+          router.push("/checklist");
+        } else {
+          router.push("/start");
+        }
+      };
+      profile();
+    }
+  }, [oauth]);
 
   return (
     <div className="flex h-full flex-col gap-8 pt-36">

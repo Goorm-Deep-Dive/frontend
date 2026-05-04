@@ -1,5 +1,5 @@
-export const KAKAO_REDIRECT_URI = `https://localhost:3000/login`;
+export const REDIRECT_URI = `${process.env.NEXT_PUBLIC_FRONT_URL}/login`;
 
 export const AUTH_URL = {
-  kakao: `https://api.donghaeng.dev/api/v1/auth/oauth2/authorization/kakao?redirect_uri=${KAKAO_REDIRECT_URI}`,
+  kakao: `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/oauth2/authorization/kakao?redirect_uri=${REDIRECT_URI}`,
 };
