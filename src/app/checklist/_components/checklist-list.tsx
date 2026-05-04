@@ -1,6 +1,6 @@
 import ArrowRightIcon from "@/components/icons/arrow-right-icon";
 import CheckIcon from "@/components/icons/check-icon";
-import ChecklistListDate from "./checklist-list-date";
+import ChecklistBadge from "./checklist-list-badge";
 import { cn } from "@/lib/cn";
 
 type Status = "default" | "urgent" | "done";
@@ -36,7 +36,7 @@ export default function ChecklistList({
       </div>
 
       <div className="flex items-center gap-4">
-        <ChecklistListDate listDate={listDate} status={status} />
+        <ChecklistBadge listDate={listDate} status={status} />
 
         <button onClick={onClick} className="flex items-center gap-2.5">
           <span className="caption">자세히보기</span>

@@ -2,15 +2,15 @@ import { cn } from "@/lib/cn";
 
 type Status = "default" | "urgent" | "done";
 
-interface ChecklistListDateProps {
+interface ChecklistBadgeProps {
   listDate?: string; // D-30
   status: Status;
 }
 
-export default function ChecklistListDate({
+export default function ChecklistBadge({
   listDate,
   status,
-}: ChecklistListDateProps) {
+}: ChecklistBadgeProps) {
   const mode = {
     default: {
       description: listDate,

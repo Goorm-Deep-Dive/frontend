@@ -14,7 +14,7 @@ export default function ChecklistHeaderCard({ profile, count }: Props) {
             <span className="body">처리해야 할 일이</span>
           </div>
           <div className="flex items-end gap-2.5">
-            <span className="relative text-[40px] leading-none font-semibold text-gray-900">
+            <span className="relative text-[2.5rem] leading-none font-semibold text-gray-900">
               {count}건
             </span>
             <span className="body">있습니다.</span>
