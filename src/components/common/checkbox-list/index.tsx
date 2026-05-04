@@ -14,6 +14,7 @@ interface Props {
   onChange: (value: string | string[]) => void;
   multiple?: boolean;
   items: CheckboxItem[];
+  idPrefix?: string;
 }
 
 export default function CheckboxList({
@@ -21,28 +22,50 @@ export default function CheckboxList({
   value,
   onChange,
   multiple = false,
+  idPrefix = "checkbox-list",
 }: Props) {
+  const selectedValues = (Array.isArray(value) ? value : [value]).filter(Boolean);
+
+  const handleToggle = (itemValue: string) => {
+    const isChecked = selectedValues.includes(itemValue);
+
+    if (!multiple) {
+      onChange(isChecked ? "" : itemValue);
+      return;
+    }
+
+    if (isChecked) {
+      onChange(selectedValues.filter((v) => v !== itemValue));
+      return;
+    }
+
+    onChange([...selectedValues, itemValue]);
+  };
+
   return (
     <div className="flex w-full flex-col gap-1.25">
       {items.map((item) => {
-        const selectedValues = Array.isArray(value) ? value : [value];
         const isChecked = selectedValues.includes(item.value);
-        const inputId = `checkbox-${item.value}`;
+        const inputId = `${idPrefix}-checkbox-${item.value}`;
         const descriptionId = item.description
-          ? `checkbox-description-${item.value}`
+          ? `${idPrefix}-checkbox-description-${item.value}`
           : undefined;
 
         return (
           <label
             key={item.value}
             className={cn(
-              "flex w-full cursor-pointer items-center justify-start gap-5 rounded-2xl border border-gray-300 bg-white px-5 py-2.5",
+              "flex w-full cursor-pointer items-center justify-start gap-5 rounded-md border border-gray-300 bg-white px-5 py-2.5",
               isChecked ? "bg-primary-bg border-primary-2" : "border-gray-300",
               "focus-within:ring-primary-1 focus-within:ring-2 focus-within:ring-offset-2",
             )}
             aria-label={item.label}
             aria-describedby={descriptionId}
             htmlFor={inputId}
+            onClick={(event) => {
+              event.preventDefault();
+              handleToggle(item.value);
+            }}
           >
             <div
               className={cn(
@@ -88,21 +111,10 @@ export default function CheckboxList({
               id={inputId}
               type="checkbox"
               value={item.value}
-              onChange={() => {
-                if (!multiple) {
-                  onChange(item.value);
-                  return;
-                }
-
-                if (isChecked) {
-                  onChange(selectedValues.filter((v) => v !== item.value));
-                  return;
-                }
-
-                onChange([...selectedValues.filter(Boolean), item.value]);
-              }}
+              onChange={() => {}}
               className="sr-only"
               checked={isChecked}
+              readOnly
             />
           </label>
         );

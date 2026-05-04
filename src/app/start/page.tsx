@@ -1,7 +1,7 @@
-import Start from "@/app/start/_components/start-content";
+import DeceasedInfoForm from "@/app/start/_components/deceased-info-form";
 import { Button } from "@/components/ui/button";
 
-export default function StartPage() {
+export default function Page() {
   return (
     <div className="mt-26 flex flex-col gap-7.5">
       <div className="flex justify-between gap-3.5 pr-5 pl-7.5">
@@ -18,9 +18,7 @@ export default function StartPage() {
           </Button>
         </div>
       </div>
-      <div>
-        <Start />
-      </div>
+      <DeceasedInfoForm />
     </div>
   );
 }
