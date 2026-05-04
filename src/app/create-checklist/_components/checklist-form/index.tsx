@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
-  useGetSurveyListSuspense,
+  type GetSurveyListQueryResult,
+  useGetSurveyList,
   useSaveTempSurvey,
   useSkipSurvey,
   useSubmitSurvey,
@@ -15,10 +16,39 @@ import { Button } from "@/components/ui/button";
 
 type AnswerMap = Record<string, string | string[]>;
 
+type SurveyItem = NonNullable<
+  NonNullable<GetSurveyListQueryResult["surveys"]>[number]
+>;
+
+const isSurveyQuestionVisible = (
+  question: SurveyItem,
+  index: number,
+  nextQuestionIds: string[],
+): boolean => {
+  const questionKey = String(question.surveyQuestionId ?? `question-${index}`);
+  if (
+    question.requirementType === "OPTIONAL" &&
+    !nextQuestionIds.includes(questionKey)
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const hasCompletedAnswer = (
+  questionType: string | undefined,
+  answer: string | string[] | undefined,
+): boolean => {
+  if (questionType === "MULTIPLE") {
+    return Array.isArray(answer) && answer.length > 0;
+  }
+  return typeof answer === "string" && answer.trim().length > 0;
+};
+
 export default function ChecklistForm() {
   const router = useRouter();
 
-  const { data: surveyRes } = useGetSurveyListSuspense();
+  const { data: surveyRes, isPending: isSurveyPending } = useGetSurveyList();
 
   const { mutateAsync: skipSurvey } = useSkipSurvey();
   const { mutateAsync: saveTempSurvey } = useSaveTempSurvey();
@@ -27,17 +57,34 @@ export default function ChecklistForm() {
   const surveys = surveyRes?.surveys;
 
   const [answers, setAnswers] = useState<AnswerMap>({});
+  const [nextQuestionIds, setNextQuestionIds] = useState<string[]>([]);
+
   /**
    * @description 답변 변경 시, 상태 수정
    */
   const handleChangeAnswer = useCallback(
-    (questionKey: string, nextValue: string | string[]) => {
+    (
+      questionKey: string,
+      nextValue: string | string[],
+      nextQuestionId?: number,
+    ) => {
       setAnswers((prev) => ({
         ...prev,
         [questionKey]: nextValue,
       }));
+
+      if (nextQuestionId) {
+        if (nextQuestionIds.includes(String(nextQuestionId))) {
+          setNextQuestionIds((prev) =>
+            prev.filter((id) => id !== String(nextQuestionId)),
+          );
+          return;
+        }
+
+        setNextQuestionIds((prev) => [...prev, String(nextQuestionId)]);
+      }
     },
-    [],
+    [nextQuestionIds],
   );
 
   /**
@@ -104,6 +151,18 @@ export default function ChecklistForm() {
     } catch {}
   };
 
+  const submitButtonDisabled = Boolean(
+    surveys?.some(
+      (q, index) =>
+        q != null &&
+        isSurveyQuestionVisible(q, index, nextQuestionIds) &&
+        !hasCompletedAnswer(
+          q.questionType,
+          answers[String(q.surveyQuestionId ?? `question-${index}`)],
+        ),
+    ),
+  );
+
   return (
     <>
       <div className="flex min-h-39 w-full items-end justify-between border-b border-gray-300 px-6.5 pb-5">
@@ -114,14 +173,15 @@ export default function ChecklistForm() {
           </span>
         </div>
         <div className="flex flex-col items-end gap-3.5">
-          <span className="h3">1/3단계</span>
           <Button size="small" rounded onClick={handleSaveDraft}>
             임시 저장하기
           </Button>
         </div>
       </div>
 
-      <Suspense fallback={<ChecklistFormSkeleton />}>
+      {isSurveyPending ? (
+        <ChecklistFormSkeleton />
+      ) : (
         <div className="flex flex-col gap-5 p-5">
           {surveys?.map(
             (q, index) =>
@@ -135,6 +195,7 @@ export default function ChecklistForm() {
                       String(q.surveyQuestionId ?? `question-${index}`)
                     ] ?? (q.questionType === "MULTIPLE" ? [] : "")
                   }
+                  nextQuestionIds={nextQuestionIds}
                   onChangeAnswer={handleChangeAnswer}
                 />
               ),
@@ -153,11 +214,13 @@ export default function ChecklistForm() {
                   설문 문진 건너뛰기
                 </button>
               </div>
-              <Button onClick={handleNext}>다음으로</Button>
+              <Button disabled={submitButtonDisabled} onClick={handleNext}>
+                다음으로
+              </Button>
             </div>
           </BottomCTA>
         </div>
-      </Suspense>
+      )}
     </>
   );
 }
