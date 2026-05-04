@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import Header from "@/components/common/header";
 import EditForm from "../_components/edit-form";
 
@@ -12,9 +11,7 @@ export default async function Page({ params }: PageProps) {
   return (
     <>
       <Header title="고인 프로필 수정" variant="detail" />
-      <Suspense fallback={<div>Loading...</div>}>
-        <EditForm id={id} />
-      </Suspense>
+      <EditForm id={id} />
     </>
   );
 }
