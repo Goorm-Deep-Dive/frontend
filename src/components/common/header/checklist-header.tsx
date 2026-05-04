@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { cn } from "@/lib/cn";
 import { useGetOverallProgress } from "@/apis/generated/api-client";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 
 interface Props {
   defaultOpen?: boolean;
@@ -19,6 +20,16 @@ export default function ChecklistHeader({
   const { data: overallProgress } = useGetOverallProgress();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
+  const selectedCategoryId = useChecklistCategoryStore(
+    (s) => s.selectedCategoryId,
+  );
+  const setSelectedCategoryId = useChecklistCategoryStore(
+    (s) => s.setSelectedCategoryId,
+  );
+  const initializeDefaultFromFirst = useChecklistCategoryStore(
+    (s) => s.initializeDefaultFromFirst,
+  );
+
   const handleToggle = useCallback(() => {
     setIsOpen((prev) => {
       const next = !prev;
@@ -26,6 +37,51 @@ export default function ChecklistHeader({
       return next;
     });
   }, [onToggleOpen]);
+
+  const closePanel = useCallback(() => {
+    setIsOpen(false);
+    onToggleOpen?.(false);
+  }, [onToggleOpen]);
+
+  const handleSelectCategory = useCallback(
+    (categoryId: number | undefined) => {
+      if (categoryId == null) return;
+      setSelectedCategoryId(categoryId);
+      closePanel();
+    },
+    [closePanel, setSelectedCategoryId],
+  );
+
+  const categoryList = overallProgress?.checklistCategoryProgressResList;
+
+  useEffect(() => {
+    const firstId = categoryList?.[0]?.categoryId;
+    if (firstId != null) {
+      initializeDefaultFromFirst(firstId);
+    }
+  }, [categoryList, initializeDefaultFromFirst]);
+
+  useEffect(() => {
+    if (!categoryList?.length || selectedCategoryId == null) return;
+    const exists = categoryList.some(
+      (i) => i.categoryId === selectedCategoryId,
+    );
+    if (!exists) {
+      const firstId = categoryList[0]?.categoryId;
+      if (firstId != null) setSelectedCategoryId(firstId);
+    }
+  }, [categoryList, selectedCategoryId, setSelectedCategoryId]);
+
+  const selectedProgress = useMemo(() => {
+    if (!categoryList?.length) return undefined;
+    return categoryList.find((i) => i.categoryId === selectedCategoryId);
+  }, [categoryList, selectedCategoryId]);
+
+  const progressBadgeLabel = useMemo(() => {
+    const completed = selectedProgress?.completedCount ?? 0;
+    const total = selectedProgress?.totalCount ?? 0;
+    return `${completed}/${total} 완료`;
+  }, [selectedProgress]);
 
   return (
     <>
@@ -57,7 +113,7 @@ export default function ChecklistHeader({
             >
               <div className="flex items-center gap-2.5">
                 <span className="h2 text-primary-1 font-semibold tracking-[-0.02em]">
-                  체크리스트
+                  {selectedProgress?.categoryName ?? "체크리스트"}
                 </span>
                 <Image
                   src="/icons/header/arrow-up.svg"
@@ -71,9 +127,16 @@ export default function ChecklistHeader({
                 />
               </div>
 
-              <Button variant="secondary" size="small" rounded>
-                0/0 완료
-              </Button>
+              <span
+                className={buttonVariants({
+                  variant: "secondary",
+                  size: "small",
+                  rounded: true,
+                })}
+                aria-hidden
+              >
+                {progressBadgeLabel}
+              </span>
             </button>
 
             <div
@@ -86,12 +149,19 @@ export default function ChecklistHeader({
             >
               <div className="overflow-hidden">
                 <div className="flex flex-col gap-3">
-                  {overallProgress?.checklistCategoryProgressResList?.map(
-                    (item, index) => (
-                      <div
-                        key={item.categoryId}
+                  {categoryList?.map((item, index) => {
+                    const cid = item.categoryId;
+                    if (cid == null) return null;
+                    const isSelected = cid === selectedCategoryId;
+                    const isCompleted = item.completedCount === item.totalCount;
+
+                    return (
+                      <button
+                        key={cid}
+                        type="button"
                         className={cn(
-                          "flex items-center justify-between gap-4 rounded-lg bg-gray-100 px-2.5 py-2.5 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                          "flex w-full items-center justify-between gap-4 rounded-lg px-2.5 py-2.5 text-left transition-[opacity,transform,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                          isSelected ? "bg-primary-10" : "bg-gray-100",
                           isOpen
                             ? "translate-y-0 opacity-100"
                             : "translate-y-1 opacity-0",
@@ -99,6 +169,8 @@ export default function ChecklistHeader({
                         style={{
                           transitionDelay: isOpen ? `${index * 45}ms` : "0ms",
                         }}
+                        onClick={() => handleSelectCategory(cid)}
+                        aria-current={isSelected ? "true" : undefined}
                       >
                         <span className="h2 font-semibold tracking-[-0.02em] text-gray-900">
                           {item.categoryName}
@@ -106,17 +178,16 @@ export default function ChecklistHeader({
 
                         <span
                           className={cn(
-                            "label h-6.5 min-w-17.5 rounded-2xl px-2.5 leading-6.5 font-bold text-white transition-colors",
-                            item.completedCount === item.totalCount
-                              ? "bg-primary-1"
-                              : "bg-gray-700",
+                            "label h-6.5 min-w-17.5 shrink-0 rounded-2xl px-2.5 leading-6.5 font-bold text-white transition-colors",
+                            isCompleted ? "bg-primary-1" : "bg-gray-700",
                           )}
                         >
-                          {item.completedCount}/{item.totalCount} 미완
+                          {item.completedCount}/{item.totalCount}{" "}
+                          {isCompleted ? "완료" : "미완"}
                         </span>
-                      </div>
-                    ),
-                  )}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <button
@@ -129,7 +200,7 @@ export default function ChecklistHeader({
                   )}
                   style={{
                     transitionDelay: isOpen
-                      ? `${(overallProgress?.checklistCategoryProgressResList?.length ?? 0) * 45 + 60}ms`
+                      ? `${(categoryList?.length ?? 0) * 45 + 60}ms`
                       : "0ms",
                   }}
                   onClick={handleToggle}
@@ -157,7 +228,7 @@ export default function ChecklistHeader({
         </button>
       </header>
 
-      <div className="h-[70px] w-full" aria-hidden="true" />
+      <div className="h-[90px] min-h-[90px] w-full" aria-hidden="true" />
     </>
   );
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import {
+  getGetCategoryProceduresQueryKey,
   getGetProcedureDetailQueryKey,
-  useGetProcedureDetailSuspense,
+  useGetProcedureDetail,
   useModifyProcedureCheck,
 } from "@/apis/generated/api-client";
 import type { ChecklistProcedureDetailRes } from "@/apis/generated/model";
@@ -11,17 +12,40 @@ import { Button } from "@/components/ui/button";
 import { getChannelLabel } from "../_utils/getChannelLabel";
 import { useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/common/header";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
+
 interface Props {
   procedureId: number;
 }
 
 export default function Content({ procedureId }: Props) {
-  const { data: procedureDetail } = useGetProcedureDetailSuspense(procedureId);
+  const router = useRouter();
+
+  /** 체크 완료 후 돌아갔을 때 동일 카테고리 절차 목록만 무효화 */
+  const selectedCategoryId = useChecklistCategoryStore(
+    (s) => s.selectedCategoryId,
+  );
+
+  const searchParams = useSearchParams();
+  const userProcedureChecklistId = searchParams.get("userProcedureChecklistId");
+
+  const { data: procedureDetail, isPending: isProcedurePending } =
+    useGetProcedureDetail(procedureId);
 
   const cautionTextList = procedureDetail?.cautionText?.split(";") ?? [];
 
   const queryClient = useQueryClient();
   const { mutateAsync: modifyProcedureCheck } = useModifyProcedureCheck();
+
+  if (isProcedurePending) {
+    return (
+      <>
+        <Header title="" variant="detail" />
+        <p className="body px-5 py-8 text-center text-gray-500">불러오는 중…</p>
+      </>
+    );
+  }
 
   const handleModifyProcedureCheck = async () => {
     const queryKey = getGetProcedureDetailQueryKey(procedureId);
@@ -34,23 +58,32 @@ export default function Content({ procedureId }: Props) {
 
     try {
       await modifyProcedureCheck({
-        userProcedureChecklistId: procedureId,
+        userProcedureChecklistId: Number(userProcedureChecklistId),
         data: { checked: true },
       });
+
+      queryClient.invalidateQueries({ queryKey });
+      if (
+        typeof selectedCategoryId === "number" &&
+        selectedCategoryId > 0
+      ) {
+        queryClient.invalidateQueries({
+          queryKey: getGetCategoryProceduresQueryKey(selectedCategoryId),
+        });
+      }
+      router.back();
     } catch {
       if (previousData) {
         queryClient.setQueryData(queryKey, previousData);
       }
-    } finally {
-      queryClient.invalidateQueries({ queryKey });
     }
   };
 
   return (
     <>
-      <Header title={procedureDetail?.procedureName ?? ""} />
+      <Header title={procedureDetail?.procedureName ?? ""} variant="detail" />
 
-      <div className="gap flex flex-col gap-5 p-5">
+      <div className="flex flex-col gap-5 p-5">
         <div className="flex gap-5">
           <span>D-100</span>
           <div>
@@ -105,7 +138,7 @@ export default function Content({ procedureId }: Props) {
         </div>
       </div>
 
-      <div className="gap flex flex-col gap-5 p-5">
+      <div className="flex flex-col gap-5 p-5">
         <span className="h4 pl-5 text-gray-900">필요서류</span>
         <div className="flex flex-col gap-2.5">
           {procedureDetail?.documents?.map(
@@ -123,6 +156,7 @@ export default function Content({ procedureId }: Props) {
           )}
         </div>
       </div>
+
       <div className="flex items-center justify-center p-5">
         <Button onClick={handleModifyProcedureCheck}>
           {procedureDetail?.procedureName} 체크 완료하기

@@ -23,7 +23,7 @@ export default function ChecklistHeaderCard({ profile, count }: Props) {
       </div>
 
       {/* TODO: button 컴포넌트에 variant 추가한 뒤 수정 */}
-      <button className="label flex cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 px-23.5 py-2 text-white">
+      <button className="label flex cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 py-2 text-white">
         <ListCutIcon />
         리스트 편집하기
       </button>

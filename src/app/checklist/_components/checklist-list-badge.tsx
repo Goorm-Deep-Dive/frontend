@@ -4,13 +4,9 @@ type Status = "default" | "urgent" | "done";
 
 interface ChecklistBadgeProps {
   listDate?: string; // D-30
-  status: Status;
 }
 
-export default function ChecklistBadge({
-  listDate,
-  status,
-}: ChecklistBadgeProps) {
+export default function ChecklistBadge({ listDate }: ChecklistBadgeProps) {
   const mode = {
     default: {
       description: listDate,
@@ -28,7 +24,7 @@ export default function ChecklistBadge({
     },
   };
 
-  const current = mode[status];
+  const current = mode["default"];
 
   return (
     <div className={cn("label rounded-md border-2", current.style)}>
