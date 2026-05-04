@@ -5,11 +5,6 @@ import BottomNavigation from "@/components/common/bottom-navigation";
 
 type Status = "default" | "urgent" | "done";
 
-interface ChecklistPageProps {
-  date: string;
-  remainingCount: number;
-}
-
 const checklistData = [
   { title: "Title1", status: "default", listDate: "D-30" },
   { title: "Title2", status: "default", listDate: "D-30" },
@@ -17,10 +12,7 @@ const checklistData = [
   { title: "Title4", status: "done" },
 ];
 
-export default function ChecklistPage({
-  date = "D-30",
-  remainingCount = 3,
-}: ChecklistPageProps) {
+export default function ChecklistPage() {
   return (
     <>
       <Header variant="checklist" />
@@ -28,12 +20,12 @@ export default function ChecklistPage({
         <div className="flex w-full flex-col gap-5">
           <div className="bg-tab-bg flex justify-center gap-2.5 py-1.5">
             <span className="label">가장 빠른 기한까지 </span>
-            <span className="text-sementic-red">{date}</span>
+            <span className="text-sementic-red">D-100</span>
             <span className="label">일 남았어요</span>
           </div>
 
           <div className="flex flex-col justify-center gap-5 px-5">
-            <ChecklistHeaderCard profile="Profile1" count={remainingCount} />
+            <ChecklistHeaderCard profile="Profile1" count={10} />
 
             <div className="flex flex-col gap-2.5">
               {checklistData.map((item, index) => (

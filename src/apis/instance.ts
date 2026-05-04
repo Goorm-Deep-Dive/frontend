@@ -30,14 +30,15 @@ export const axiosInstance: AxiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = process.env.NEXT_PUBLIC_MASTER_ACCESS_TOKEN;
-    if (token) {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
       config.headers = config.headers ?? {};
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
