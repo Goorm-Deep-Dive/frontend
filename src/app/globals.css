@@ -20,6 +20,11 @@
   --color-sementic-info: #006aff;
   --color-sementic-red: #ff3764;
   --color-sementic-red-bg: #fdede9;
+  --color-gr2-bg: linear-gradient(
+    90deg,
+    rgba(191, 239, 243, 0.2) 0%,
+    rgba(0, 162, 154, 0.2) 100%
+  );
 
   --color-tab-bg-start: #fafafa;
   --color-tab-bg-end: #ffffff;
@@ -166,6 +171,12 @@
 
   .other2 {
     @apply text-xs leading-normal font-normal tracking-[-0.02em];
+  }
+}
+
+@layer utilities {
+  .bg-gr2 {
+    background: linear-gradient(90deg, #bfeff320 0%, #00a29a20 100%);
   }
 }
 
