@@ -38,7 +38,7 @@ export default function DocumentListItem({
         ...old,
         documents: old.documents.map((document) =>
           document.procedureDocumentId === procedureDocumentId
-            ? { ...document, isChecked: documentChecked }
+            ? { ...document, checked: documentChecked }
             : document,
         ),
       };
@@ -48,7 +48,7 @@ export default function DocumentListItem({
       await modifyDocumentCheck({
         procedureDocumentId: procedureDocumentId,
         data: {
-          isChecked: documentChecked,
+          checked: documentChecked,
         },
       });
     } catch {
