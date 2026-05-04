@@ -1,3 +1,4 @@
+import { STORAGE_ACCESS_TOKEN_KEY } from "@/constants/storage-keys";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -35,10 +36,12 @@ export const axiosInstance: AxiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      config.headers = config.headers ?? {};
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    if (typeof window !== "undefined") {
+      const accessToken = localStorage.getItem(STORAGE_ACCESS_TOKEN_KEY);
+      if (accessToken) {
+        config.headers = config.headers ?? {};
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     }
     return config;
   },
@@ -60,13 +63,14 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          // open("인증이 만료되었습니다. 다시 로그인해주세요.");
+          if (typeof window !== "undefined") {
+            localStorage.clear();
+            window.location.href = "/login";
+          }
           break;
         case 500:
-          // open("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
           break;
         default:
-        // open("알 수 없는 에러가 발생했습니다.");
       }
     }
     return Promise.reject(error);
