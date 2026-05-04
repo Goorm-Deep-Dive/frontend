@@ -34,7 +34,7 @@ export const axiosInstance: AxiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = process.env.MASTER_ACCESS_TOKEN;
+    const token = process.env.NEXT_PUBLIC_MASTER_ACCESS_TOKEN;
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;

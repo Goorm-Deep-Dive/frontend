@@ -12,7 +12,7 @@ const buttonVariants = cva(
     variants: {
       rounded: {
         true: "rounded-2xl",
-        false: "rounded-[10px]",
+        false: "rounded-md",
       },
       variant: {
         primary: `
