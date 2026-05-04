@@ -1,18 +1,26 @@
 "use client";
 
 import {
-  useGetActiveDeceasedProfileSuspense,
-  useGetOverallProgressSuspense,
+  useGetActiveDeceasedProfile,
+  useGetOverallProgress,
 } from "@/apis/generated/api-client";
 import CircleGraph from "@/components/common/circle-graph";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
+import OverallProgressSkeleton from "./overall-progress-skeleton";
+
 const colors = ["#FFCA96", "#DD8853", "#35ACB7", "#006C76"];
 
 export default function OverallProgressPanel() {
-  const { data: activeDeceasedProfile } = useGetActiveDeceasedProfileSuspense();
-  const { data: progress } = useGetOverallProgressSuspense();
+  const { data: activeDeceasedProfile, isPending: isProfilePending } =
+    useGetActiveDeceasedProfile();
+  const { data: progress, isPending: isProgressPending } =
+    useGetOverallProgress();
+
+  if (isProfilePending || isProgressPending) {
+    return <OverallProgressSkeleton />;
+  }
 
   return (
     <>
@@ -21,11 +29,14 @@ export default function OverallProgressPanel() {
 
         <div className="flex flex-col items-end justify-end">
           <span className="caption font-semibold text-gray-700">
-            {activeDeceasedProfile.name} 님의 영면일
+            {activeDeceasedProfile?.name} 님의 영면일
           </span>
           <span className="caption text-primary-1 font-semibold">
-            {activeDeceasedProfile.dateOfDeath &&
-              format(new Date(activeDeceasedProfile.dateOfDeath), "yyyy.MM.dd")}
+            {activeDeceasedProfile?.dateOfDeath &&
+              format(
+                new Date(activeDeceasedProfile.dateOfDeath),
+                "yyyy.MM.dd",
+              )}
           </span>
         </div>
       </div>
