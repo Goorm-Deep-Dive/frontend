@@ -12,9 +12,9 @@ export default function Checkbox({ id, checked, onChange }: Props) {
       <input
         id={id}
         type="checkbox"
-        className="sr-only"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
+        hidden
       />
       <label
         htmlFor={id}

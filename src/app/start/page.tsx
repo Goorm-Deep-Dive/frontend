@@ -1,5 +1,5 @@
-import DeceasedInfoForm from "@/app/start/_components/deceased-info-form";
 import { Button } from "@/components/ui/button";
+import AddForm from "./_components/add-form";
 
 export default function Page() {
   return (
@@ -18,7 +18,7 @@ export default function Page() {
           </Button>
         </div>
       </div>
-      <DeceasedInfoForm />
+      <AddForm />
     </div>
   );
 }

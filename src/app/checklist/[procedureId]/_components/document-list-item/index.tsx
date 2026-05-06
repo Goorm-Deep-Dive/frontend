@@ -55,31 +55,31 @@ export default function DocumentListItem({
       if (previousData) {
         queryClient.setQueryData(queryKey, previousData);
       }
-    } finally {
-      queryClient.invalidateQueries({ queryKey });
     }
   };
 
   return (
-    <div className="bg-primary-bg flex rounded-xl px-5 py-2.5">
-      <label
-        htmlFor={`document-${index}`}
-        className="flex cursor-pointer gap-2.5 select-none"
-      >
-        <span className="bg-primary-1 caption flex h-6 w-6 items-center justify-center rounded-full text-white">
+    <div className="bg-primary-bg flex items-center gap-3 rounded-xl px-5 py-2.5">
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+        <span className="bg-primary-1 caption flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white">
           {index + 1}
         </span>
-        <span className="h4 w-30 text-gray-900">{title}</span>
+        <span className="h4 min-w-0 flex-1 text-gray-900">{title}</span>
         <Checkbox
-          id={`document-${index}`}
+          id={`document-${procedureDocumentId}`}
           checked={checked ?? false}
           onChange={(documentChecked) =>
             handleModifyDocumentCheck(documentChecked)
           }
         />
-      </label>
+      </div>
 
-      <Link href="#" target="_blank" className="ml-auto">
+      <Link
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="caption text-primary-1 shrink-0 underline"
+      >
         발급처 알아보기 {">"}
       </Link>
     </div>

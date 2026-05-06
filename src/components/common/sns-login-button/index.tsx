@@ -40,9 +40,7 @@ export default function SnsLoginButton({
       disabled={disabled}
       className={cn(
         "flex w-full items-center justify-center gap-2 rounded-full py-2.5 shadow-md",
-        disabled
-          ? "cursor-not-allowed opacity-50"
-          : "cursor-pointer",
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
         className,
       )}
       onClick={onClick}

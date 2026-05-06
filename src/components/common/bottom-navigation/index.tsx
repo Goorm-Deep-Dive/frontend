@@ -30,12 +30,16 @@ export default function BottomNavigation() {
 
   return (
     <>
-      <div className="h-25 min-h-25" />
+      <div
+        className="shrink-0 bg-transparent"
+        style={{ height: "var(--bottom-nav-reserve)" }}
+        aria-hidden
+      />
       <nav
         aria-label="바텀 네비게이션"
-        className="fixed bottom-0 z-10 w-full max-w-(--app-max-width) rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4"
+        className="fixed bottom-0 left-1/2 z-10 w-full max-w-[var(--app-max-width)] -translate-x-1/2 rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4 pb-[env(safe-area-inset-bottom,0px)]"
       >
-        <div className="flex items-center">
+        <div className="flex items-center justify-center pb-3">
           {MENUS.map((menu) => {
             const isActive =
               pathname === menu.path || pathname.startsWith(`${menu.path}/`);
@@ -45,7 +49,7 @@ export default function BottomNavigation() {
               <Link
                 href={menu.path}
                 key={menu.path}
-                className="flex flex-1 cursor-pointer flex-col items-center gap-2 pb-10"
+                className="flex flex-1 cursor-pointer flex-col items-center gap-2"
               >
                 <Icon
                   className={cn(

@@ -1,24 +1,35 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
-import type { GetSurveyListSuspenseQueryResult } from "@/apis/generated/api-client";
+import type { GetSurveyListQueryResult } from "@/apis/generated/api-client";
 import CommonAccordion from "@/components/common/accordion";
 import CheckboxList from "@/components/common/checkbox-list";
 import { Button } from "@/components/ui/button";
 
 type SurveyItem = NonNullable<
-  NonNullable<GetSurveyListSuspenseQueryResult["surveys"]>[number]
+  NonNullable<GetSurveyListQueryResult["surveys"]>[number]
 >;
 
 interface SurveyQuestionCardProps {
   question: SurveyItem;
   index: number;
   value: string | string[];
-  onChangeAnswer: (questionKey: string, nextValue: string | string[]) => void;
+  nextQuestionIds: string[];
+  onChangeAnswer: (
+    questionKey: string,
+    nextValue: string | string[],
+    nextQuestionId?: number,
+  ) => void;
 }
 
 const SurveyQuestionCard = memo(
-  ({ question, index, value, onChangeAnswer }: SurveyQuestionCardProps) => {
+  ({
+    question,
+    index,
+    value,
+    nextQuestionIds,
+    onChangeAnswer,
+  }: SurveyQuestionCardProps) => {
     const questionKey = String(
       question.surveyQuestionId ?? `question-${index}`,
     );
@@ -31,16 +42,24 @@ const SurveyQuestionCard = memo(
           value: String(
             answer.surveyAnswerId ?? `question-${index}-answer-${answerIndex}`,
           ),
+          nextQuestionId: answer.nextQuestionId,
         })) ?? [],
       [index, question.answers],
     );
 
     const handleChange = useCallback(
-      (nextValue: string | string[]) => {
-        onChangeAnswer(questionKey, nextValue);
+      (nextValue: string | string[], nextQuestionId?: number) => {
+        onChangeAnswer(questionKey, nextValue, nextQuestionId);
       },
       [onChangeAnswer, questionKey],
     );
+
+    if (
+      question.requirementType === "OPTIONAL" &&
+      !nextQuestionIds.includes(questionKey)
+    ) {
+      return null;
+    }
 
     return (
       <CommonAccordion questionId={questionKey}>

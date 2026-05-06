@@ -32,6 +32,8 @@
   /** App Max Width */
   --app-max-width: 480px;
 
+  --bottom-nav-reserve: calc(7.75rem + env(safe-area-inset-bottom, 0px));
+
   /** Shadcn UI Colors */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -302,7 +304,28 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  body {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  /* 좁은 폭: rem 전역 스케일 소폭 축소(SE·작은 폰) */
+  @media (max-width: 375px) {
+    html {
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 320px) {
+    html {
+      font-size: 14px;
+    }
   }
 }
