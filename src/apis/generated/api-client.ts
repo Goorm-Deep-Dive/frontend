@@ -39,6 +39,7 @@ import type {
   ApiResponseChecklistProcedureDetailRes,
   ApiResponseDeceasedProfileRes,
   ApiResponseDeceasedSurveyStatusRes,
+  ApiResponseListChatMessageRes,
   ApiResponseListDeceasedProfileListRes,
   ApiResponseListOptionalProcedureRes,
   ApiResponseProcedureDocumentDetailRes,
@@ -52,8 +53,10 @@ import type {
   ChecklistCheckReq,
   DeceasedProfileCreateReq,
   DeceasedProfileUpdateReq,
+  GetMessagesParams,
   LinkGoogleParams,
-  SurveyTempSaveReq,
+  SseEmitter,
+  SurveySaveReq,
   UserNotificationUpdateReq,
 } from "./model";
 
@@ -66,14 +69,14 @@ import { customQueryOptions } from "../config/query-options";
  * @summary 설문조사 임시저장
  */
 export const saveTempSurvey = (
-  surveyTempSaveReq: SurveyTempSaveReq,
+  surveySaveReq: SurveySaveReq,
   signal?: AbortSignal,
 ) => {
   return customInstance<ApiResponseSurveyTempSaveRes>({
     url: `/api/v1/surveys/temp`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    data: surveyTempSaveReq,
+    data: surveySaveReq,
     signal,
   });
 };
@@ -85,13 +88,13 @@ export const useSaveTempSurveyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof saveTempSurvey>>,
     TError,
-    { data: SurveyTempSaveReq },
+    { data: SurveySaveReq },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof saveTempSurvey>>,
   TError,
-  { data: SurveyTempSaveReq },
+  { data: SurveySaveReq },
   TContext
 > => {
   const mutationKey = ["saveTempSurvey"];
@@ -105,7 +108,7 @@ export const useSaveTempSurveyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof saveTempSurvey>>,
-    { data: SurveyTempSaveReq }
+    { data: SurveySaveReq }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -123,7 +126,7 @@ export const useSaveTempSurveyMutationOptions = <
 export type SaveTempSurveyMutationResult = NonNullable<
   Awaited<ReturnType<typeof saveTempSurvey>>
 >;
-export type SaveTempSurveyMutationBody = SurveyTempSaveReq;
+export type SaveTempSurveyMutationBody = SurveySaveReq;
 export type SaveTempSurveyMutationError = unknown;
 
 /**
@@ -134,7 +137,7 @@ export const useSaveTempSurvey = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof saveTempSurvey>>,
       TError,
-      { data: SurveyTempSaveReq },
+      { data: SurveySaveReq },
       TContext
     >;
   },
@@ -142,7 +145,7 @@ export const useSaveTempSurvey = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof saveTempSurvey>>,
   TError,
-  { data: SurveyTempSaveReq },
+  { data: SurveySaveReq },
   TContext
 > => {
   return useMutation(useSaveTempSurveyMutationOptions(options), queryClient);
@@ -229,18 +232,98 @@ export const useSkipSurvey = <TError = unknown, TContext = unknown>(
 };
 
 /**
+ * 체크리스트와 응답을 모두 삭제하고 설문 상태를 IN_PROGRESS로 되돌립니다.
+ * @summary 설문조사 다시 하기
+ */
+export const resetSurvey = (signal?: AbortSignal) => {
+  return customInstance<ApiResponseVoid>({
+    url: `/api/v1/surveys/reset`,
+    method: "POST",
+    signal,
+  });
+};
+
+export const useResetSurveyMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof resetSurvey>>,
+    TError,
+    void,
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof resetSurvey>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["resetSurvey"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof resetSurvey>>,
+    void
+  > = () => {
+    return resetSurvey();
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type ResetSurveyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof resetSurvey>>
+>;
+
+export type ResetSurveyMutationError = unknown;
+
+/**
+ * @summary 설문조사 다시 하기
+ */
+export const useResetSurvey = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof resetSurvey>>,
+      TError,
+      void,
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof resetSurvey>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(useResetSurveyMutationOptions(options), queryClient);
+};
+
+/**
  * 설문조사 답변을 저장하고 체크리스트를 자동 생성합니다.
  * @summary 설문조사 답변 저장
  */
 export const submitSurvey = (
-  surveyTempSaveReq: SurveyTempSaveReq,
+  surveySaveReq: SurveySaveReq,
   signal?: AbortSignal,
 ) => {
   return customInstance<ApiResponseSurveySubmitRes>({
     url: `/api/v1/surveys/complete`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    data: surveyTempSaveReq,
+    data: surveySaveReq,
     signal,
   });
 };
@@ -252,13 +335,13 @@ export const useSubmitSurveyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof submitSurvey>>,
     TError,
-    { data: SurveyTempSaveReq },
+    { data: SurveySaveReq },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof submitSurvey>>,
   TError,
-  { data: SurveyTempSaveReq },
+  { data: SurveySaveReq },
   TContext
 > => {
   const mutationKey = ["submitSurvey"];
@@ -272,7 +355,7 @@ export const useSubmitSurveyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof submitSurvey>>,
-    { data: SurveyTempSaveReq }
+    { data: SurveySaveReq }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -290,7 +373,7 @@ export const useSubmitSurveyMutationOptions = <
 export type SubmitSurveyMutationResult = NonNullable<
   Awaited<ReturnType<typeof submitSurvey>>
 >;
-export type SubmitSurveyMutationBody = SurveyTempSaveReq;
+export type SubmitSurveyMutationBody = SurveySaveReq;
 export type SubmitSurveyMutationError = unknown;
 
 /**
@@ -301,7 +384,7 @@ export const useSubmitSurvey = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof submitSurvey>>,
       TError,
-      { data: SurveyTempSaveReq },
+      { data: SurveySaveReq },
       TContext
     >;
   },
@@ -309,7 +392,7 @@ export const useSubmitSurvey = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof submitSurvey>>,
   TError,
-  { data: SurveyTempSaveReq },
+  { data: SurveySaveReq },
   TContext
 > => {
   return useMutation(useSubmitSurveyMutationOptions(options), queryClient);
@@ -1333,8 +1416,420 @@ export const useCreateOptionalProcedure = <
 };
 
 /**
+ * @summary 날짜별 채팅 히스토리 조회
+ */
+export const getMessages = (
+  params: GetMessagesParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseListChatMessageRes>({
+    url: `/api/v1/chats/messages`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetMessagesQueryKey = (params?: GetMessagesParams) => {
+  return [`/api/v1/chats/messages`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetMessagesInfiniteQueryKey = (params?: GetMessagesParams) => {
+  return [
+    "infinite",
+    `/api/v1/chats/messages`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const useGetMessagesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMessages>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMessagesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMessages>>> = ({
+    signal,
+  }) => getMessages(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getMessages>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMessagesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMessages>>
+>;
+export type GetMessagesQueryError = unknown;
+
+export function useGetMessages<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMessages>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMessages>>,
+          TError,
+          Awaited<ReturnType<typeof getMessages>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMessages<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMessages>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMessages>>,
+          TError,
+          Awaited<ReturnType<typeof getMessages>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMessages<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMessages>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 날짜별 채팅 히스토리 조회
+ */
+
+export function useGetMessages<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMessages>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetMessagesQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetMessagesSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMessagesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMessages>>> = ({
+    signal,
+  }) => getMessages(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getMessages>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMessagesSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMessages>>
+>;
+export type GetMessagesSuspenseQueryError = unknown;
+
+export function useGetMessagesSuspense<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMessagesSuspense<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMessagesSuspense<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 날짜별 채팅 히스토리 조회
+ */
+
+export function useGetMessagesSuspense<
+  TData = Awaited<ReturnType<typeof getMessages>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetMessagesSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetMessagesSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getMessages>>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMessagesInfiniteQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMessages>>> = ({
+    signal,
+  }) => getMessages(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getMessages>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMessagesSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMessages>>
+>;
+export type GetMessagesSuspenseInfiniteQueryError = unknown;
+
+export function useGetMessagesSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMessages>>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMessagesSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMessages>>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMessagesSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMessages>>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 날짜별 채팅 히스토리 조회
+ */
+
+export function useGetMessagesSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMessages>>>,
+  TError = unknown,
+>(
+  params: GetMessagesParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMessages>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetMessagesSuspenseInfiniteQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
  * 로그인한 사용자의 메시지를 AI 챗봇 서비스로 전달합니다.
- * @summary AI 챗봇 메시지 전송[서버 테스트 불가]
+ * @summary AI 챗봇 메시지 전송
  */
 export const sendMessage = (chatReq: ChatReq, signal?: AbortSignal) => {
   return customInstance<ApiResponseChatRes>({
@@ -1395,7 +1890,7 @@ export type SendMessageMutationBody = ChatReq;
 export type SendMessageMutationError = unknown;
 
 /**
- * @summary AI 챗봇 메시지 전송[서버 테스트 불가]
+ * @summary AI 챗봇 메시지 전송
  */
 export const useSendMessage = <TError = unknown, TContext = unknown>(
   options?: {
@@ -1414,6 +1909,90 @@ export const useSendMessage = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   return useMutation(useSendMessageMutationOptions(options), queryClient);
+};
+
+/**
+ * 로그인한 사용자의 메시지를 AI 챗봇 서비스로 전달합니다.
+ * @summary AI 챗봇 메시지 전송(SSE)
+ */
+export const streamMessage = (chatReq: ChatReq, signal?: AbortSignal) => {
+  return customInstance<SseEmitter>({
+    url: `/api/v1/chats/messages/stream`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: chatReq,
+    signal,
+  });
+};
+
+export const useStreamMessageMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof streamMessage>>,
+    TError,
+    { data: ChatReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof streamMessage>>,
+  TError,
+  { data: ChatReq },
+  TContext
+> => {
+  const mutationKey = ["streamMessage"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof streamMessage>>,
+    { data: ChatReq }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return streamMessage(data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type StreamMessageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof streamMessage>>
+>;
+export type StreamMessageMutationBody = ChatReq;
+export type StreamMessageMutationError = unknown;
+
+/**
+ * @summary AI 챗봇 메시지 전송(SSE)
+ */
+export const useStreamMessage = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof streamMessage>>,
+      TError,
+      { data: ChatReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof streamMessage>>,
+  TError,
+  { data: ChatReq },
+  TContext
+> => {
+  return useMutation(useStreamMessageMutationOptions(options), queryClient);
 };
 
 /**
