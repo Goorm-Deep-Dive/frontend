@@ -45,7 +45,7 @@ export default function DeceasedInfoForm({ defaultValues, onSubmit }: Props) {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2.5 pl-5">
             <span className="h2 text-gray-900">1.영면일 입력</span>
-            <span className="font-regular text-[18px] leading-normal tracking-[-0.02em] text-gray-700">
+            <span className="font-regular text-[1.125rem] leading-normal tracking-[-0.02em] text-gray-700">
               고인께서 영면에 드신 날을 알려주세요.
             </span>
           </div>
@@ -61,7 +61,7 @@ export default function DeceasedInfoForm({ defaultValues, onSubmit }: Props) {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2.5 pl-5">
             <span className="h2 text-gray-900">2.프로필 생성</span>
-            <span className="font-regular text-[18px] leading-normal tracking-[-0.02em] text-gray-700">
+            <span className="font-regular text-[1.125rem] leading-normal tracking-[-0.02em] text-gray-700">
               등록할 성명 혹은 명칭을 알려주세요.
             </span>
           </div>
@@ -74,7 +74,8 @@ export default function DeceasedInfoForm({ defaultValues, onSubmit }: Props) {
         </span>
         <Button
           onClick={handleSubmit}
-          className={`py-3.5 ${isBothFilled ? "bg-primary-1 text-white" : "bg-gray-300 text-[#444444]"}`}
+          disabled={!isBothFilled}
+          className={`py-3.5 ${isBothFilled ? "bg-primary-1 text-white" : "bg-gray-300 text-gray-700"}`}
         >
           입력하기
         </Button>

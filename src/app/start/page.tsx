@@ -13,14 +13,14 @@ export default function Page() {
             </span>
             <Button
               size="small"
-              className="label rounded-[20px] bg-gray-300 px-3 py-1 text-gray-700"
+              className="label rounded-[1.25rem] bg-gray-300 px-3 py-1 text-gray-700"
             >
               로그인 하기
             </Button>
           </div>
         </div>
       </div>
-      <div className="rounded-t-[20px] border-t-2 shadow-[0px_-2px_2px_rgba(0,0,0,0.01)]">
+      <div className="rounded-t-[1.25rem] border-t-2 shadow-[0px_-2px_2px_rgba(0,0,0,0.01)]">
         <div className="mt-15">
           <AddForm />
         </div>
