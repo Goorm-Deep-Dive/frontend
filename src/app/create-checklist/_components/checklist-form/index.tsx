@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
+  getGetSurveyListQueryKey,
   type GetSurveyListQueryResult,
   useGetSurveyList,
   useSaveTempSurvey,
@@ -13,6 +14,8 @@ import BottomCTA from "@/components/common/bottom-cta";
 import { useRouter } from "next/navigation";
 import SurveyQuestionCard from "../survey-question-card";
 import { Button } from "@/components/ui/button";
+import { useAlertStore } from "@/store/useAlertStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 type AnswerMap = Record<string, string | string[]>;
 
@@ -48,6 +51,7 @@ const hasCompletedAnswer = (
 export default function ChecklistForm() {
   const router = useRouter();
 
+  const queryClient = useQueryClient();
   const { data: surveyRes, isPending: isSurveyPending } = useGetSurveyList();
 
   const { mutateAsync: skipSurvey } = useSkipSurvey();
@@ -58,6 +62,60 @@ export default function ChecklistForm() {
 
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [nextQuestionIds, setNextQuestionIds] = useState<string[]>([]);
+
+  const alert = useAlertStore();
+
+  const prefilledAnswers = useMemo(() => {
+    if (
+      !surveyRes?.selectedAnswerIds ||
+      surveyRes.selectedAnswerIds.length === 0 ||
+      !surveys
+    ) {
+      return {} as AnswerMap;
+    }
+
+    const selectedAnswerIds = surveyRes.selectedAnswerIds;
+
+    const answerMap = surveys.reduce((acc, survey, index) => {
+      if (!survey) {
+        return acc;
+      }
+
+      const questionKey = String(
+        survey.surveyQuestionId ?? `question-${index}`,
+      );
+      const selectedIdsByQuestion =
+        survey.answers
+          ?.map((answer) => answer.surveyAnswerId)
+          .filter(
+            (answerId): answerId is number =>
+              typeof answerId === "number" &&
+              selectedAnswerIds.includes(answerId),
+          )
+          .map(String) ?? [];
+
+      if (selectedIdsByQuestion.length === 0) {
+        return acc;
+      }
+
+      acc[questionKey] =
+        survey.questionType === "MULTIPLE"
+          ? selectedIdsByQuestion
+          : selectedIdsByQuestion[0];
+
+      return acc;
+    }, {} as AnswerMap);
+
+    return answerMap;
+  }, [surveyRes, surveys]);
+
+  const resolvedAnswers = useMemo(
+    () => ({
+      ...prefilledAnswers,
+      ...answers,
+    }),
+    [prefilledAnswers, answers],
+  );
 
   /**
    * @description 답변 변경 시, 상태 수정
@@ -112,17 +170,49 @@ export default function ChecklistForm() {
    */
   const handleSaveDraft = async () => {
     try {
-      const filteredAnswer = Object.entries(answers).flatMap(
-        ([_questionId, answer]) =>
-          Array.isArray(answer)
-            ? answer.map((id) => ({ surveyAnswerId: +id }))
-            : [{ surveyAnswerId: +answer }],
+      const filteredAnswer = Object.entries(answers).flatMap(([, answer]) =>
+        Array.isArray(answer)
+          ? answer.map((id) => ({ surveyAnswerId: +id }))
+          : [{ surveyAnswerId: +answer }],
       );
 
       await saveTempSurvey({
         data: {
           answers: filteredAnswer,
         },
+      });
+
+      await queryClient.setQueryData(
+        getGetSurveyListQueryKey(),
+        (old: GetSurveyListQueryResult) => {
+          return {
+            ...old,
+            selectedAnswerIds: [
+              ...(filteredAnswer.map((answer) => answer.surveyAnswerId) ?? []),
+            ],
+          };
+        },
+      );
+
+      alert.push({
+        title: "임시 저장되었습니다.",
+        description: "임시 저장되었습니다.",
+        buttons: [
+          {
+            label: "닫기",
+            onClick: () => {
+              alert.pop();
+            },
+            variant: "secondary",
+          },
+          {
+            label: "확인",
+            onClick: () => {
+              alert.pop();
+            },
+            variant: "primary",
+          },
+        ],
       });
     } catch {}
   };
@@ -132,12 +222,12 @@ export default function ChecklistForm() {
    */
   const handleSave = async () => {
     try {
-      if (Object.keys(answers).length === 0) {
+      if (Object.keys(resolvedAnswers).length === 0) {
         return null;
       }
 
-      const filteredAnswer = Object.entries(answers).flatMap(
-        ([_questionId, answer]) =>
+      const filteredAnswer = Object.entries(resolvedAnswers).flatMap(
+        ([, answer]) =>
           Array.isArray(answer)
             ? answer.map((id) => ({ surveyAnswerId: +id }))
             : [{ surveyAnswerId: +answer }],
@@ -158,7 +248,7 @@ export default function ChecklistForm() {
         isSurveyQuestionVisible(q, index, nextQuestionIds) &&
         !hasCompletedAnswer(
           q.questionType,
-          answers[String(q.surveyQuestionId ?? `question-${index}`)],
+          resolvedAnswers[String(q.surveyQuestionId ?? `question-${index}`)],
         ),
     ),
   );
@@ -191,7 +281,7 @@ export default function ChecklistForm() {
                   question={q}
                   index={index}
                   value={
-                    answers[
+                    resolvedAnswers[
                       String(q.surveyQuestionId ?? `question-${index}`)
                     ] ?? (q.questionType === "MULTIPLE" ? [] : "")
                   }
