@@ -13,6 +13,10 @@ export default function Content() {
     login("kakao");
   };
 
+  const handleNaverLogin = () => {
+    login("naver");
+  };
+
   return (
     <div className="flex h-full flex-col gap-8 pt-36">
       <div className="flex flex-col gap-2 px-5">
@@ -35,6 +39,7 @@ export default function Content() {
             </span>
           </div>
           <SnsLoginButton sns="kakao" onClick={handleKakaoLogin} />
+          <SnsLoginButton sns="naver" onClick={handleNaverLogin} />
           <SnsLoginButton sns="google" disabled />
         </div>
       </div>
