@@ -5,9 +5,11 @@
  * 동행 서비스 API 입니다.
  * OpenAPI spec version: v1
  */
+import type { SurveyAnswerResSurveyAnswerType } from "./surveyAnswerResSurveyAnswerType";
 
 export interface SurveyAnswerRes {
   surveyAnswerId?: number;
   surveyAnswerText?: string;
   nextQuestionId?: number;
+  surveyAnswerType?: SurveyAnswerResSurveyAnswerType;
 }

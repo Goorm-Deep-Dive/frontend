@@ -8,6 +8,7 @@ interface CheckboxItem {
   value: string;
   description?: string;
   nextQuestionId?: number;
+  surveyAnswerType?: string;
 }
 
 interface Props {
@@ -25,11 +26,18 @@ export default function CheckboxList({
   multiple = false,
   idPrefix = "checkbox-list",
 }: Props) {
+  const isExclusiveAnswerType = (surveyAnswerType?: string) =>
+    surveyAnswerType === "NOT_APPLICABLE" || surveyAnswerType === "UNKNOWN";
+
   const selectedValues = (Array.isArray(value) ? value : [value]).filter(
     Boolean,
   );
 
-  const handleToggle = (itemValue: string, nextQuestionId?: number) => {
+  const handleToggle = (
+    itemValue: string,
+    nextQuestionId?: number,
+    surveyAnswerType?: string,
+  ) => {
     const isChecked = selectedValues.includes(itemValue);
 
     if (!multiple) {
@@ -45,7 +53,18 @@ export default function CheckboxList({
       return;
     }
 
-    onChange([...selectedValues, itemValue], nextQuestionId);
+    if (isExclusiveAnswerType(surveyAnswerType)) {
+      // "해당없음/모르겠음" 선택 시 동일 질문의 기존 선택을 해제하고 단일 선택으로 고정
+      onChange([itemValue], nextQuestionId);
+      return;
+    }
+
+    const selectedGeneralValues = selectedValues.filter((selectedValue) => {
+      const selectedItem = items.find((item) => item.value === selectedValue);
+      return !isExclusiveAnswerType(selectedItem?.surveyAnswerType);
+    });
+
+    onChange([...selectedGeneralValues, itemValue], nextQuestionId);
   };
 
   return (
@@ -70,7 +89,11 @@ export default function CheckboxList({
             htmlFor={inputId}
             onClick={(event) => {
               event.preventDefault();
-              handleToggle(item.value, item.nextQuestionId);
+              handleToggle(
+                item.value,
+                item.nextQuestionId,
+                item.surveyAnswerType,
+              );
             }}
           >
             <div

@@ -1,11 +1,11 @@
 import { cn } from "@/lib/cn";
 
-interface Props {
+interface BottomCTAProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export default function BottomCTA({ children, className }: Props) {
+export default function BottomCTA({ children, className }: BottomCTAProps) {
   return (
     <>
       <div aria-hidden className="h-37.5 min-h-37.5" />

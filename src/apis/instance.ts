@@ -6,6 +6,13 @@ import axios, {
   AxiosResponse,
 } from "axios";
 
+const clearRefreshCookieOnAppOrigin = async () => {
+  await fetch("/api/auth/clear-refresh-cookie", {
+    method: "POST",
+    credentials: "include",
+  });
+};
+
 /**
  * @description Orval `ApiResponse*` 스키마에서 HTTP 본문(payload) 타입만 추출
  * @param T - HTTP 본문(payload) 타입
@@ -59,12 +66,13 @@ axiosInstance.interceptors.response.use(
     }
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     if (error.response) {
       switch (error.response.status) {
         case 401:
           if (typeof window !== "undefined") {
             localStorage.clear();
+            await clearRefreshCookieOnAppOrigin();
             window.location.href = "/login";
           }
           break;
