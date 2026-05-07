@@ -4,7 +4,6 @@ import { memo, useCallback, useMemo } from "react";
 import type { GetSurveyListQueryResult } from "@/apis/generated/api-client";
 import CommonAccordion from "@/components/common/accordion";
 import CheckboxList from "@/components/common/checkbox-list";
-import { Button } from "@/components/ui/button";
 
 type SurveyItem = NonNullable<
   NonNullable<GetSurveyListQueryResult["surveys"]>[number]
@@ -43,6 +42,7 @@ const SurveyQuestionCard = memo(
             answer.surveyAnswerId ?? `question-${index}-answer-${answerIndex}`,
           ),
           nextQuestionId: answer.nextQuestionId,
+          surveyAnswerType: answer.surveyAnswerType,
         })) ?? [],
       [index, question.answers],
     );
@@ -76,15 +76,6 @@ const SurveyQuestionCard = memo(
             multiple={isMultiple}
             onChange={handleChange}
           />
-
-          <div className="mx-auto mt-2.5 flex items-center justify-center gap-5 p-2.5">
-            <Button size="small" rounded disabled>
-              이전 질문으로
-            </Button>
-            <Button size="small" rounded disabled>
-              다음 질문으로
-            </Button>
-          </div>
         </CommonAccordion.Content>
       </CommonAccordion>
     );
