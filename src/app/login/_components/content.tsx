@@ -19,7 +19,7 @@ export default function Content() {
 
   return (
     <div className="flex h-full flex-col gap-8 pt-36">
-      <div className="flex flex-col gap-2 px-5">
+      <div className="flex flex-col gap-2 px-7.5">
         <span className="h1 text-gray-900">
           이제 혼자
           <br />
@@ -30,7 +30,16 @@ export default function Content() {
         </span>
       </div>
 
-      <div className="mt-auto flex h-130 w-full flex-col items-center justify-end rounded-t-3xl bg-linear-to-b from-[#DEDEDE] to-white pb-6">
+      <div className="flex w-full flex-col items-center justify-end gap-10 rounded-t-3xl bg-linear-to-b from-[#FCFBF8] to-white">
+        <div className="flex pt-12">
+          <Image
+            src="/images/logo_final.png"
+            alt="login"
+            width={290}
+            height={290}
+          />
+        </div>
+
         <div className="flex w-full flex-col gap-4 px-5">
           <div className="flex items-center justify-center gap-1">
             <Image src="/icons/info.svg" alt="" width={20} height={20} />

@@ -13,6 +13,7 @@ interface DateInputProps {
   onChange: (value: string) => void;
   date?: Date;
   onDateChange?: (date?: Date) => void;
+  isFilled: boolean;
 }
 
 export default function DateInput({
@@ -20,13 +21,13 @@ export default function DateInput({
   onChange,
   date,
   onDateChange,
+  isFilled,
 }: DateInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [open, setOpen] = useState(false);
 
   const formatDate = (input: string) => {
     const numbers = input.replace(/\D/g, "").slice(0, 8);
-
     if (numbers.length < 5) {
       return numbers;
     }
@@ -64,10 +65,18 @@ export default function DateInput({
             value={value}
             onChange={handleChange}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                setIsFocused(false);
+              }
+            }}
             placeholder="YYYY-MM-DD"
             inputMode="numeric"
-            className="text-primary-1 w-full bg-transparent outline-none"
+            className={`w-full bg-transparent px-2 outline-none ${
+              isFocused || isFilled
+                ? "text-primary-1 placeholder:text-primary-1"
+                : "text-primary-2 placeholder:text-primary-2"
+            }`}
           />
 
           <Popover open={open} onOpenChange={setOpen}>
@@ -83,7 +92,7 @@ export default function DateInput({
             </PopoverTrigger>
 
             <PopoverContent className="w-auto gap-2 p-0">
-              <div className="flex flex-col gap-4 rounded-lg bg-gray-200 p-4">
+              <div className="flex flex-col items-center gap-4 rounded-lg bg-gray-200 p-4">
                 <div className="rounded-lg bg-white shadow-md">
                   <Calendar
                     mode="single"
@@ -95,6 +104,7 @@ export default function DateInput({
                         onChange(formatted);
                       }
                     }}
+                    disabled={{ after: new Date() }}
                   />
                 </div>
                 <button
