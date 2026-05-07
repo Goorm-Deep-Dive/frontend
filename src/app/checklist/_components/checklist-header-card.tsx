@@ -1,6 +1,5 @@
 import {
   getGetSurveyListQueryKey,
-  GetSurveyListQueryResult,
   useResetSurvey,
 } from "@/apis/generated/api-client";
 import ListCutIcon from "@/components/icons/list-cut-icon";
@@ -20,15 +19,9 @@ export default function ChecklistHeaderCard({ profile, count }: Props) {
   const handleResetSurvey = async () => {
     try {
       await resetSurvey();
-      await queryClient.setQueryData(
-        getGetSurveyListQueryKey(),
-        (old: GetSurveyListQueryResult) => {
-          return {
-            ...old,
-            selectedAnswerIds: [],
-          };
-        },
-      );
+      await queryClient.invalidateQueries({
+        queryKey: getGetSurveyListQueryKey(),
+      });
       router.push("/create-checklist");
     } catch (error) {
       console.error(error);
