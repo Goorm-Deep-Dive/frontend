@@ -87,6 +87,9 @@ export default function DeceasedProfileList() {
           });
         },
       );
+
+      // 전체 쿼리 리로드
+      await queryClient.invalidateQueries();
     } catch {}
   };
 

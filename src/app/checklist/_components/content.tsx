@@ -31,13 +31,7 @@ export default function Content() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="flex w-full flex-col gap-5">
-        <div className="bg-tab-bg flex justify-center gap-2.5 py-1.5">
-          <span className="label">가장 빠른 기한까지 </span>
-          <span className="text-sementic-red">D-100</span>
-          <span className="label">일 남았어요</span>
-        </div>
-
+      <div className="flex w-full flex-col gap-5 pt-5">
         <div className="flex flex-col justify-center gap-5 px-5">
           <ChecklistHeaderCard
             profile={profile?.name ?? ""}
