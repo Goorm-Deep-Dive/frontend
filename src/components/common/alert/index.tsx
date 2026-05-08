@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/cn";
 import Image from "next/image";
 
 interface AlertButton {
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "negative";
   label: string;
   onClick: () => void;
 }
 
 interface AlertProps {
+  variant?: "primary" | "negative";
   icon?: React.ReactNode;
   title: string | React.ReactNode;
   description: string | React.ReactNode;
@@ -16,6 +18,7 @@ interface AlertProps {
 }
 
 export default function Alert({
+  variant = "primary",
   icon,
   title,
   description,
@@ -23,7 +26,7 @@ export default function Alert({
   buttons,
 }: AlertProps) {
   return (
-    <div className="relative w-[350px] rounded-xl border border-black bg-white">
+    <div className="relative w-[350px] rounded-xl border bg-white">
       <button className="absolute top-4 right-4" onClick={onClose}>
         <Image
           src="/icons/alert/close.svg"
@@ -37,7 +40,14 @@ export default function Alert({
           {icon && (
             <div className="flex items-center justify-center">{icon}</div>
           )}
-          <h2 className="h2 text-primary-1">{title}</h2>
+          <h2
+            className={cn(
+              "h2",
+              variant === "negative" ? "text-sementic-red" : "text-primary-1",
+            )}
+          >
+            {title}
+          </h2>
           <span className="body text-gray-700">{description}</span>
         </div>
         <div className="flex justify-center gap-5">
