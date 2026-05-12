@@ -4,11 +4,14 @@ import {
   useGetActiveDeceasedProfile,
   useGetCategoryProcedures,
 } from "@/apis/generated/api-client";
+import { useRequireSurveyCompleted } from "@/hooks/use-require-survey-completed";
 import ChecklistHeaderCard from "./checklist-header-card";
 import ChecklistList from "./checklist-list";
 import ChecklistAdd from "./checklist-add";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 import { useState } from "react";
+import { useEffect } from "react";
+import { event } from "@/lib/gtag";
 
 const checklistAddItems = [
   {
@@ -40,6 +43,7 @@ const checklistAddItems = [
 export default function Content() {
   const [isListClicked, setIsListClicked] = useState(false);
   const [isAddListClicked, setIsAddListClicked] = useState(false);
+  useRequireSurveyCompleted();
 
   const { data: profile } = useGetActiveDeceasedProfile();
 
@@ -60,6 +64,10 @@ export default function Content() {
   const remainingCount = proceduresRes?.procedures?.filter(
     (item) => !item.checked,
   ).length;
+
+  useEffect(() => {
+    event("checklist_page_view");
+  }, []);
 
   return (
     <div className="flex w-full flex-col">

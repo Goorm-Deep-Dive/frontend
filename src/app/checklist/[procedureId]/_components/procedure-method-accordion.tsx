@@ -3,7 +3,6 @@
 import InfoCircleIcon from "@/components/icons/info-circle-icon";
 import IssuerIcon from "@/components/icons/issuer-icon";
 import PhoneIcon from "@/components/icons/phone-icon";
-import RequiredDocumentIcon from "@/components/icons/required-document-icon";
 import {
   Accordion,
   AccordionContent,
@@ -49,11 +48,9 @@ export default function ProcedureMethodAccordion({
   const { data: documentDetail } =
     useGetProcedureDocumentDetail(procedureDocumentId);
 
-  const issuerText = documentDetail?.documentLocation?.trim() || "정보 없음";
-  const contactText = documentDetail?.documentLink?.trim() || "정보 없음";
-  const requiredDocumentText =
-    documentDetail?.documentName?.trim() || "정보 없음";
-  const noteText = documentDetail?.description?.trim() || "정보 없음";
+  const issuerText = documentDetail?.documentLocation?.trim() ?? "";
+  const contactText = documentDetail?.documentLink?.trim() ?? "";
+  const noteText = documentDetail?.description?.trim() ?? "";
 
   const issuerLink =
     documentDetail?.documentLink?.startsWith("http://") ||
@@ -170,43 +167,35 @@ export default function ProcedureMethodAccordion({
 
           <AccordionContent className="rounded-b-md">
             <div className="flex flex-col gap-4 rounded-b-md bg-gray-100 px-5 pt-5 pb-7.5">
-              {/* 발급처 */}
-              <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
-                <div className="flex items-center gap-2.5 pl-2.5">
-                  <IssuerIcon className="h-5 w-4" />
-                  <span className="h4 text-gray-900">발급처</span>
+              {issuerText ? (
+                <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
+                  <div className="flex items-center gap-2.5 pl-2.5">
+                    <IssuerIcon className="h-5 w-4" />
+                    <span className="h4 text-gray-900">발급처</span>
+                  </div>
+                  <span className="body text-gray-700">{issuerText}</span>
                 </div>
-                <span className="body text-gray-700">{issuerText}</span>
-              </div>
+              ) : null}
 
-              {/* 연락처 */}
-              <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
-                <div className="flex items-center gap-2.5 pl-2.5">
-                  <PhoneIcon className="h-5.5 w-5.5" />
-                  <span className="h4 text-gray-900">연락처</span>
+              {contactText ? (
+                <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
+                  <div className="flex items-center gap-2.5 pl-2.5">
+                    <PhoneIcon className="h-5.5 w-5.5" />
+                    <span className="h4 text-gray-900">연락처</span>
+                  </div>
+                  <span className="body text-gray-700">{contactText}</span>
                 </div>
-                <span className="body text-gray-700">{contactText}</span>
-              </div>
+              ) : null}
 
-              {/* 필요서류 */}
-              <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
-                <div className="flex items-center gap-2.5 pl-2.5">
-                  <RequiredDocumentIcon className="h-5 w-4.5" />
-                  <span className="h4 text-gray-900">필요서류</span>
+              {noteText ? (
+                <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
+                  <div className="flex items-center gap-2.5 pl-2.5">
+                    <InfoCircleIcon className="h-5 w-5" />
+                    <span className="h4 text-gray-900">비고</span>
+                  </div>
+                  <span className="body text-gray-700">{noteText}</span>
                 </div>
-                <span className="body text-gray-700">
-                  {requiredDocumentText}
-                </span>
-              </div>
-
-              {/* 비고 */}
-              <div className="flex flex-col gap-1 rounded-md border border-gray-300 bg-white px-5 py-2.5">
-                <div className="flex items-center gap-2.5 pl-2.5">
-                  <InfoCircleIcon className="h-5 w-5" />
-                  <span className="h4 text-gray-900">비고</span>
-                </div>
-                <span className="body text-gray-700">{noteText}</span>
-              </div>
+              ) : null}
               <div className="flex items-center justify-center gap-2.5">
                 {/*
                   같은 페이지에서 여러 개 렌더링되므로 id는 반드시 unique 해야 한다.

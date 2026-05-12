@@ -1,9 +1,12 @@
 "use client";
 
+import { useRequireSurveyCompleted } from "@/hooks/use-require-survey-completed";
 import CategoryCardsPanel from "./category-cards-panel";
 import OverallProgressPanel from "./overall-progress-panel";
 
 export default function Content() {
+  useRequireSurveyCompleted();
+
   return (
     <>
       <div className="bg-primary-1 px-5 py-9">

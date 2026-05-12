@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useRef, useEffect } from "react";
 import {
+  getGetCategoryProceduresQueryKey,
+  getGetOverallProgressQueryKey,
   getGetSurveyListQueryKey,
   type GetSurveyListQueryResult,
   useGetSurveyList,
@@ -16,6 +18,8 @@ import SurveyQuestionCard from "../survey-question-card";
 import { Button } from "@/components/ui/button";
 import { useAlertStore } from "@/store/useAlertStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
+import { event } from "@/lib/gtag";
 
 type AnswerMap = Record<string, string | string[]>;
 
@@ -50,6 +54,7 @@ const hasCompletedAnswer = (
 
 export default function ChecklistForm() {
   const router = useRouter();
+  const questionStartTimes = useRef<Record<string, number>>({});
 
   const queryClient = useQueryClient();
   const { data: surveyRes, isPending: isSurveyPending } = useGetSurveyList();
@@ -64,6 +69,9 @@ export default function ChecklistForm() {
   const [nextQuestionIds, setNextQuestionIds] = useState<string[]>([]);
 
   const alert = useAlertStore();
+  const selectedCategoryId = useChecklistCategoryStore(
+    (s) => s.selectedCategoryId,
+  );
 
   const prefilledAnswers = useMemo(() => {
     if (
@@ -126,6 +134,23 @@ export default function ChecklistForm() {
       nextValue: string | string[],
       nextQuestionId?: number,
     ) => {
+      const startedAt = questionStartTimes.current[questionKey];
+
+      if (startedAt) {
+        const duration = Math.floor((Date.now() - startedAt) / 1000);
+
+        event("survey_question_answer", {
+          questionId: questionKey,
+        });
+
+        event("survey_question_duration", {
+          questionId: questionKey,
+          duration,
+        });
+
+        delete questionStartTimes.current[questionKey];
+      }
+
       setAnswers((prev) => ({
         ...prev,
         [questionKey]: nextValue,
@@ -144,13 +169,19 @@ export default function ChecklistForm() {
     },
     [nextQuestionIds],
   );
-
   /**
    * @description 설문 문진 건너뛰기
    */
   const handleSkipSurvey = async () => {
     try {
       await skipSurvey();
+
+      await queryClient.invalidateQueries({
+        queryKey: getGetOverallProgressQueryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getGetCategoryProceduresQueryKey(selectedCategoryId ?? 1),
+      });
       router.push("/checklist");
     } catch {}
   };
@@ -161,6 +192,13 @@ export default function ChecklistForm() {
   const handleNext = async () => {
     try {
       await handleSave();
+      await queryClient.invalidateQueries({
+        queryKey: getGetOverallProgressQueryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getGetCategoryProceduresQueryKey(selectedCategoryId ?? 1),
+      });
+
       router.push("/checklist");
     } catch {}
   };
@@ -252,6 +290,20 @@ export default function ChecklistForm() {
         ),
     ),
   );
+
+  useEffect(() => {
+    surveys?.forEach((q, index) => {
+      const questionKey = String(q?.surveyQuestionId ?? `question-${index}`);
+
+      if (!questionStartTimes.current[questionKey]) {
+        questionStartTimes.current[questionKey] = Date.now();
+      }
+    });
+  }, [surveys]);
+
+  useEffect(() => {
+    event("survey_page_view");
+  }, []);
 
   return (
     <>
