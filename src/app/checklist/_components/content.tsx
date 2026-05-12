@@ -8,6 +8,8 @@ import { useRequireSurveyCompleted } from "@/hooks/use-require-survey-completed"
 import ChecklistHeaderCard from "./checklist-header-card";
 import ChecklistList from "./checklist-list";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
+import { useEffect } from "react";
+import { event } from "@/lib/gtag";
 
 export default function Content() {
   useRequireSurveyCompleted();
@@ -31,6 +33,10 @@ export default function Content() {
   const remainingCount = proceduresRes?.procedures?.filter(
     (item) => !item.checked,
   ).length;
+
+  useEffect(() => {
+    event("checklist_page_view");
+  }, []);
 
   return (
     <div className="flex w-full flex-col">

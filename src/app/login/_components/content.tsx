@@ -4,18 +4,32 @@ import SnsLoginButton from "@/components/common/sns-login-button";
 import { useOAuthLoginSuccess } from "@/hooks/use-oauth-login-success";
 import { useSocialLogin } from "@/hooks/use-social-login";
 import Image from "next/image";
+import { useEffect } from "react";
+import { event } from "@/lib/gtag";
 
 export default function Content() {
   useOAuthLoginSuccess();
   const { login } = useSocialLogin();
 
   const handleKakaoLogin = () => {
+    event("login_button_click", {
+      provider: "kakao",
+    });
+
     login("kakao");
   };
 
   const handleNaverLogin = () => {
+    event("login_button_click", {
+      provider: "naver",
+    });
+
     login("naver");
   };
+
+  useEffect(() => {
+    event("login_page_view");
+  }, []);
 
   return (
     <div className="flex h-full flex-col gap-8 pt-36">
