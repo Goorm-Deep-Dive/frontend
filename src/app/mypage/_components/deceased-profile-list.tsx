@@ -211,12 +211,16 @@ export default function DeceasedProfileList() {
                     <Pencil className="h-4 w-4 text-gray-700" />
                     <span className="caption">수정하기</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleDeleteProfileConfirm(deceasedProfile)}
-                  >
-                    <Trash2 className="h-4 w-4 text-gray-700" />
-                    <span className="caption">삭제하기</span>
-                  </DropdownMenuItem>
+                  {!deceasedProfile.active && (
+                    <DropdownMenuItem
+                      onClick={() =>
+                        handleDeleteProfileConfirm(deceasedProfile)
+                      }
+                    >
+                      <Trash2 className="h-4 w-4 text-gray-700" />
+                      <span className="caption">삭제하기</span>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

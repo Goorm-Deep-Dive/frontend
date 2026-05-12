@@ -1,15 +1,13 @@
 import { cn } from "@/lib/cn";
 
-type Status = "default" | "urgent" | "done";
-
 interface ChecklistBadgeProps {
-  listDate?: string; // D-30
+  listDate?: number;
 }
 
 export default function ChecklistBadge({ listDate }: ChecklistBadgeProps) {
   const mode = {
     default: {
-      description: listDate,
+      description: `D-${listDate}`,
       style:
         "text-sementic-red bg-sementic-red-bg border-sementic-red px-2 py-1",
     },

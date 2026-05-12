@@ -2,6 +2,8 @@
 
 import { useCallback, useMemo, useState } from "react";
 import {
+  getGetCategoryProceduresQueryKey,
+  getGetOverallProgressQueryKey,
   getGetSurveyListQueryKey,
   type GetSurveyListQueryResult,
   useGetSurveyList,
@@ -16,6 +18,7 @@ import SurveyQuestionCard from "../survey-question-card";
 import { Button } from "@/components/ui/button";
 import { useAlertStore } from "@/store/useAlertStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 
 type AnswerMap = Record<string, string | string[]>;
 
@@ -64,6 +67,9 @@ export default function ChecklistForm() {
   const [nextQuestionIds, setNextQuestionIds] = useState<string[]>([]);
 
   const alert = useAlertStore();
+  const selectedCategoryId = useChecklistCategoryStore(
+    (s) => s.selectedCategoryId,
+  );
 
   const prefilledAnswers = useMemo(() => {
     if (
@@ -151,6 +157,13 @@ export default function ChecklistForm() {
   const handleSkipSurvey = async () => {
     try {
       await skipSurvey();
+
+      await queryClient.invalidateQueries({
+        queryKey: getGetOverallProgressQueryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getGetCategoryProceduresQueryKey(selectedCategoryId ?? 1),
+      });
       router.push("/checklist");
     } catch {}
   };
@@ -161,6 +174,13 @@ export default function ChecklistForm() {
   const handleNext = async () => {
     try {
       await handleSave();
+      await queryClient.invalidateQueries({
+        queryKey: getGetOverallProgressQueryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getGetCategoryProceduresQueryKey(selectedCategoryId ?? 1),
+      });
+
       router.push("/checklist");
     } catch {}
   };
