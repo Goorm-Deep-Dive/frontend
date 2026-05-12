@@ -4,7 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "negative";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center transition-all disabled:pointer-events-none whitespace-nowrap cursor-pointer",
@@ -29,6 +29,11 @@ const buttonVariants = cva(
         hover:bg-zinc-100
         disabled:bg-transparent disabled:text-zinc-400 disabled:opacity-50
         dark:text-zinc-50 dark:hover:bg-zinc-800 dark:disabled:text-zinc-600
+      `,
+        negative: `
+        bg-sementic-red text-white
+        hover:bg-sementic-red-hover
+        disabled:bg-sementic-red-disabled disabled:text-white
       `,
       },
       size: {

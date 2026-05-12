@@ -13,6 +13,7 @@ export default function AlertRenderer() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <Alert
+        variant={current.variant}
         icon={current.icon}
         title={current.title}
         description={current.description ?? ""}

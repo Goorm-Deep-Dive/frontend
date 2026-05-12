@@ -1,13 +1,14 @@
 import { create } from "zustand";
 
 export interface AlertButton {
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "negative";
   label: string;
   onClick: () => void;
 }
 
 export interface AlertItem {
   id: string;
+  variant?: "primary" | "negative";
   icon?: React.ReactNode;
   title: string | React.ReactNode;
   description?: string | React.ReactNode;
