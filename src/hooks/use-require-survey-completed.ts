@@ -15,11 +15,18 @@ const isSurveyCompleted = (status?: string) =>
  */
 export const useRequireSurveyCompleted = () => {
   const router = useRouter();
-  const { data, isSuccess } = useGetDeceasedSurveyStatus();
+  const { data, isSuccess } = useGetDeceasedSurveyStatus({
+    query: {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      gcTime: 0,
+    },
+  });
 
   useEffect(() => {
     if (!isSuccess) return;
-    if (isSurveyCompleted(data?.surveyStatus)) return;
+    const isCompleted = isSurveyCompleted(data?.surveyStatus);
+    if (isCompleted) return;
     router.replace("/create-checklist");
   }, [data?.surveyStatus, isSuccess, router]);
 };

@@ -39,7 +39,22 @@ export default function DateInput({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatDate(e.target.value);
+
     onChange(formatted);
+
+    const numbers = formatted.replace(/\D/g, "");
+
+    if (numbers.length === 8) {
+      const parsedDate = new Date(
+        Number(numbers.slice(0, 4)),
+        Number(numbers.slice(4, 6)) - 1,
+        Number(numbers.slice(6, 8)),
+      );
+
+      if (!isNaN(parsedDate.getTime())) {
+        onDateChange?.(parsedDate);
+      }
+    }
   };
 
   return (

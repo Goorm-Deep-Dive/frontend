@@ -120,6 +120,7 @@ export default function Content({ procedureId }: Props) {
                     title={document.documentName ?? ""}
                     index={index}
                     checked={document.checked ?? false}
+                    defaultOpen={false}
                   />
                 ),
             )}
@@ -178,9 +179,9 @@ export default function Content({ procedureId }: Props) {
         {procedureDetail?.checked ? (
           <>
             {" "}
-            <div className="flex flex-col">
+            <div className="flex flex-col text-center">
               <span className="caption text-gray-900">
-                <span className="h4">화장/매장 신고</span>
+                <span className="h4">{procedureDetail?.procedureName}</span>
                 버튼을 잘못 누르셨나요?
               </span>
               <span className="caption text-gray-900">
@@ -196,10 +197,10 @@ export default function Content({ procedureId }: Props) {
           </>
         ) : (
           <>
-            <div className="flex flex-col">
+            <div className="flex flex-col text-center">
               <span className="caption text-gray-900">
-                <span className="h4">화장/매장 신고</span> 후 체크 완료하기
-                버튼을 눌러주세요.
+                <span className="h4">{procedureDetail?.procedureName}</span> 후
+                체크 완료하기 버튼을 눌러주세요.
               </span>
               <span className="caption text-gray-900">
                 필요서류 항목을 모두 체크하면 버튼이 활성화 됩니다.
