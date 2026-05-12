@@ -29,7 +29,7 @@ export default function ChecklistList({
     );
   };
 
-  const showListDate = listDate && listDate > 0 && listDate < 31;
+  const showListDate = listDate && listDate > 0 && +listDate < 31;
 
   return (
     <button
@@ -56,8 +56,7 @@ export default function ChecklistList({
       </div>
 
       <div className="flex items-center gap-4">
-        {showListDate && <ChecklistBadge listDate={`D-${listDate}`} />}
-
+        {showListDate ? <ChecklistBadge listDate={listDate} /> : null}
         <span className="flex items-center gap-2.5 whitespace-nowrap">
           <span className="caption">자세히보기</span>
           <ArrowRightIcon width={6} height={10} />
