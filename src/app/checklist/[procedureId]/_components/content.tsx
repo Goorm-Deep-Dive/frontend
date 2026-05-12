@@ -8,6 +8,7 @@ import {
   useModifyProcedureCheck,
 } from "@/apis/generated/api-client";
 import type { ChecklistProcedureDetailRes } from "@/apis/generated/model";
+import { useRequireSurveyCompleted } from "@/hooks/use-require-survey-completed";
 import ProcedureMethodAccordion from "./procedure-method-accordion";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,6 +22,8 @@ interface Props {
 }
 
 export default function Content({ procedureId }: Props) {
+  useRequireSurveyCompleted();
+
   const router = useRouter();
 
   /** 체크 완료 후 돌아갔을 때 동일 카테고리 절차 목록만 무효화 */
