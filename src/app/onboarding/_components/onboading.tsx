@@ -55,12 +55,12 @@ export default function Onboarding() {
         <button
           type="button"
           onClick={() => setStep(steps[stepIndex + 1])}
-          className="h4 absolute bottom-15 left-1/2 -translate-x-1/2 cursor-pointer px-4 py-2 text-[#94FAFF] underline"
+          className="h4 absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer px-4 py-2 text-[#94FAFF] underline"
         >
           다음으로
         </button>
       ) : (
-        <div className="absolute bottom-10 px-5">
+        <div className="absolute bottom-10 w-full px-5">
           <Button
             type="button"
             onClick={async () => {
