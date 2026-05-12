@@ -12,8 +12,15 @@ import { useRouter } from "next/navigation";
 interface Props {
   profile: string;
   count: number;
+  isClicked: boolean;
+  onClick: () => void;
 }
-export default function ChecklistHeaderCard({ profile, count }: Props) {
+export default function ChecklistHeaderCard({
+  profile,
+  count,
+  isClicked,
+  onClick,
+}: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutateAsync: resetSurvey } = useResetSurvey();
@@ -58,6 +65,7 @@ export default function ChecklistHeaderCard({ profile, count }: Props) {
       console.error(error);
     }
   };
+
   return (
     <div className="bg-gr2 border-gray-30 flex flex-col gap-5 rounded-lg border px-9 py-7.5 pb-10">
       <div className="flex justify-center">
@@ -75,19 +83,32 @@ export default function ChecklistHeaderCard({ profile, count }: Props) {
         </div>
       </div>
 
-      <div className="flex w-full gap-2.5">
-        <button className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 py-2 text-white">
+      {isClicked ? (
+        <button
+          onClick={onClick}
+          className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-200 py-2 text-gray-500"
+        >
           <ListCutIcon />
           리스트 편집하기
         </button>
-        <button
-          className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 py-2 text-white"
-          onClick={handleResetSurveyConfirm}
-        >
-          <ResetSurveyIcon />
-          설문 다시하기
-        </button>
-      </div>
+      ) : (
+        <div className="flex w-full gap-2.5">
+          <button
+            onClick={onClick}
+            className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 py-2 text-white"
+          >
+            <ListCutIcon />
+            리스트 편집하기
+          </button>
+          <button
+            className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 py-2 text-white"
+            onClick={handleResetSurveyConfirm}
+          >
+            <ResetSurveyIcon />
+            설문 다시하기
+          </button>
+        </div>
+      )}
     </div>
   );
 }
