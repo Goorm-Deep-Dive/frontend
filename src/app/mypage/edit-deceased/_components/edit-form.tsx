@@ -1,11 +1,15 @@
 "use client";
 
 import {
+  getGetActiveDeceasedProfileQueryKey,
+  getGetCategoryProceduresQueryKey,
   getGetDeceasedProfilesQueryKey,
+  getGetOverallProgressQueryKey,
   useGetDeceasedProfiles,
   useModifyDeceasedProfile,
 } from "@/apis/generated/api-client";
 import DeceasedInfoForm from "@/app/start/_components/deceased-info-form";
+import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
@@ -19,6 +23,9 @@ export default function EditForm({ id }: { id: string }) {
   const deceasedProfile = deceasedProfiles?.find(
     (profile) => profile.deceasedProfileId === +id,
   );
+
+  const selectedCategoryId =
+    useChecklistCategoryStore((s) => s.selectedCategoryId) ?? 1;
 
   if (isPending) {
     return (
@@ -40,7 +47,16 @@ export default function EditForm({ id }: { id: string }) {
       });
 
       await queryClient.invalidateQueries({
+        queryKey: getGetActiveDeceasedProfileQueryKey(),
+      });
+      await queryClient.invalidateQueries({
         queryKey: getGetDeceasedProfilesQueryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getGetOverallProgressQueryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getGetCategoryProceduresQueryKey(selectedCategoryId ?? 0),
       });
     } catch {
     } finally {
