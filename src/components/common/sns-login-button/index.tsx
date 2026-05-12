@@ -13,7 +13,7 @@ const SNS_CONFIG = {
     className: "bg-green-600 text-white",
   },
   google: {
-    name: "구글 로그인",
+    name: "Google 로그인",
     icon: "/icons/google.svg",
     className: "bg-white text-black",
   },
