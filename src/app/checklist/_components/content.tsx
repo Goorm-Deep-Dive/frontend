@@ -4,11 +4,14 @@ import {
   useGetActiveDeceasedProfile,
   useGetCategoryProcedures,
 } from "@/apis/generated/api-client";
+import { useRequireSurveyCompleted } from "@/hooks/use-require-survey-completed";
 import ChecklistHeaderCard from "./checklist-header-card";
 import ChecklistList from "./checklist-list";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 
 export default function Content() {
+  useRequireSurveyCompleted();
+
   const { data: profile } = useGetActiveDeceasedProfile();
 
   const selectedCategoryId = useChecklistCategoryStore(
