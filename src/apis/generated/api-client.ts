@@ -39,6 +39,7 @@ import type {
   ApiResponseChecklistProcedureDetailRes,
   ApiResponseDeceasedProfileRes,
   ApiResponseDeceasedSurveyStatusRes,
+  ApiResponseListCalendarEventRes,
   ApiResponseListChatMessageRes,
   ApiResponseListDeceasedProfileListRes,
   ApiResponseListOptionalProcedureRes,
@@ -53,7 +54,9 @@ import type {
   ChecklistCheckReq,
   DeceasedProfileCreateReq,
   DeceasedProfileUpdateReq,
+  GetDailyEventsParams,
   GetMessagesParams,
+  GetMonthlyEventsParams,
   LinkGoogleParams,
   SseEmitter,
   SurveySaveReq,
@@ -6737,6 +6740,856 @@ export function useGetCategoryProceduresSuspenseInfinite<
 } {
   const queryOptions = useGetCategoryProceduresSuspenseInfiniteQueryOptions(
     categoryId,
+    options,
+  );
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 체크리스트에서 생성된 due date를 기반으로 월간 달력을 조회합니다.
+ * @summary 월별 캘린더 조회
+ */
+export const getMonthlyEvents = (
+  params: GetMonthlyEventsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseListCalendarEventRes>({
+    url: `/api/v1/calendar`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetMonthlyEventsQueryKey = (
+  params?: GetMonthlyEventsParams,
+) => {
+  return [`/api/v1/calendar`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetMonthlyEventsInfiniteQueryKey = (
+  params?: GetMonthlyEventsParams,
+) => {
+  return ["infinite", `/api/v1/calendar`, ...(params ? [params] : [])] as const;
+};
+
+export const useGetMonthlyEventsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMonthlyEventsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMonthlyEvents>>
+  > = ({ signal }) => getMonthlyEvents(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getMonthlyEvents>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMonthlyEventsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMonthlyEvents>>
+>;
+export type GetMonthlyEventsQueryError = unknown;
+
+export function useGetMonthlyEvents<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMonthlyEvents>>,
+          TError,
+          Awaited<ReturnType<typeof getMonthlyEvents>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMonthlyEvents<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMonthlyEvents>>,
+          TError,
+          Awaited<ReturnType<typeof getMonthlyEvents>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMonthlyEvents<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 월별 캘린더 조회
+ */
+
+export function useGetMonthlyEvents<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetMonthlyEventsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetMonthlyEventsSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMonthlyEventsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMonthlyEvents>>
+  > = ({ signal }) => getMonthlyEvents(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getMonthlyEvents>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMonthlyEventsSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMonthlyEvents>>
+>;
+export type GetMonthlyEventsSuspenseQueryError = unknown;
+
+export function useGetMonthlyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMonthlyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMonthlyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 월별 캘린더 조회
+ */
+
+export function useGetMonthlyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getMonthlyEvents>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetMonthlyEventsSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetMonthlyEventsSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getMonthlyEvents>>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMonthlyEventsInfiniteQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMonthlyEvents>>
+  > = ({ signal }) => getMonthlyEvents(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getMonthlyEvents>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMonthlyEventsSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMonthlyEvents>>
+>;
+export type GetMonthlyEventsSuspenseInfiniteQueryError = unknown;
+
+export function useGetMonthlyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMonthlyEvents>>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMonthlyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMonthlyEvents>>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMonthlyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMonthlyEvents>>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 월별 캘린더 조회
+ */
+
+export function useGetMonthlyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getMonthlyEvents>>>,
+  TError = unknown,
+>(
+  params: GetMonthlyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getMonthlyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetMonthlyEventsSuspenseInfiniteQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * 체크리스트에서 생성된 due date를 기반으로 일간 달력을 조회합니다. 입력예시: yyyy-MM-dd 형식
+ * @summary 일별 캘린더 조회
+ */
+export const getDailyEvents = (
+  params: GetDailyEventsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseListCalendarEventRes>({
+    url: `/api/v1/calendar/daily`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetDailyEventsQueryKey = (params?: GetDailyEventsParams) => {
+  return [`/api/v1/calendar/daily`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetDailyEventsInfiniteQueryKey = (
+  params?: GetDailyEventsParams,
+) => {
+  return [
+    "infinite",
+    `/api/v1/calendar/daily`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const useGetDailyEventsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDailyEvents>>, TError, TData>
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDailyEventsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailyEvents>>> = ({
+    signal,
+  }) => getDailyEvents(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getDailyEvents>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyEventsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDailyEvents>>
+>;
+export type GetDailyEventsQueryError = unknown;
+
+export function useGetDailyEvents<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDailyEvents>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDailyEvents>>,
+          TError,
+          Awaited<ReturnType<typeof getDailyEvents>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDailyEvents<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDailyEvents>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDailyEvents>>,
+          TError,
+          Awaited<ReturnType<typeof getDailyEvents>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDailyEvents<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDailyEvents>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 일별 캘린더 조회
+ */
+
+export function useGetDailyEvents<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDailyEvents>>, TError, TData>
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetDailyEventsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetDailyEventsSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDailyEventsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailyEvents>>> = ({
+    signal,
+  }) => getDailyEvents(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getDailyEvents>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyEventsSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDailyEvents>>
+>;
+export type GetDailyEventsSuspenseQueryError = unknown;
+
+export function useGetDailyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDailyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDailyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 일별 캘린더 조회
+ */
+
+export function useGetDailyEventsSuspense<
+  TData = Awaited<ReturnType<typeof getDailyEvents>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetDailyEventsSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetDailyEventsSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getDailyEvents>>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetDailyEventsInfiniteQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailyEvents>>> = ({
+    signal,
+  }) => getDailyEvents(params, signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getDailyEvents>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyEventsSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDailyEvents>>
+>;
+export type GetDailyEventsSuspenseInfiniteQueryError = unknown;
+
+export function useGetDailyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getDailyEvents>>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDailyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getDailyEvents>>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDailyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getDailyEvents>>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 일별 캘린더 조회
+ */
+
+export function useGetDailyEventsSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getDailyEvents>>>,
+  TError = unknown,
+>(
+  params: GetDailyEventsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getDailyEvents>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetDailyEventsSuspenseInfiniteQueryOptions(
+    params,
     options,
   );
 
