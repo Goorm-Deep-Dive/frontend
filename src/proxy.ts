@@ -58,8 +58,6 @@ const getSurveyStatus = async (
       data?: { surveyStatus?: SurveyStatus };
     };
 
-    console.log("payload", payload);
-
     return payload.data?.surveyStatus;
   } catch {
     return undefined;
