@@ -21,3 +21,16 @@ export const event = (action: string, params?: Record<string, unknown>) => {
 
   window.gtag?.("event", action, params);
 };
+
+export const getClientId = (): Promise<string | null> => {
+  return new Promise((resolve) => {
+    if (!window.gtag) {
+      resolve(null);
+      return;
+    }
+
+    window.gtag("get", GA_ID, "client_id", (clientId: string) => {
+      resolve(clientId);
+    });
+  });
+};

@@ -6,29 +6,36 @@ import { useSocialLogin } from "@/hooks/use-social-login";
 import Image from "next/image";
 import { useEffect } from "react";
 import { event } from "@/lib/gtag";
+import { getClientId } from "@/lib/gtag";
 
 export default function Content() {
   useOAuthLoginSuccess();
   const { login } = useSocialLogin();
 
-  const handleKakaoLogin = () => {
+  const handleKakaoLogin = async () => {
+    const clientId = await getClientId();
+
     event("login_button_click", {
       provider: "kakao",
+      clientId,
     });
 
-    login("kakao");
+    login("kakao", clientId);
   };
 
-  const handleNaverLogin = () => {
+  const handleNaverLogin = async () => {
+    const clientId = await getClientId();
+
     event("login_button_click", {
       provider: "naver",
+      clientId,
     });
 
-    login("naver");
+    login("naver", clientId);
   };
 
   useEffect(() => {
-    event("login_page_view");
+    event("onboarding_view");
   }, []);
 
   return (
