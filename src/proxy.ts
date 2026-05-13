@@ -32,9 +32,6 @@ export function proxy(request: NextRequest) {
     if (refresh) {
       return NextResponse.redirect(new URL("/checklist", request.url));
     }
-    if (!onboardingComplete) {
-      return NextResponse.redirect(new URL("/onboarding", request.url));
-    }
     return NextResponse.next();
   }
 

@@ -64,7 +64,8 @@ export default function Onboarding() {
           <Button
             type="button"
             onClick={async () => {
-              await completeOnboarding();
+              // 테스트를 위해 주석처리
+              // await completeOnboarding();
               router.push("/login");
               router.refresh();
             }}
