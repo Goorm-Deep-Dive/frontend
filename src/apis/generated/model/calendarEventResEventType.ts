@@ -13,4 +13,5 @@ export const CalendarEventResEventType = {
   CHECKLIST: "CHECKLIST",
   GOOGLE: "GOOGLE",
   USER_CUSTOM: "USER_CUSTOM",
+  MEMORIAL_DAY: "MEMORIAL_DAY",
 } as const;
