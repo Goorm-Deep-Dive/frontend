@@ -14,12 +14,14 @@ interface Props {
   count: number;
   isClicked: boolean;
   onClick: () => void;
+  onSave: () => void;
 }
 export default function ChecklistHeaderCard({
   profile,
   count,
   isClicked,
   onClick,
+  onSave,
 }: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -85,11 +87,14 @@ export default function ChecklistHeaderCard({
 
       {isClicked ? (
         <button
-          onClick={onClick}
+          onClick={() => {
+            onSave();
+            onClick();
+          }}
           className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-200 py-2 text-gray-500"
         >
-          <ListCutIcon />
-          리스트 편집하기
+          <ListCutIcon className="fill-gray-200" />
+          편집 완료하기
         </button>
       ) : (
         <div className="flex w-full gap-2.5">
