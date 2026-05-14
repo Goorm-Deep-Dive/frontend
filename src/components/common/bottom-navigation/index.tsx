@@ -35,6 +35,14 @@ export default function BottomNavigation() {
         style={{ height: "var(--bottom-nav-reserve)" }}
         aria-hidden
       />
+      <div className="fixed bottom-[calc(var(--bottom-nav-reserve))] mx-auto flex w-full max-w-[var(--app-max-width)] justify-end">
+        <Link
+          href="/chat"
+          className="bg-primary-1 mr-2 flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-white shadow-2xl"
+        >
+          AI 상담
+        </Link>
+      </div>
       <nav
         aria-label="바텀 네비게이션"
         className="fixed bottom-0 left-1/2 z-10 w-full max-w-[var(--app-max-width)] -translate-x-1/2 rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4 pb-[env(safe-area-inset-bottom,0px)]"
