@@ -159,6 +159,7 @@ export default function Content() {
 
   useEffect(() => {
     if (proceduresRes?.procedures) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentList(
         proceduresRes.procedures.map((item) => ({
           ...item,
@@ -170,6 +171,7 @@ export default function Content() {
 
   useEffect(() => {
     if (optionalProcedures) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAddList(
         optionalProcedures.map((item) => ({
           categoryId: item.categoryId ?? 0,
