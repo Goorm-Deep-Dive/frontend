@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
 import { useState, type KeyboardEvent } from "react";
 
 import { cn } from "@/lib/cn";
+import ChatSendActiveIcon from "@/components/icons/chat-send-active-icon";
+import ChatSendDisabledIcon from "@/components/icons/chat-send-disabled-icon";
 
 type ChatComposerProps = {
   onSend: (message: string) => void;
@@ -31,8 +32,8 @@ const ChatComposer = ({ onSend, isDisabled = false }: ChatComposerProps) => {
   const canSend = draft.trim().length > 0 && !isDisabled;
 
   return (
-    <div className="px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)+16px)]">
-      <div className="flex items-center gap-3 rounded-full bg-[#f4f4f4] px-6 py-3.5">
+    <div className="px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+      <div className="flex min-h-15.5 items-center gap-3 rounded-[2.5rem] bg-gray-200 px-5 py-2.25 shadow-[0.125rem_0.125rem_0.375rem_rgba(0,0,0,0.3)]">
         <textarea
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
@@ -41,7 +42,7 @@ const ChatComposer = ({ onSend, isDisabled = false }: ChatComposerProps) => {
           rows={1}
           placeholder="궁금한 사항을 물어봐 주세요."
           className={cn(
-            "body max-h-28 min-h-6 flex-1 resize-none bg-transparent text-gray-900 outline-none placeholder:text-[#8e8e8e]",
+            "max-h-28 min-h-5.5 flex-1 resize-none bg-transparent text-base leading-[1.4rem] font-semibold tracking-[0.01em] text-gray-900 outline-none placeholder:text-gray-500",
             isDisabled && "cursor-not-allowed opacity-60",
           )}
         />
@@ -52,11 +53,15 @@ const ChatComposer = ({ onSend, isDisabled = false }: ChatComposerProps) => {
           aria-label="메시지 보내기"
           onClick={handleSubmit}
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e0e0e0] text-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-opacity",
-            !canSend && "cursor-not-allowed opacity-60",
+            "flex h-11 w-11 shrink-0 items-center justify-center",
+            !canSend && "cursor-not-allowed",
           )}
         >
-          <ArrowUp className="h-5 w-5" strokeWidth={2.25} />
+          {canSend ? (
+            <ChatSendActiveIcon className="size-full" />
+          ) : (
+            <ChatSendDisabledIcon className="size-full" />
+          )}
         </button>
       </div>
     </div>
