@@ -7,6 +7,8 @@ import { cn } from "@/lib/cn";
 import { useGetOverallProgress } from "@/apis/generated/api-client";
 import { buttonVariants } from "@/components/ui/button";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
+import Link from "next/link";
+import NotificationIcon from "@/components/icons/notification-icon";
 
 interface Props {
   defaultOpen?: boolean;
@@ -219,13 +221,13 @@ export default function ChecklistHeader({
           </div>
         </div>
 
-        <button
-          type="button"
+        <Link
+          href="/notifications"
+          aria-label="알림 페이지 이동"
           className="flex h-11 w-11 items-center justify-center pt-2 transition-transform active:scale-95"
-          aria-label="알림"
         >
-          <Image src="/icons/header/bell.svg" alt="" width={44} height={44} />
-        </button>
+          <NotificationIcon className="h-10 w-10 text-gray-900" />
+        </Link>
       </header>
 
       <div className="h-[90px] min-h-[90px] w-full" aria-hidden="true" />
