@@ -14,6 +14,7 @@ interface DateInputProps {
   date?: Date;
   onDateChange?: (date?: Date) => void;
   isFilled: boolean;
+  dateLimit?: "past" | "future";
 }
 
 export default function DateInput({
@@ -22,6 +23,7 @@ export default function DateInput({
   date,
   onDateChange,
   isFilled,
+  dateLimit,
 }: DateInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [open, setOpen] = useState(false);
@@ -57,92 +59,81 @@ export default function DateInput({
     }
   };
 
+  const getDisabledDate = () => {
+    if (dateLimit === "past") {
+      return { after: new Date() };
+    }
+
+    if (dateLimit === "future") {
+      return { before: new Date() };
+    }
+
+    return undefined;
+  };
+
   return (
-    <div className="rounded-lg bg-gray-200 px-5 py-4">
-      <div className="flex flex-col gap-2.5">
-        {isFocused && (
-          <div className="flex items-center gap-1">
-            <Image
-              src="/icons/input/info.svg"
-              alt="정보"
-              width={20}
-              height={20}
-            />
-            <span className="h4 text-gray-900">
-              연도/월/일 순으로 입력해주세요
-            </span>
-            <span className="caption text-gray-500">(8자리)</span>
-          </div>
-        )}
+    <div className="flex w-full flex-col gap-2.5 rounded-lg border border-gray-300 px-5 py-2.5">
+      <div className="h3 caret-primary-1 flex justify-between">
+        <input
+          value={value}
+          onChange={handleChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              setIsFocused(false);
+            }
+          }}
+          placeholder="연 / 월 / 일 순으로 입력해주세요."
+          inputMode="numeric"
+          className={`w-full bg-transparent px-2 outline-none ${
+            isFocused || isFilled
+              ? "text-text-gray-800 placeholder:text-gray-800"
+              : "text-text-gray-400 placeholder:text-gray-400"
+          }`}
+        />
 
-        <div className="h3 bg-primary-bg caret-primary-1 flex justify-between rounded-lg px-2.5 py-2.5">
-          <input
-            value={value}
-            onChange={handleChange}
-            onFocus={() => setIsFocused(true)}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget)) {
-                setIsFocused(false);
-              }
-            }}
-            placeholder="YYYY-MM-DD"
-            inputMode="numeric"
-            className={`w-full bg-transparent px-2 outline-none ${
-              isFocused || isFilled
-                ? "text-primary-1 placeholder:text-primary-1"
-                : "text-primary-2 placeholder:text-primary-2"
-            }`}
-          />
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <button type="button">
+              <Image
+                src="/icons/input/calender.svg"
+                alt="캘린더"
+                width={25}
+                height={25}
+              />
+            </button>
+          </PopoverTrigger>
 
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <button type="button">
-                <Image
-                  src="/icons/input/calender.svg"
-                  alt="캘린더"
-                  width={20}
-                  height={20}
-                />
-              </button>
-            </PopoverTrigger>
-
-            <PopoverContent className="w-auto gap-2 p-0">
-              <div className="flex flex-col items-center gap-4 rounded-lg bg-gray-200 p-4">
-                <div className="rounded-lg bg-white shadow-md">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={(selectedDate) => {
-                      onDateChange?.(selectedDate);
-                      if (selectedDate) {
-                        const formatted = format(selectedDate, "yyyy-MM-dd");
-                        onChange(formatted);
-                      }
-                    }}
-                    disabled={{ after: new Date() }}
-                  />
-                </div>
-                <button
-                  disabled={!date}
-                  className={`w-full rounded-lg py-3 ${date ? "bg-primary-1 px-13 text-white" : "body bg-gray-300 text-gray-900"}`}
-                  onClick={() => {
-                    if (!date) return;
-                    console.log(format(date, "yyyy-MM-dd"));
-                    setOpen(false);
+          <PopoverContent className="w-auto gap-2 p-0">
+            <div className="flex flex-col items-center gap-4 rounded-lg bg-gray-200 p-4">
+              <div className="rounded-lg bg-white shadow-md">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(selectedDate) => {
+                    onDateChange?.(selectedDate);
+                    if (selectedDate) {
+                      const formatted = format(selectedDate, "yyyy-MM-dd");
+                      onChange(formatted);
+                    }
                   }}
-                >
-                  {date ? `${format(date, "yyyy-MM-dd")} 선택하기` : "선택하기"}
-                </button>
+                  disabled={getDisabledDate()}
+                />
               </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        {isFocused && (
-          <div className="caption text-gray-700">
-            ※ 법적 기한 계산에 사용됩니다.
-          </div>
-        )}
+              <button
+                disabled={!date}
+                className={`w-full rounded-lg py-3 ${date ? "bg-primary-1 px-13 text-white" : "body bg-gray-300 text-gray-900"}`}
+                onClick={() => {
+                  if (!date) return;
+                  console.log(format(date, "yyyy-MM-dd"));
+                  setOpen(false);
+                }}
+              >
+                {date ? `${format(date, "yyyy-MM-dd")} 선택하기` : "선택하기"}
+              </button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
