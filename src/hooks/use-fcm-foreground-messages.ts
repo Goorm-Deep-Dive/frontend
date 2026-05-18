@@ -13,6 +13,7 @@ export const useFcmForegroundMessages = () => {
   const dismiss = useFcmForegroundStore((state) => state.dismiss);
 
   useEffect(() => {
+    let disposed = false;
     let unsubscribe: (() => void) | undefined;
     const dismissTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
@@ -30,11 +31,13 @@ export const useFcmForegroundMessages = () => {
 
     const subscribe = async () => {
       const context = await getFirebaseMessagingContext();
-      if (!context) return;
+      if (!context || disposed) return;
 
       const { onMessage } = await import("firebase/messaging");
 
-      unsubscribe = onMessage(context.messaging, (payload) => {
+      const nextUnsubscribe = onMessage(context.messaging, (payload) => {
+        if (disposed) return;
+
         if (process.env.NODE_ENV === "development") {
           console.info("[FCM] Foreground message:", payload);
         }
@@ -42,11 +45,19 @@ export const useFcmForegroundMessages = () => {
         const id = push(message);
         scheduleAutoDismiss(id);
       });
+
+      if (disposed) {
+        nextUnsubscribe();
+        return;
+      }
+
+      unsubscribe = nextUnsubscribe;
     };
 
     void subscribe();
 
     return () => {
+      disposed = true;
       unsubscribe?.();
       dismissTimers.forEach((timer) => clearTimeout(timer));
     };
