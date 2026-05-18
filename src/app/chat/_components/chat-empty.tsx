@@ -28,7 +28,7 @@ export default function ChatEmpty({
         </span>
         <div className="flex flex-col items-center gap-0">
           <span className="h3 font-bold text-gray-900">
-            검증된 답변에 내 생황을 분석해
+            검증된 답변에 내 상황을 분석해
           </span>
           <span className="h3 text-primary-1 font-bold">
             딱 맞는 정보만 정확하게 알려드려요
@@ -50,9 +50,7 @@ export default function ChatEmpty({
               onClick={() => onPromptClick(prompt)}
               className={cn(
                 samplePromptClassName,
-                isDisabled
-                  ? "cursor-not-allowed opacity-60"
-                  : "cursor-pointer",
+                isDisabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
               )}
             >
               &ldquo;{prompt}&rdquo;
