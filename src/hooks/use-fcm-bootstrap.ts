@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import { STORAGE_ACCESS_TOKEN_KEY } from "@/constants/storage-keys";
 import { registerMessagingServiceWorker } from "@/lib/firebase/messaging-service-worker";
+import { maskFcmTokenForLog } from "@/services/mask-fcm-token-for-log";
 import { syncFcmTokenWithServer } from "@/services/sync-fcm-token-with-server";
 
 /**
@@ -29,7 +30,7 @@ export const useFcmBootstrap = () => {
       const token = await syncFcmTokenWithServer(ac.signal);
 
       if (process.env.NODE_ENV === "development" && token) {
-        console.info("[FCM] Current device token:", token);
+        console.info("[FCM] Current device token:", maskFcmTokenForLog(token));
       }
     };
 

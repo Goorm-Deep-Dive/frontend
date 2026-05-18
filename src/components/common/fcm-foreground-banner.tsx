@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import CloseIcon from "@/components/icons/close-icon";
 import NotificationDefaultIcon from "@/components/icons/notification-default-icon";
 import { cn } from "@/lib/cn";
+import { resolveSafeFcmNavigationPath } from "@/services/resolve-safe-fcm-navigation-path";
 import { useFcmForegroundStore } from "@/store/use-fcm-foreground-store";
 
 const FcmForegroundBanner = () => {
@@ -21,17 +22,20 @@ const FcmForegroundBanner = () => {
       aria-label="앱 알림"
     >
       {notifications.map((notification) => {
+        const safeNavigationPath = resolveSafeFcmNavigationPath(
+          notification.url,
+        );
+
         const handleDismiss = (event: React.MouseEvent) => {
           event.stopPropagation();
           dismiss(notification.id);
         };
 
         const handleNavigate = () => {
-          dismiss(notification.id);
+          if (!safeNavigationPath) return;
 
-          if (notification.url) {
-            router.push(notification.url);
-          }
+          dismiss(notification.id);
+          router.push(safeNavigationPath);
         };
 
         return (
@@ -51,10 +55,10 @@ const FcmForegroundBanner = () => {
             <button
               type="button"
               onClick={handleNavigate}
-              disabled={!notification.url}
+              disabled={!safeNavigationPath}
               className={cn(
                 "flex min-w-0 flex-1 flex-col gap-1 py-0.5 text-left",
-                notification.url ? "cursor-pointer" : "cursor-default",
+                safeNavigationPath ? "cursor-pointer" : "cursor-default",
               )}
             >
               <p className="body line-clamp-2 font-medium text-gray-900">
