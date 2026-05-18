@@ -110,8 +110,8 @@ export const useChatRoom = () => {
       } finally {
         if (streamAbortRef.current === abortController) {
           streamAbortRef.current = null;
+          setIsReplying(false);
         }
-        setIsReplying(false);
       }
     },
     [appendAiChunk, chatDate, isReplying, queryClient],
