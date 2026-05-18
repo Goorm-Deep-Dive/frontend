@@ -9,11 +9,14 @@ import type { CalendarEventResEventType } from "./calendarEventResEventType";
 
 export interface CalendarEventRes {
   eventId?: number;
+  deceasedProfileId?: number;
+  deceasedName?: string;
   userProcedureChecklistId?: number;
   title?: string;
   description?: string;
   startAt?: string;
   endAt?: string;
+  procedureCategoryId?: number;
   category?: string;
   categoryColor?: string;
   eventType?: CalendarEventResEventType;
