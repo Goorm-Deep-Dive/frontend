@@ -65,11 +65,6 @@ const FcmForegroundBanner = () => {
                   {notification.body}
                 </p>
               ) : null}
-              {notification.url ? (
-                <span className="caption text-primary-1 mt-0.5 font-medium">
-                  자세히 보기
-                </span>
-              ) : null}
             </button>
 
             <button
