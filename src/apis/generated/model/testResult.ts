@@ -6,13 +6,10 @@
  * OpenAPI spec version: v1
  */
 
-export interface NotificationRes {
-  notificationId?: number;
-  message?: string;
-  isRead?: boolean;
-  createdAt?: string;
-  userProcedureChecklistId?: number;
+export interface TestResult {
   deceasedProfileId?: number;
   deceasedName?: string;
-  dueDate?: string;
+  sent?: boolean;
+  messageId?: string;
+  failureReason?: string;
 }

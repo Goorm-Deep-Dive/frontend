@@ -22,8 +22,6 @@ export const event = (action: string, params?: Record<string, unknown>) => {
   window.gtag?.("event", action, params);
 };
 
-const GET_CLIENT_ID_TIMEOUT_MS = 2000;
-
 export const getClientId = (): Promise<string | null> => {
   return new Promise((resolve) => {
     if (!window.gtag) {
@@ -31,21 +29,8 @@ export const getClientId = (): Promise<string | null> => {
       return;
     }
 
-    let isSettled = false;
-
-    const settle = (clientId: string | null) => {
-      if (isSettled) return;
-      isSettled = true;
-      window.clearTimeout(timeoutId);
-      resolve(clientId);
-    };
-
-    const timeoutId = window.setTimeout(() => {
-      settle(null);
-    }, GET_CLIENT_ID_TIMEOUT_MS);
-
     window.gtag("get", GA_ID, "client_id", (clientId: string) => {
-      settle(clientId);
+      resolve(clientId);
     });
   });
 };

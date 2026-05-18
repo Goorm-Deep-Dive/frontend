@@ -17,7 +17,13 @@ const buildAuthUrl = (
 
 export function useSocialLogin() {
   const login = (provider: "kakao" | "naver", clientId?: string | null) => {
-    window.location.href = buildAuthUrl(provider, clientId);
+    if (provider === "kakao") {
+      window.location.href = `${AUTH_URL.kakao}&deviceId=${clientId}`;
+    }
+
+    if (provider === "naver") {
+      window.location.href = `${AUTH_URL.naver}&deviceId=${clientId}`;
+    }
   };
 
   return { login };

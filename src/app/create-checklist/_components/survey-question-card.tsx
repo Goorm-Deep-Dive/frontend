@@ -19,6 +19,7 @@ interface SurveyQuestionCardProps {
     nextValue: string | string[],
     nextQuestionId?: number,
   ) => void;
+  onUnknownAnswerSelect?: (questionIndex: number) => void;
 }
 
 const SurveyQuestionCard = memo(
@@ -28,6 +29,7 @@ const SurveyQuestionCard = memo(
     value,
     nextQuestionIds,
     onChangeAnswer,
+    onUnknownAnswerSelect,
   }: SurveyQuestionCardProps) => {
     const questionKey = String(
       question.surveyQuestionId ?? `question-${index}`,
@@ -75,6 +77,11 @@ const SurveyQuestionCard = memo(
             value={value}
             multiple={isMultiple}
             onChange={handleChange}
+            onUnknownAnswerSelect={
+              onUnknownAnswerSelect
+                ? () => onUnknownAnswerSelect(index)
+                : undefined
+            }
           />
         </CommonAccordion.Content>
       </CommonAccordion>
