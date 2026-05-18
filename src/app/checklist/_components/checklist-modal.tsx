@@ -1,13 +1,19 @@
+"use client";
+
 import CloseIcon from "@/components/icons/close-icon";
 import { Button } from "@/components/ui/button";
-import ChecklistListOnline from "./checklist-modal/checklist-list-online";
-import ChecklistListCable from "./checklist-modal/checklist-list-cable";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+
 import ChecklistListAddress from "./checklist-modal/checklist-list-address";
+import ChecklistListCable from "./checklist-modal/checklist-list-cable";
 import ChecklistListNotice from "./checklist-modal/checklist-list-notice";
 import ChecklistListOffline from "./checklist-modal/checklist-list-offline";
+import ChecklistListOnline from "./checklist-modal/checklist-list-online";
 
-interface checklistModalProps {
+interface ChecklistModalProps {
   id: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const MOCK_DATA = [
@@ -109,55 +115,82 @@ const SECTION_COMPONENTS = {
   offline: ChecklistListOffline,
 };
 
-export default function ChecklistModal({ id }: checklistModalProps) {
+export default function ChecklistModal({
+  id,
+  isOpen,
+  onClose,
+}: ChecklistModalProps) {
   const matchedData = MOCK_DATA.find((item) => item.id === id);
 
+  if (!matchedData) {
+    return null;
+  }
+
   return (
-    <div className="flex w-full flex-col gap-3 rounded-xl border border-red-300 px-5 pt-4">
-      <div className="flex justify-end">
-        <Button variant="ghost" size="icon">
-          <CloseIcon width={30} height={30} />
-        </Button>
-      </div>
-      <div className="flex flex-col gap-7.5 pb-10">
-        <div className="flex flex-col gap-2.5">
-          <span className="h2 text-gray-900">{matchedData?.title}</span>
-          <div className="flex flex-col">
-            <span className="body text-gray-900">{matchedData?.subTitle}</span>
-            <span className="body text-gray-900">
-              아래 방법을 통해 확인해보세요.
-            </span>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="rounded-xl bg-white p-0">
+        <DialogTitle className="sr-only">{matchedData.title}</DialogTitle>
+        <div className="max-w-[calc(var(--app-max-width) - 40px)] mx-auto flex w-full flex-col gap-3 px-5 pt-4">
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="닫기"
+              onClick={onClose}
+            >
+              <CloseIcon width={30} height={30} />
+            </Button>
+          </div>
+          <div className="flex flex-col gap-7.5 pb-10">
+            <div className="flex flex-col gap-2.5">
+              <span className="h2 text-gray-900">{matchedData.title}</span>
+              <div className="flex flex-col">
+                <span className="body text-gray-900">
+                  {matchedData.subTitle}
+                </span>
+                <span className="body text-gray-900">
+                  아래 방법을 통해 확인해보세요.
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-7.5">
+              {matchedData.sections.map((section) => {
+                const Component =
+                  SECTION_COMPONENTS[
+                    section.type as keyof typeof SECTION_COMPONENTS
+                  ];
+                return (
+                  <Component
+                    key={section.type}
+                    title={section.title}
+                    description={section.description}
+                    tel={section.tel ?? ""}
+                  />
+                );
+              })}
+            </div>
+            <div className="body flex flex-col text-gray-900">
+              <span>· 확인 완료 후, 안내 다시 보기는 </span>
+              <span>
+                <span className="pl-2 underline">모름 체크 항목</span> 해제 후
+                다시 선택해주세요.
+              </span>
+            </div>
+            <div>
+              <Button
+                type="button"
+                variant="primary"
+                size="large"
+                className="bg-navy p-3.5"
+                onClick={onClose}
+              >
+                확인 완료
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col gap-7.5">
-          {matchedData?.sections.map((section) => {
-            const Component =
-              SECTION_COMPONENTS[
-                section.type as keyof typeof SECTION_COMPONENTS
-              ];
-            return (
-              <Component
-                key={section.type}
-                title={section.title}
-                description={section.description}
-                tel={section.tel ?? ""}
-              />
-            );
-          })}
-        </div>
-        <div className="body flex flex-col text-gray-900">
-          <span>· 확인 완료 후, 안내 다시 보기는 </span>
-          <span>
-            <span className="pl-2 underline">모름 체크 항목</span> 해제 후 다시
-            선택해주세요.
-          </span>
-        </div>
-        <div>
-          <Button variant="primary" size="large" className="bg-navy p-3.5">
-            확인 완료
-          </Button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

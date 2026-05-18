@@ -1,5 +1,4 @@
 import OrganizationIcon from "@/components/icons/organization-icon";
-import SearchIcon from "@/components/icons/search-icon";
 
 interface ChecklistListAddressProps {
   title: string;
@@ -17,18 +16,21 @@ export default function ChecklistListAddress({
         <OrganizationIcon width={24} height={24} />
         <span>{description}</span>
       </div>
-      <div className="relative">
-        <SearchIcon
-          width={22}
-          height={22}
-          className="absolute top-1/2 right-5 -translate-y-1/2"
-        />
-        <input
-          type="text"
-          placeholder="주소를 입력해 주세요."
-          className="body w-full rounded-lg border border-gray-300 px-5 py-4 text-gray-500"
-        />
-      </div>
+      {/* TODO: 주소에 맞는 주민센터 조회 */}
+      {/* 
+        <div className="relative">
+          <SearchIcon
+            width={22}
+            height={22}
+            className="absolute top-1/2 right-5 -translate-y-1/2"
+          />
+          <input
+            type="text"
+            placeholder="주소를 입력해 주세요."
+            className="body w-full rounded-lg border border-gray-300 px-5 py-4 text-gray-500"
+          />
+        </div> 
+      */}
     </div>
   );
 }

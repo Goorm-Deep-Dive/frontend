@@ -1,5 +1,6 @@
 "use client";
 
+import { SurveyAnswerResSurveyAnswerType } from "@/apis/generated/model/surveyAnswerResSurveyAnswerType";
 import { cn } from "@/lib/cn";
 import Image from "next/image";
 
@@ -17,6 +18,7 @@ interface Props {
   multiple?: boolean;
   items: CheckboxItem[];
   idPrefix?: string;
+  onUnknownAnswerSelect?: () => void;
 }
 
 export default function CheckboxList({
@@ -25,6 +27,7 @@ export default function CheckboxList({
   onChange,
   multiple = false,
   idPrefix = "checkbox-list",
+  onUnknownAnswerSelect,
 }: Props) {
   const isExclusiveAnswerType = (surveyAnswerType?: string) =>
     surveyAnswerType === "NOT_APPLICABLE" || surveyAnswerType === "UNKNOWN";
@@ -32,6 +35,15 @@ export default function CheckboxList({
   const selectedValues = (Array.isArray(value) ? value : [value]).filter(
     Boolean,
   );
+
+  const notifyUnknownAnswerSelect = (surveyAnswerType?: string) => {
+    if (
+      surveyAnswerType === SurveyAnswerResSurveyAnswerType.UNKNOWN &&
+      onUnknownAnswerSelect
+    ) {
+      onUnknownAnswerSelect();
+    }
+  };
 
   const handleToggle = (
     itemValue: string,
@@ -42,6 +54,9 @@ export default function CheckboxList({
 
     if (!multiple) {
       onChange(isChecked ? "" : itemValue, nextQuestionId);
+      if (!isChecked) {
+        notifyUnknownAnswerSelect(surveyAnswerType);
+      }
       return;
     }
 
@@ -54,8 +69,8 @@ export default function CheckboxList({
     }
 
     if (isExclusiveAnswerType(surveyAnswerType)) {
-      // "해당없음/모르겠음" 선택 시 동일 질문의 기존 선택을 해제하고 단일 선택으로 고정
       onChange([itemValue], nextQuestionId);
+      notifyUnknownAnswerSelect(surveyAnswerType);
       return;
     }
 
