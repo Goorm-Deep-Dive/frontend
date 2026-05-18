@@ -1,6 +1,9 @@
 import type { MessagePayload } from "firebase/messaging";
 
-import { parseFcmSwPayload } from "@/services/parse-fcm-sw-payload";
+import {
+  parseFcmSwPayload,
+  resolveExplicitFcmUrl,
+} from "@/services/parse-fcm-sw-payload";
 
 export type FcmForegroundMessage = {
   title: string;
@@ -13,9 +16,11 @@ export const parseFcmMessagePayload = (
 ): FcmForegroundMessage => {
   const parsed = parseFcmSwPayload(payload);
 
+  const explicitUrl = resolveExplicitFcmUrl(payload);
+
   return {
     title: parsed.title,
     body: parsed.body,
-    url: parsed.url,
+    url: explicitUrl ?? undefined,
   };
 };

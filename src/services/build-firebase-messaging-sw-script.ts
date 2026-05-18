@@ -66,12 +66,12 @@ const readDataField = (data, keys) => {
 const parsePayload = (payload) => {
   const data = payload.data ?? {};
   const title =
-    payload.notification?.title ??
-    readDataField(data, ['title', 'subject']) ||
+    (payload.notification?.title ??
+      readDataField(data, ['title', 'subject'])) ||
     '알림';
   const body =
-    payload.notification?.body ??
-    readDataField(data, ['body', 'message', 'content']) ||
+    (payload.notification?.body ??
+      readDataField(data, ['body', 'message', 'content'])) ||
     '';
   const url =
     readDataField(data, ['url', 'click_action', 'link']) ||

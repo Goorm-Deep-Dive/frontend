@@ -27,6 +27,17 @@ const readDataField = (
   return "";
 };
 
+export const resolveExplicitFcmUrl = (
+  payload: FcmPayloadLike,
+): string | null => {
+  const explicitUrl =
+    readDataField(payload.data, ["url", "click_action", "link"]) ||
+    payload.fcmOptions?.link ||
+    "";
+
+  return explicitUrl || null;
+};
+
 export const parseFcmSwPayload = (
   payload: FcmPayloadLike,
 ): ParsedFcmSwPayload => {
@@ -42,10 +53,7 @@ export const parseFcmSwPayload = (
     readDataField(data, ["body", "message", "content"]) ||
     "";
 
-  const url =
-    readDataField(data, ["url", "click_action", "link"]) ||
-    payload.fcmOptions?.link ||
-    "/";
+  const url = resolveExplicitFcmUrl(payload) ?? "/";
 
   return { title, body, url };
 };
