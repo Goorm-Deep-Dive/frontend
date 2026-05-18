@@ -44,10 +44,10 @@ export default function Content() {
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
-          {notifications.map((notification) => {
+          {notifications.map((notification, index) => {
             const notificationKey =
               notification.notificationId ??
-              `${notification.createdAt}-${notification.message}`;
+              `${notification.createdAt}-${notification.message}-${index}`;
 
             return (
               <li key={notificationKey}>
