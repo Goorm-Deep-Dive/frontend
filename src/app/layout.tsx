@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import FcmForegroundProvider from "@/app/_providers/fcm-foreground-provider";
 import QueryClientProvider from "@/app/_providers/query-client-provider";
 import { pretendard } from "@/styles/fonts";
 import AlertRenderer from "@/components/common/alert/alert-renderer";
@@ -62,13 +63,15 @@ export default function RootLayout({
           </Script>
         </>
         <QueryClientProvider>
-          <div className="mx-auto flex min-h-0 w-full max-w-(--app-max-width) flex-1 flex-col overflow-hidden bg-white">
-            <main className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto overscroll-y-contain bg-white [-webkit-overflow-scrolling:touch]">
-              <div className="flex min-h-full w-full flex-1 flex-col bg-white">
-                {children}
-              </div>
-            </main>
-          </div>
+          <FcmForegroundProvider>
+            <div className="mx-auto flex min-h-0 w-full max-w-(--app-max-width) flex-1 flex-col overflow-hidden bg-white">
+              <main className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto overscroll-y-contain bg-white [-webkit-overflow-scrolling:touch]">
+                <div className="flex min-h-full w-full flex-1 flex-col bg-white">
+                  {children}
+                </div>
+              </main>
+            </div>
+          </FcmForegroundProvider>
         </QueryClientProvider>
         <AlertRenderer />
       </body>
