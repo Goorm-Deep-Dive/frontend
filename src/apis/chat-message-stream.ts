@@ -1,4 +1,7 @@
-import { STORAGE_ACCESS_TOKEN_KEY } from "@/constants/storage-keys";
+import {
+  STORAGE_ACCESS_TOKEN_KEY,
+  STORAGE_DECEASED_PROFILE_KEY,
+} from "@/constants/storage-keys";
 import { extractSsePayload, parseSseChunk } from "@/services/parse-sse-chunk";
 
 type StreamChatMessageParams = {
@@ -23,12 +26,21 @@ const clearRefreshCookieOnAppOrigin = async () => {
   });
 };
 
+const clearAuthStorage = () => {
+  localStorage.removeItem(STORAGE_ACCESS_TOKEN_KEY);
+  localStorage.removeItem(STORAGE_DECEASED_PROFILE_KEY);
+};
+
 const handleUnauthorized = async () => {
   if (typeof window === "undefined") return;
 
-  localStorage.clear();
-  await clearRefreshCookieOnAppOrigin();
-  window.location.href = "/login";
+  clearAuthStorage();
+
+  try {
+    await clearRefreshCookieOnAppOrigin();
+  } finally {
+    window.location.href = "/login";
+  }
 };
 
 export const streamChatMessage = async ({
@@ -92,6 +104,8 @@ export const streamChatMessage = async ({
 
     events.forEach(consumeEvent);
   }
+
+  buffer += decoder.decode();
 
   if (buffer.trim()) {
     consumeEvent(buffer);
