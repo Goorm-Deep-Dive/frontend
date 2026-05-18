@@ -32,6 +32,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  ApiResponseCalendarEventRes,
   ApiResponseChatRes,
   ApiResponseChecklistCategoryProcedureRes,
   ApiResponseChecklistCategoryRes,
@@ -62,6 +63,7 @@ import type {
   GetMessagesParams,
   GetMonthlyEventsParams,
   LinkGoogleParams,
+  PendingTaskCalendarReq,
   SseEmitter,
   SurveySaveReq,
   UserNotificationUpdateReq,
@@ -2173,6 +2175,496 @@ export const useStreamMessage = <TError = unknown, TContext = unknown>(
 };
 
 /**
+ * 아직 캘린더에 추가되지 않은 과업 목록을 조회합니다.
+ * @summary 처리 필요 과업 목록 조회
+ */
+export const getPendingTasks = (signal?: AbortSignal) => {
+  return customInstance<ApiResponseListPendingTaskRes>({
+    url: `/api/v1/calendars/pending-tasks`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetPendingTasksQueryKey = () => {
+  return [`/api/v1/calendars/pending-tasks`] as const;
+};
+
+export const getGetPendingTasksInfiniteQueryKey = () => {
+  return ["infinite", `/api/v1/calendars/pending-tasks`] as const;
+};
+
+export const useGetPendingTasksQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getPendingTasks>>, TError, TData>
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPendingTasksQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingTasks>>> = ({
+    signal,
+  }) => getPendingTasks(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseQueryOptions<
+    Awaited<ReturnType<typeof getPendingTasks>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPendingTasksQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPendingTasks>>
+>;
+export type GetPendingTasksQueryError = unknown;
+
+export function useGetPendingTasks<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPendingTasks>>,
+          TError,
+          Awaited<ReturnType<typeof getPendingTasks>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingTasks<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPendingTasks>>,
+          TError,
+          Awaited<ReturnType<typeof getPendingTasks>>
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingTasks<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 처리 필요 과업 목록 조회
+ */
+
+export function useGetPendingTasks<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetPendingTasksQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetPendingTasksSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getPendingTasks>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPendingTasksQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingTasks>>> = ({
+    signal,
+  }) => getPendingTasks(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getPendingTasks>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPendingTasksSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPendingTasks>>
+>;
+export type GetPendingTasksSuspenseQueryError = unknown;
+
+export function useGetPendingTasksSuspense<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingTasksSuspense<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingTasksSuspense<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 처리 필요 과업 목록 조회
+ */
+
+export function useGetPendingTasksSuspense<
+  TData = Awaited<ReturnType<typeof getPendingTasks>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetPendingTasksSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const useGetPendingTasksSuspenseInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<
+    UseSuspenseInfiniteQueryOptions<
+      Awaited<ReturnType<typeof getPendingTasks>>,
+      TError,
+      TData
+    >
+  >;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPendingTasksInfiniteQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingTasks>>> = ({
+    signal,
+  }) => getPendingTasks(signal);
+
+  const customOptions = customQueryOptions({
+    ...queryOptions,
+    queryKey,
+    queryFn,
+  });
+
+  return customOptions as UseSuspenseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getPendingTasks>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPendingTasksSuspenseInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPendingTasks>>
+>;
+export type GetPendingTasksSuspenseInfiniteQueryError = unknown;
+
+export function useGetPendingTasksSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
+  TError = unknown,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingTasksSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPendingTasksSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary 처리 필요 과업 목록 조회
+ */
+
+export function useGetPendingTasksSuspenseInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
+  TError = unknown,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getPendingTasks>>,
+        TError,
+        TData
+      >
+    >;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = useGetPendingTasksSuspenseInfiniteQueryOptions(options);
+
+  const query = useSuspenseInfiniteQuery(
+    queryOptions,
+    queryClient,
+  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * due date가 없는 처리 필요 과업을 캘린더 일정으로 추가합니다.
+ * @summary 미등록 일정 추가
+ */
+export const createPendingTaskCalendar = (
+  pendingTaskCalendarReq: PendingTaskCalendarReq,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseCalendarEventRes>({
+    url: `/api/v1/calendars/pending-tasks`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: pendingTaskCalendarReq,
+    signal,
+  });
+};
+
+export const useCreatePendingTaskCalendarMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createPendingTaskCalendar>>,
+    TError,
+    { data: PendingTaskCalendarReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createPendingTaskCalendar>>,
+  TError,
+  { data: PendingTaskCalendarReq },
+  TContext
+> => {
+  const mutationKey = ["createPendingTaskCalendar"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createPendingTaskCalendar>>,
+    { data: PendingTaskCalendarReq }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createPendingTaskCalendar(data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type CreatePendingTaskCalendarMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createPendingTaskCalendar>>
+>;
+export type CreatePendingTaskCalendarMutationBody = PendingTaskCalendarReq;
+export type CreatePendingTaskCalendarMutationError = unknown;
+
+/**
+ * @summary 미등록 일정 추가
+ */
+export const useCreatePendingTaskCalendar = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createPendingTaskCalendar>>,
+      TError,
+      { data: PendingTaskCalendarReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createPendingTaskCalendar>>,
+  TError,
+  { data: PendingTaskCalendarReq },
+  TContext
+> => {
+  return useMutation(
+    useCreatePendingTaskCalendarMutationOptions(options),
+    queryClient,
+  );
+};
+
+/**
  * RefreshToken을 검증하여 AccessToken을 재발급합니다.
  * @summary AccessToken 재발급
  */
@@ -2954,6 +3446,189 @@ export const useModifyDocumentCheck = <TError = unknown, TContext = unknown>(
 > => {
   return useMutation(
     useModifyDocumentCheckMutationOptions(options),
+    queryClient,
+  );
+};
+
+/**
+ * @summary 처리 필요 과업 일정 삭제
+ */
+export const deletePendingTaskCalendar = (
+  eventId: number,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseVoid>({
+    url: `/api/v1/calendars/pending-tasks/${eventId}`,
+    method: "DELETE",
+    signal,
+  });
+};
+
+export const useDeletePendingTaskCalendarMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePendingTaskCalendar>>,
+    TError,
+    { eventId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deletePendingTaskCalendar>>,
+  TError,
+  { eventId: number },
+  TContext
+> => {
+  const mutationKey = ["deletePendingTaskCalendar"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deletePendingTaskCalendar>>,
+    { eventId: number }
+  > = (props) => {
+    const { eventId } = props ?? {};
+
+    return deletePendingTaskCalendar(eventId);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type DeletePendingTaskCalendarMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePendingTaskCalendar>>
+>;
+
+export type DeletePendingTaskCalendarMutationError = unknown;
+
+/**
+ * @summary 처리 필요 과업 일정 삭제
+ */
+export const useDeletePendingTaskCalendar = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deletePendingTaskCalendar>>,
+      TError,
+      { eventId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deletePendingTaskCalendar>>,
+  TError,
+  { eventId: number },
+  TContext
+> => {
+  return useMutation(
+    useDeletePendingTaskCalendarMutationOptions(options),
+    queryClient,
+  );
+};
+
+/**
+ * @summary 처리 필요 과업 일정 수정
+ */
+export const updatePendingTaskCalendar = (
+  eventId: number,
+  pendingTaskCalendarReq: PendingTaskCalendarReq,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ApiResponseCalendarEventRes>({
+    url: `/api/v1/calendars/pending-tasks/${eventId}`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: pendingTaskCalendarReq,
+    signal,
+  });
+};
+
+export const useUpdatePendingTaskCalendarMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePendingTaskCalendar>>,
+    TError,
+    { eventId: number; data: PendingTaskCalendarReq },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePendingTaskCalendar>>,
+  TError,
+  { eventId: number; data: PendingTaskCalendarReq },
+  TContext
+> => {
+  const mutationKey = ["updatePendingTaskCalendar"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePendingTaskCalendar>>,
+    { eventId: number; data: PendingTaskCalendarReq }
+  > = (props) => {
+    const { eventId, data } = props ?? {};
+
+    return updatePendingTaskCalendar(eventId, data);
+  };
+
+  const customOptions = customMutationOptions({
+    ...mutationOptions,
+    mutationFn,
+  });
+
+  return customOptions;
+};
+
+export type UpdatePendingTaskCalendarMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePendingTaskCalendar>>
+>;
+export type UpdatePendingTaskCalendarMutationBody = PendingTaskCalendarReq;
+export type UpdatePendingTaskCalendarMutationError = unknown;
+
+/**
+ * @summary 처리 필요 과업 일정 수정
+ */
+export const useUpdatePendingTaskCalendar = <
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updatePendingTaskCalendar>>,
+      TError,
+      { eventId: number; data: PendingTaskCalendarReq },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updatePendingTaskCalendar>>,
+  TError,
+  { eventId: number; data: PendingTaskCalendarReq },
+  TContext
+> => {
+  return useMutation(
+    useUpdatePendingTaskCalendarMutationOptions(options),
     queryClient,
   );
 };
@@ -7834,403 +8509,6 @@ export function useGetMonthlyEventsSuspenseInfinite<
     params,
     options,
   );
-
-  const query = useSuspenseInfiniteQuery(
-    queryOptions,
-    queryClient,
-  ) as UseSuspenseInfiniteQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-/**
- * 아직 캘린더에 추가되지 않은 과업 목록을 조회합니다.
- * @summary 처리 필요 과업 목록 조회
- */
-export const getPendingTasks = (signal?: AbortSignal) => {
-  return customInstance<ApiResponseListPendingTaskRes>({
-    url: `/api/v1/calendars/pending-tasks`,
-    method: "GET",
-    signal,
-  });
-};
-
-export const getGetPendingTasksQueryKey = () => {
-  return [`/api/v1/calendars/pending-tasks`] as const;
-};
-
-export const getGetPendingTasksInfiniteQueryKey = () => {
-  return ["infinite", `/api/v1/calendars/pending-tasks`] as const;
-};
-
-export const useGetPendingTasksQueryOptions = <
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getPendingTasks>>, TError, TData>
-  >;
-}) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetPendingTasksQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingTasks>>> = ({
-    signal,
-  }) => getPendingTasks(signal);
-
-  const customOptions = customQueryOptions({
-    ...queryOptions,
-    queryKey,
-    queryFn,
-  });
-
-  return customOptions as UseQueryOptions<
-    Awaited<ReturnType<typeof getPendingTasks>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetPendingTasksQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPendingTasks>>
->;
-export type GetPendingTasksQueryError = unknown;
-
-export function useGetPendingTasks<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPendingTasks>>,
-          TError,
-          Awaited<ReturnType<typeof getPendingTasks>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPendingTasks<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getPendingTasks>>,
-          TError,
-          Awaited<ReturnType<typeof getPendingTasks>>
-        >,
-        "initialData"
-      >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPendingTasks<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 처리 필요 과업 목록 조회
- */
-
-export function useGetPendingTasks<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = useGetPendingTasksQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-export const useGetPendingTasksSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(options?: {
-  query?: Partial<
-    UseSuspenseQueryOptions<
-      Awaited<ReturnType<typeof getPendingTasks>>,
-      TError,
-      TData
-    >
-  >;
-}) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetPendingTasksQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingTasks>>> = ({
-    signal,
-  }) => getPendingTasks(signal);
-
-  const customOptions = customQueryOptions({
-    ...queryOptions,
-    queryKey,
-    queryFn,
-  });
-
-  return customOptions as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getPendingTasks>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetPendingTasksSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPendingTasks>>
->;
-export type GetPendingTasksSuspenseQueryError = unknown;
-
-export function useGetPendingTasksSuspense<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPendingTasksSuspense<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPendingTasksSuspense<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 처리 필요 과업 목록 조회
- */
-
-export function useGetPendingTasksSuspense<
-  TData = Awaited<ReturnType<typeof getPendingTasks>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = useGetPendingTasksSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(
-    queryOptions,
-    queryClient,
-  ) as UseSuspenseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-export const useGetPendingTasksSuspenseInfiniteQueryOptions = <
-  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
-  TError = unknown,
->(options?: {
-  query?: Partial<
-    UseSuspenseInfiniteQueryOptions<
-      Awaited<ReturnType<typeof getPendingTasks>>,
-      TError,
-      TData
-    >
-  >;
-}) => {
-  const { query: queryOptions } = options ?? {};
-
-  const queryKey =
-    queryOptions?.queryKey ?? getGetPendingTasksInfiniteQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPendingTasks>>> = ({
-    signal,
-  }) => getPendingTasks(signal);
-
-  const customOptions = customQueryOptions({
-    ...queryOptions,
-    queryKey,
-    queryFn,
-  });
-
-  return customOptions as UseSuspenseInfiniteQueryOptions<
-    Awaited<ReturnType<typeof getPendingTasks>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetPendingTasksSuspenseInfiniteQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getPendingTasks>>
->;
-export type GetPendingTasksSuspenseInfiniteQueryError = unknown;
-
-export function useGetPendingTasksSuspenseInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
-  TError = unknown,
->(
-  options: {
-    query: Partial<
-      UseSuspenseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPendingTasksSuspenseInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-export function useGetPendingTasksSuspenseInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-};
-/**
- * @summary 처리 필요 과업 목록 조회
- */
-
-export function useGetPendingTasksSuspenseInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof getPendingTasks>>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseInfiniteQueryOptions<
-        Awaited<ReturnType<typeof getPendingTasks>>,
-        TError,
-        TData
-      >
-    >;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>;
-} {
-  const queryOptions = useGetPendingTasksSuspenseInfiniteQueryOptions(options);
 
   const query = useSuspenseInfiniteQuery(
     queryOptions,
