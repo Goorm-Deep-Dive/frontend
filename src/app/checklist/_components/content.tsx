@@ -65,8 +65,6 @@ export default function Content() {
     },
   });
 
-  console.log(optionalProcedures);
-
   const remainingCount = proceduresRes?.procedures?.filter(
     (item) => !item.checked,
   ).length;

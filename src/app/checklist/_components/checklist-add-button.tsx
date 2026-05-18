@@ -8,7 +8,7 @@ export default function ChecklistAddButton({
   return (
     <div className="flex items-center justify-center rounded-lg bg-gray-200">
       <button
-        className="flex h-[46px] w-[46px] items-center justify-center p-3"
+        className="flex h-5 w-5 items-center justify-center p-3"
         onClick={onClick}
       >
         <PlusIcon width={20} height={20} />
