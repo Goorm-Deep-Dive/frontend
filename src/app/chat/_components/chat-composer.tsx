@@ -23,6 +23,7 @@ const ChatComposer = ({ onSend, isDisabled = false }: ChatComposerProps) => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.nativeEvent.isComposing) return;
     if (event.key !== "Enter" || event.shiftKey) return;
 
     event.preventDefault();
