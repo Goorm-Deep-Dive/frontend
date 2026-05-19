@@ -5,6 +5,7 @@
  * 동행 서비스 API 입니다.
  * OpenAPI spec version: v1
  */
+import type { ProcedureDueDateType } from "./procedureDueDateType";
 
 export interface Procedure {
   userProcedureChecklistId?: number;
@@ -13,4 +14,5 @@ export interface Procedure {
   remainingDays?: number;
   checked?: boolean;
   priority?: string;
+  dueDateType?: ProcedureDueDateType;
 }

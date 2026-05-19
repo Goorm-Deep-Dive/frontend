@@ -1,5 +1,10 @@
+import {
+  getBadgeLabel,
+  getRemainingDaysLabel,
+} from "../_utils/get-checklist-badge-label";
+
 interface Props {
-  priority?: string;
+  dueDateType?: string;
   date?: number;
 }
 const BADGE_STYLE = {
@@ -7,11 +12,11 @@ const BADGE_STYLE = {
     bg: "#FDEDE9",
     text: "#FF3764",
   },
-  긴급: {
+  IMMEDIATE: {
     bg: "#FDEDE9",
     text: "#FF3764",
   },
-  빠른처리: {
+  NONE: {
     bg: "#FFEFE7",
     text: "#FF6F1B",
   },
@@ -21,9 +26,15 @@ const BADGE_STYLE = {
   },
 } as const;
 
-export default function ChecklistBadge({ priority, date }: Props) {
+export default function ChecklistBadge({ dueDateType, date }: Props) {
+  if (dueDateType === "RELATIVE") return null;
+
+  const label = getBadgeLabel(dueDateType) ?? getRemainingDaysLabel(date);
+  if (!label) return null;
+
   const badgeStyle =
-    BADGE_STYLE[priority as keyof typeof BADGE_STYLE] || BADGE_STYLE.scheduled;
+    BADGE_STYLE[dueDateType as keyof typeof BADGE_STYLE] ||
+    BADGE_STYLE.scheduled;
 
   return (
     <div className="flex items-center gap-2.5">
@@ -35,7 +46,7 @@ export default function ChecklistBadge({ priority, date }: Props) {
           color: badgeStyle.text,
         }}
       >
-        {priority || `D-${date}`}
+        {label}
       </div>
     </div>
   );

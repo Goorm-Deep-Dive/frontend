@@ -46,7 +46,6 @@ import type {
   ApiResponseListOptionalProcedureRes,
   ApiResponseListPendingTaskRes,
   ApiResponseNotificationListRes,
-  ApiResponseNotificationTestRes,
   ApiResponseProcedureDocumentDetailRes,
   ApiResponseSurveyListRes,
   ApiResponseSurveySubmitRes,
@@ -492,89 +491,6 @@ export const useSubmitSurvey = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   return useMutation(useSubmitSurveyMutationOptions(options), queryClient);
-};
-
-/**
- * 로그인한 사용자의 모든 고인 프로필에 대해 테스트 푸시를 발송합니다.
- * @summary FCM 테스트 발송
- */
-export const sendTestNotification = (signal?: AbortSignal) => {
-  return customInstance<ApiResponseNotificationTestRes>({
-    url: `/api/v1/notifications/test`,
-    method: "POST",
-    signal,
-  });
-};
-
-export const useSendTestNotificationMutationOptions = <
-  TError = unknown,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof sendTestNotification>>,
-    TError,
-    void,
-    TContext
-  >;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof sendTestNotification>>,
-  TError,
-  void,
-  TContext
-> => {
-  const mutationKey = ["sendTestNotification"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof sendTestNotification>>,
-    void
-  > = () => {
-    return sendTestNotification();
-  };
-
-  const customOptions = customMutationOptions({
-    ...mutationOptions,
-    mutationFn,
-  });
-
-  return customOptions;
-};
-
-export type SendTestNotificationMutationResult = NonNullable<
-  Awaited<ReturnType<typeof sendTestNotification>>
->;
-
-export type SendTestNotificationMutationError = unknown;
-
-/**
- * @summary FCM 테스트 발송
- */
-export const useSendTestNotification = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof sendTestNotification>>,
-      TError,
-      void,
-      TContext
-    >;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof sendTestNotification>>,
-  TError,
-  void,
-  TContext
-> => {
-  return useMutation(
-    useSendTestNotificationMutationOptions(options),
-    queryClient,
-  );
 };
 
 /**
