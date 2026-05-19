@@ -12,7 +12,6 @@ import {
   endOfWeek,
   addDays,
   isSameMonth,
-  isToday,
   isSameDay,
 } from "date-fns";
 import { useState } from "react";
@@ -117,7 +116,7 @@ export default function Calendar() {
         </button>
 
         <span className="h4 text-gray-900">
-          {format(currentDate, "M월 d일 EEEE", { locale: ko })}
+          {format(selectedDate, "M월 d일 EEEE", { locale: ko })}
         </span>
 
         <button onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
