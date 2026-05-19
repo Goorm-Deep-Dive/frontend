@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { format } from "date-fns";
+import { format, isAfter, addDays, startOfDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -28,6 +28,22 @@ export default function DateInput({
   const [isFocused, setIsFocused] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const today = startOfDay(new Date());
+
+  const isDateAllowed = (parsedDate: Date) => {
+    const day = startOfDay(parsedDate);
+
+    if (dateLimit === "future") {
+      return isAfter(day, today);
+    }
+
+    if (dateLimit === "past") {
+      return !isAfter(day, today);
+    }
+
+    return true;
+  };
+
   const formatDate = (input: string) => {
     const numbers = input.replace(/\D/g, "").slice(0, 8);
     if (numbers.length < 5) {
@@ -53,7 +69,7 @@ export default function DateInput({
         Number(numbers.slice(6, 8)),
       );
 
-      if (!isNaN(parsedDate.getTime())) {
+      if (!isNaN(parsedDate.getTime()) && isDateAllowed(parsedDate)) {
         onDateChange?.(parsedDate);
       }
     }
@@ -61,11 +77,11 @@ export default function DateInput({
 
   const getDisabledDate = () => {
     if (dateLimit === "past") {
-      return { after: new Date() };
+      return { after: today };
     }
 
     if (dateLimit === "future") {
-      return { before: new Date() };
+      return { before: addDays(today, 1) };
     }
 
     return undefined;
@@ -111,6 +127,10 @@ export default function DateInput({
                   mode="single"
                   selected={date}
                   onSelect={(selectedDate) => {
+                    if (selectedDate && !isDateAllowed(selectedDate)) {
+                      return;
+                    }
+
                     onDateChange?.(selectedDate);
                     if (selectedDate) {
                       const formatted = format(selectedDate, "yyyy-MM-dd");
@@ -125,7 +145,6 @@ export default function DateInput({
                 className={`w-full rounded-lg py-3 ${date ? "bg-primary-1 px-13 text-white" : "body bg-gray-300 text-gray-900"}`}
                 onClick={() => {
                   if (!date) return;
-                  console.log(format(date, "yyyy-MM-dd"));
                   setOpen(false);
                 }}
               >
