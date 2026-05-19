@@ -4,10 +4,7 @@ import CalendarScheduleList from "./calendar-schedule-list";
 import CalendarButton from "./calendar-button";
 import PlusIcon from "@/components/icons/plus-icon";
 import { useState } from "react";
-import {
-  useGetPendingTasks,
-  useCreatePendingTaskCalendar,
-} from "@/apis/generated/api-client";
+import { useGetPendingTasks } from "@/apis/generated/api-client";
 import { useRouter } from "next/navigation";
 
 type Filter = "all" | "긴급" | "빠른처리";
