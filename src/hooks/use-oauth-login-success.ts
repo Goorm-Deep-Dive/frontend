@@ -5,6 +5,7 @@ import {
   STORAGE_ACCESS_TOKEN_KEY,
   STORAGE_DECEASED_PROFILE_KEY,
 } from "@/constants/storage-keys";
+import { syncFcmTokenWithServer } from "@/services/sync-fcm-token-with-server";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -32,6 +33,16 @@ export const useOAuthLoginSuccess = () => {
           STORAGE_DECEASED_PROFILE_KEY,
           JSON.stringify(deceasedProfile),
         );
+
+        try {
+          await syncFcmTokenWithServer(ac.signal, { force: true });
+        } catch (error) {
+          if (process.env.NODE_ENV === "development") {
+            console.warn("[FCM] Login token sync failed:", error);
+          }
+        }
+
+        if (ac.signal.aborted) return;
 
         const path = deceasedProfile.length > 0 ? "/checklist" : "/start";
         router.replace(path);
