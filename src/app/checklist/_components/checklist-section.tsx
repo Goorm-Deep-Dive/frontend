@@ -11,7 +11,7 @@ interface ChecklistSectionProps {
   index: number;
   listDate?: number; // D-30
   isDone?: boolean;
-  priority?: string;
+  dueDateType?: string;
   isEditMode?: boolean;
 }
 
@@ -22,7 +22,7 @@ export default function ChecklistSection({
   index,
   listDate,
   isDone,
-  priority,
+  dueDateType,
   isEditMode = false,
 }: ChecklistSectionProps) {
   return (
@@ -33,7 +33,7 @@ export default function ChecklistSection({
       index={index}
       listDate={listDate}
       isDone={isDone}
-      priority={priority}
+      dueDateType={dueDateType}
       isEditMode={isEditMode}
     />
   );
