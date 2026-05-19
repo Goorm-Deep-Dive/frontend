@@ -196,66 +196,19 @@ export default function Content() {
             onSave={handleSaveChecklist}
           />
 
-          <div className="flex flex-col gap-5.5">
-            <div className="h4 w-full rounded-2xl bg-gray-700 px-5 py-1.25 text-left text-white">
-              현재목록
-            </div>
-
-            <div className="flex flex-col gap-5.5">
-              <div className="flex flex-col gap-2.5">
-                {currentList.map((item, index) => (
-                  <div
-                    key={item.procedureId}
-                    className="flex w-full items-center gap-2.5"
-                  >
-                    {item.isAdded && (
-                      <ChecklistMinusButton
-                        onClick={() => handleRemoveChecklist(item)}
-                      />
-                    )}
-
-                    <ChecklistSection
-                      procedureId={item.procedureId ?? 0}
-                      userProcedureChecklistId={
-                        item.userProcedureChecklistId ?? 0
-                      }
-                      title={item.procedureName ?? ""}
-                      index={index + 1}
-                      listDate={item.remainingDays ?? 0}
-                      isDone={item.checked}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {isListEditClicked && (
-              <div className="flex flex-col gap-5.5">
-                <div className="h4 w-full rounded-2xl bg-gray-700 px-5 py-1.25 text-left text-white">
-                  추가 가능 목록
-                </div>
-                <div className="flex flex-col gap-2.5">
-                  {addList.map((item, index) => (
-                    <div
-                      key={item.procedureId}
-                      className="flex w-full items-center gap-2.5"
-                    >
-                      <CheckListAddButton
-                        onClick={() => handleAddChecklist(item)}
-                      />
-                      <ChecklistSection
-                        procedureId={item.procedureId}
-                        userProcedureChecklistId={0}
-                        title={item.procedureName}
-                        index={index + 1}
-                        listDate={item.remainingDays}
-                        isDone={false}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="flex flex-col gap-2.5 pb-2">
+            {proceduresRes?.procedures?.map((item, index) => (
+              <ChecklistList
+                key={item.procedureId}
+                procedureId={item.procedureId ?? 0}
+                userProcedureChecklistId={item.userProcedureChecklistId ?? 0}
+                title={item.procedureName ?? ""}
+                index={index + 1}
+                listDate={item.remainingDays ?? 0}
+                isDone={item.checked}
+                priority={item.priority}
+              />
+            ))}
           </div>
         </div>
       </div>

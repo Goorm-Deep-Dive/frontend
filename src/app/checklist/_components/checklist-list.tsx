@@ -11,6 +11,7 @@ interface Props {
   index: number;
   listDate?: number; // D-30
   isDone?: boolean;
+  priority?: string;
 }
 
 export default function ChecklistList({
@@ -20,6 +21,7 @@ export default function ChecklistList({
   index,
   listDate,
   isDone,
+  priority,
 }: Props) {
   const router = useRouter();
 
@@ -57,14 +59,18 @@ export default function ChecklistList({
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          {showListDate ? <ChecklistBadge listDate={listDate} /> : null}
-          <span className="flex items-center gap-2.5 whitespace-nowrap">
-            <span className="caption">자세히보기</span>
-            <ArrowRightIcon width={6} height={10} />
-          </span>
-        </div>
-      </button>
-    </div>
+      <div className="flex items-center gap-4">
+        {showListDate ? (
+          <ChecklistBadge
+            priority={isDone ? "완료" : priority}
+            date={listDate}
+          />
+        ) : null}
+        <span className="flex items-center gap-2.5 whitespace-nowrap">
+          <span className="caption">자세히보기</span>
+          <ArrowRightIcon width={6} height={10} />
+        </span>
+      </div>
+    </button>
   );
 }

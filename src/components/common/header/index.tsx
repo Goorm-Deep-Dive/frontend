@@ -1,7 +1,6 @@
 "use client";
 
 import ArrowLeftIcon from "@/components/icons/arrow-left-icon";
-import NotificationIcon from "@/components/icons/notification-icon";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

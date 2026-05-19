@@ -1,32 +1,42 @@
-import { cn } from "@/lib/cn";
-
-interface ChecklistBadgeProps {
-  listDate?: number;
+interface Props {
+  priority?: string;
+  date?: number;
 }
+const BADGE_STYLE = {
+  scheduled: {
+    bg: "#FDEDE9",
+    text: "#FF3764",
+  },
+  긴급: {
+    bg: "#FDEDE9",
+    text: "#FF3764",
+  },
+  빠른처리: {
+    bg: "#FFEFE7",
+    text: "#FF6F1B",
+  },
+  완료: {
+    bg: "#91B3B7",
+    text: "#006C76",
+  },
+} as const;
 
-export default function ChecklistBadge({ listDate }: ChecklistBadgeProps) {
-  const mode = {
-    default: {
-      description: `D-${listDate}`,
-      style:
-        "text-sementic-red bg-sementic-red-bg border-sementic-red px-2 py-1",
-    },
-    urgent: {
-      description: "긴급",
-      style:
-        "text-sementic-red bg-sementic-red-bg border-sementic-red px-3 py-1",
-    },
-    done: {
-      description: "완료",
-      style: "text-primary-1 bg-primary-2 border-primary-1 px-3 py-1",
-    },
-  };
-
-  const current = mode["default"];
+export default function ChecklistBadge({ priority, date }: Props) {
+  const badgeStyle =
+    BADGE_STYLE[priority as keyof typeof BADGE_STYLE] || BADGE_STYLE.scheduled;
 
   return (
-    <div className={cn("label rounded-md border-2", current.style)}>
-      {current.description}
+    <div className="flex items-center gap-2.5">
+      <div
+        className="rounded-md border px-2 py-0.5"
+        style={{
+          backgroundColor: badgeStyle.bg,
+          borderColor: badgeStyle.text,
+          color: badgeStyle.text,
+        }}
+      >
+        {priority || `D-${date}`}
+      </div>
     </div>
   );
 }
