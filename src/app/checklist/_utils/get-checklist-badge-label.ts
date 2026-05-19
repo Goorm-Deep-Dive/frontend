@@ -17,5 +17,5 @@ export const getRemainingDaysLabel = (remainingDays?: number) => {
   if (remainingDays > 0) return `D-${remainingDays}`;
   if (remainingDays === 0) return "D-DAY";
 
-  return `D-${remainingDays}`;
+  return `D+${Math.abs(remainingDays)}`;
 };

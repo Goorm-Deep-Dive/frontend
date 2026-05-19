@@ -17,20 +17,20 @@ function getIcon(name: string) {
   }
 }
 
-function getColor(name: string) {
+const getColor = (name: string): string => {
   switch (name) {
     case "사무행정":
       return "bg-tag-office";
     case "금융":
-      return "bg-tag-digital";
-    case "디지털":
       return "bg-tag-finance";
+    case "디지털":
+      return "bg-tag-digital";
     case "법원행정":
       return "bg-tag-court";
     default:
       return "bg-primary-1";
   }
-}
+};
 
 interface Props {
   name: string;

@@ -18,7 +18,13 @@ export default function Splash({ onNext }: Props) {
         </span>
       </div>
 
-      <Image src="/images/logo_final.png" alt="logo" width={290} height={290} />
+      <Image
+        src="/images/logo_final.png"
+        alt="logo"
+        width={290}
+        height={290}
+        priority
+      />
 
       <div className="flex flex-col items-center justify-center gap-2.5">
         <span className="body text-gray-900">

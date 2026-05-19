@@ -32,6 +32,8 @@ export default function ChecklistBadge({ dueDateType, date }: Props) {
       ? getRemainingDaysLabel(date)
       : getBadgeLabel(dueDateType);
 
+  if (!label) return null;
+
   const badgeStyle =
     BADGE_STYLE[dueDateType as keyof typeof BADGE_STYLE] ||
     BADGE_STYLE.scheduled;
