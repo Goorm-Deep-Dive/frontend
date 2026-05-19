@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1
  */
 import type { Channel } from "./channel";
+import type { ChecklistProcedureDetailResDueDateType } from "./checklistProcedureDetailResDueDateType";
 import type { Contact } from "./contact";
 import type { Document } from "./document";
 
@@ -15,6 +16,8 @@ export interface ChecklistProcedureDetailRes {
   procedureCategoryId?: number;
   procedureName?: string;
   description?: string;
+  dueDateType?: ChecklistProcedureDetailResDueDateType;
+  remainingDays?: number;
   dueDateDescription?: string;
   searchScope?: string;
   cautionText?: string;
