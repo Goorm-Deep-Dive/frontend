@@ -11,7 +11,7 @@ interface Props {
   index: number;
   listDate?: number; // D-30
   isDone?: boolean;
-  priority?: string;
+  dueDateType?: string;
   isEditMode?: boolean;
 }
 
@@ -22,7 +22,7 @@ export default function ChecklistList({
   index,
   listDate,
   isDone,
-  priority,
+  dueDateType,
   isEditMode = false,
 }: Props) {
   const router = useRouter();
@@ -35,7 +35,6 @@ export default function ChecklistList({
     );
   };
 
-  const showListDate = listDate && listDate > 0 && +listDate < 31;
   const numberBg = isDone ? "bg-primary-1" : "bg-gray-900";
 
   return (
@@ -61,8 +60,7 @@ export default function ChecklistList({
           </div>
           <span
             className={cn(
-              "label text-left wrap-break-word whitespace-pre-line",
-              showListDate && "max-w-31",
+              "label max-w-31 text-left wrap-break-word whitespace-pre-line",
             )}
           >
             {title}
@@ -70,12 +68,10 @@ export default function ChecklistList({
         </div>
 
         <div className="flex items-center gap-4">
-          {showListDate ? (
-            <ChecklistBadge
-              date={listDate}
-              priority={isDone ? "완료" : priority}
-            />
-          ) : null}
+          <ChecklistBadge
+            date={listDate}
+            dueDateType={isDone ? "완료" : dueDateType}
+          />
           <span className="flex items-center gap-2.5 whitespace-nowrap">
             <span className="caption">자세히보기</span>
             <ArrowRightIcon width={6} height={10} />

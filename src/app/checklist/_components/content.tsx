@@ -247,7 +247,7 @@ export default function Content() {
                   index={index + 1}
                   listDate={item.remainingDays ?? 0}
                   isDone={item.checked}
-                  priority={item.priority}
+                  dueDateType={item.dueDateType}
                 />
               ))}
             </div>
