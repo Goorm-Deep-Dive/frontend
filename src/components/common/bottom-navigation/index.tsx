@@ -6,6 +6,7 @@ import MyPageIcon from "@/components/icons/mypage-icon";
 import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ScheduleIcon from "@/components/icons/schedule-icon";
 
 export default function BottomNavigation() {
   const pathname = usePathname();
@@ -20,6 +21,11 @@ export default function BottomNavigation() {
       name: "체크리스트",
       icon: ChecklistIcon,
       path: "/checklist",
+    },
+    {
+      name: "일정관리",
+      icon: ScheduleIcon,
+      path: "/schedule",
     },
     {
       name: "마이페이지",
