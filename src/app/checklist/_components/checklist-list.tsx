@@ -30,38 +30,41 @@ export default function ChecklistList({
   };
 
   const showListDate = listDate && listDate > 0 && +listDate < 31;
+  const numberBg = isDone ? "bg-primary-1" : "bg-gray-900";
 
   return (
-    <button
-      className="flex justify-between rounded-lg bg-gray-200 px-5 py-3"
-      onClick={handleClick}
-    >
-      <div className="flex items-center gap-2.5">
-        <div
-          className={cn(
-            "label flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-full text-white",
-            isDone ? "bg-primary-1" : "bg-gray-900",
-          )}
-        >
-          {isDone ? <CheckIcon width={10} height={8} /> : index}
+    <div className="flex w-full items-center gap-2.5 rounded-lg border-2">
+      <button
+        className="flex w-full justify-between rounded-lg px-5 py-2.5"
+        onClick={handleClick}
+      >
+        <div className="flex items-center gap-2.5">
+          <div
+            className={cn(
+              "label flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-full text-white",
+              numberBg,
+            )}
+          >
+            {isDone ? <CheckIcon width={10} height={8} /> : index}
+          </div>
+          <span
+            className={cn(
+              "label text-left wrap-break-word whitespace-pre-line",
+              showListDate && "max-w-31",
+            )}
+          >
+            {title}
+          </span>
         </div>
-        <span
-          className={cn(
-            "label text-left wrap-break-word whitespace-pre-line",
-            showListDate && "max-w-31",
-          )}
-        >
-          {title}
-        </span>
-      </div>
 
-      <div className="flex items-center gap-4">
-        {showListDate ? <ChecklistBadge listDate={listDate} /> : null}
-        <span className="flex items-center gap-2.5 whitespace-nowrap">
-          <span className="caption">자세히보기</span>
-          <ArrowRightIcon width={6} height={10} />
-        </span>
-      </div>
-    </button>
+        <div className="flex items-center gap-4">
+          {showListDate ? <ChecklistBadge listDate={listDate} /> : null}
+          <span className="flex items-center gap-2.5 whitespace-nowrap">
+            <span className="caption">자세히보기</span>
+            <ArrowRightIcon width={6} height={10} />
+          </span>
+        </div>
+      </button>
+    </div>
   );
 }
