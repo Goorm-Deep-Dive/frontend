@@ -55,6 +55,7 @@ export default function DeceasedInfoForm({ defaultValues, onSubmit }: Props) {
             date={pickedDate}
             onDateChange={setPickedDate}
             isFilled={isFilled}
+            dateLimit="past"
           />
         </div>
 

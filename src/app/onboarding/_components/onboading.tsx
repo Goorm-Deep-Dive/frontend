@@ -5,7 +5,6 @@ import type { ComponentType, SVGProps } from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { completeOnboarding } from "@/app/onboarding/actions";
 import { Button } from "@/components/ui/button";
 
 const steps = [

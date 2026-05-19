@@ -4,8 +4,10 @@ import ProcessIcon from "@/components/icons/process-icon";
 import ChecklistIcon from "@/components/icons/check-list-icon";
 import MyPageIcon from "@/components/icons/mypage-icon";
 import { cn } from "@/lib/cn";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ScheduleIcon from "@/components/icons/schedule-icon";
 
 export default function BottomNavigation() {
   const pathname = usePathname();
@@ -22,6 +24,11 @@ export default function BottomNavigation() {
       path: "/checklist",
     },
     {
+      name: "일정관리",
+      icon: ScheduleIcon,
+      path: "/schedule",
+    },
+    {
       name: "마이페이지",
       icon: MyPageIcon,
       path: "/mypage",
@@ -35,6 +42,16 @@ export default function BottomNavigation() {
         style={{ height: "var(--bottom-nav-reserve)" }}
         aria-hidden
       />
+      <div className="fixed bottom-[calc(var(--bottom-nav-reserve))] left-1/2 z-20 flex w-full max-w-[var(--app-max-width)] -translate-x-1/2 justify-end pr-4">
+        <Link
+          href="/chat"
+          aria-label="AI 챗봇"
+          className="flex h-17.5 w-17.5 cursor-pointer flex-col items-center rounded-full bg-gray-200 px-2.5 pt-1.5 pb-2.5 shadow-[1px_1px_4px_rgba(0,0,0,0.25)]"
+        >
+          <Image src="/images/chat-bot.png" alt="" width={32} height={32} />
+          <span className="label text-gray-700">AI 챗봇</span>
+        </Link>
+      </div>
       <nav
         aria-label="바텀 네비게이션"
         className="fixed bottom-0 left-1/2 z-10 w-full max-w-[var(--app-max-width)] -translate-x-1/2 rounded-t-2xl border-t border-[#DADADA] bg-white px-6 pt-4 pb-[env(safe-area-inset-bottom,0px)]"

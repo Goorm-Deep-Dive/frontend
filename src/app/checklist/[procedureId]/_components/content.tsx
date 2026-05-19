@@ -16,6 +16,7 @@ import Header from "@/components/common/header";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 import { getChannelLabel } from "../_utils/getChannelLabel";
+import ChecklistBadge from "../../_components/checklist-list-badge";
 
 interface Props {
   procedureId: number;
@@ -98,11 +99,10 @@ export default function Content({ procedureId }: Props) {
 
       <div className="flex flex-col gap-5 p-5">
         <div className="flex gap-5">
-          <div>
-            <span className="body text-gray-900">
-              {procedureDetail?.dueDateDescription}
-            </span>
-          </div>
+          {/* <ChecklistBadge
+            priority={procedureDetail?.priority}
+            date={procedureDetail?.remainingDays}
+          /> */}
         </div>
 
         {/* 필요서류 */}

@@ -23,6 +23,8 @@
   --color-sementic-info: #006aff;
   --color-sementic-red: #ff3764;
   --color-sementic-red-bg: #fdede9;
+  --color-sementic-orange: #ff6f1b;
+  --color-sementic-orange-bg: #ffefe7;
   --color-gr2-bg: linear-gradient(
     90deg,
     rgba(191, 239, 243, 0.2) 0%,
@@ -31,6 +33,11 @@
 
   --color-tab-bg-start: #fafafa;
   --color-tab-bg-end: #ffffff;
+
+  --color-tag-finance: #ffca96;
+  --color-tag-digital: #dd8853;
+  --color-tag-court: #35acb7;
+  --color-tag-office: #006c76;
 
   /** App Max Width */
   --app-max-width: 480px;
@@ -97,9 +104,16 @@
   --color-sementic-info: var(--color-sementic-info);
   --color-sementic-red: var(--color-sementic-red);
   --color-sementic-red-bg: var(--color-sementic-red-bg);
+  --color-sementic-orange: var(--color-sementic-orange);
+  --color-sementic-orange-bg: var(--color-sementic-orange-bg);
 
   --color-navy: var(--color-navy);
   --color-beige: var(--color-beige);
+
+  --color-tag-finance: var(--color-tag-finance);
+  --color-tag-digital: var(--color-tag-digital);
+  --color-tag-court: var(--color-tag-court);
+  --color-tag-office: var(--color-tag-office);
 
   /****************************
   * Fonts
@@ -171,6 +185,10 @@
 
   .label {
     @apply text-[0.9375rem] font-semibold tracking-[-0.02em];
+  }
+
+  .label2 {
+    @apply text-[0.8125rem] font-semibold tracking-[-0.02em];
   }
 
   .caption {
@@ -300,6 +318,67 @@ body {
   .loading-dot-trail-dot {
     animation: none;
     background-color: #00747f;
+  }
+}
+
+/** AI 챗봇 타이핑 인디케이터 (chat-typing-indicator) */
+@keyframes chat-typing-dot-1 {
+  0%,
+  100% {
+    background-color: #ffffff;
+  }
+  33.33% {
+    background-color: #dddddd;
+  }
+  66.66% {
+    background-color: #f5f5f5;
+  }
+}
+
+@keyframes chat-typing-dot-2 {
+  0%,
+  100% {
+    background-color: #f5f5f5;
+  }
+  33.33% {
+    background-color: #ffffff;
+  }
+  66.66% {
+    background-color: #dddddd;
+  }
+}
+
+@keyframes chat-typing-dot-3 {
+  0%,
+  100% {
+    background-color: #dddddd;
+  }
+  33.33% {
+    background-color: #f5f5f5;
+  }
+  66.66% {
+    background-color: #ffffff;
+  }
+}
+
+.chat-typing-dot-1 {
+  animation: chat-typing-dot-1 0.9s ease-out infinite;
+}
+
+.chat-typing-dot-2 {
+  animation: chat-typing-dot-2 0.9s ease-out infinite;
+}
+
+.chat-typing-dot-3 {
+  animation: chat-typing-dot-3 0.9s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-typing-dot-1,
+  .chat-typing-dot-2,
+  .chat-typing-dot-3 {
+    animation: none;
+    background-color: #ffffff;
   }
 }
 

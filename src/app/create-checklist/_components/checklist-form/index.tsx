@@ -20,6 +20,7 @@ import { useAlertStore } from "@/store/useAlertStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 import { event } from "@/lib/gtag";
+import ChecklistModal from "@/app/checklist/_components/checklist-modal";
 
 type AnswerMap = Record<string, string | string[]>;
 
@@ -67,6 +68,7 @@ export default function ChecklistForm() {
 
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [nextQuestionIds, setNextQuestionIds] = useState<string[]>([]);
+  const [unknownModalId, setUnknownModalId] = useState<string | null>(null);
 
   const alert = useAlertStore();
   const selectedCategoryId = useChecklistCategoryStore(
@@ -124,6 +126,14 @@ export default function ChecklistForm() {
     }),
     [prefilledAnswers, answers],
   );
+
+  const handleUnknownAnswerSelect = useCallback((questionIndex: number) => {
+    setUnknownModalId(`Q${questionIndex + 1}`);
+  }, []);
+
+  const handleCloseUnknownModal = useCallback(() => {
+    setUnknownModalId(null);
+  }, []);
 
   /**
    * @description 답변 변경 시, 상태 수정
@@ -339,6 +349,7 @@ export default function ChecklistForm() {
                   }
                   nextQuestionIds={nextQuestionIds}
                   onChangeAnswer={handleChangeAnswer}
+                  onUnknownAnswerSelect={handleUnknownAnswerSelect}
                 />
               ),
           )}
@@ -363,6 +374,14 @@ export default function ChecklistForm() {
           </BottomCTA>
         </div>
       )}
+
+      {unknownModalId ? (
+        <ChecklistModal
+          id={unknownModalId}
+          isOpen
+          onClose={handleCloseUnknownModal}
+        />
+      ) : null}
     </>
   );
 }

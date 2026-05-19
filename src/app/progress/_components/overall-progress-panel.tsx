@@ -33,10 +33,7 @@ export default function OverallProgressPanel() {
           </span>
           <span className="caption text-primary-1 font-semibold">
             {activeDeceasedProfile?.dateOfDeath &&
-              format(
-                new Date(activeDeceasedProfile.dateOfDeath),
-                "yyyy.MM.dd",
-              )}
+              format(new Date(activeDeceasedProfile.dateOfDeath), "yyyy.MM.dd")}
           </span>
         </div>
       </div>
@@ -56,21 +53,24 @@ export default function OverallProgressPanel() {
 
         <div className="flex w-29.5 flex-col">
           {progress?.checklistCategoryProgressResList?.map((item, index) => (
-            <div className="flex items-center justify-between" key={item.categoryId}>
+            <div
+              className="flex items-center justify-between"
+              key={item.categoryId}
+            >
               <div className="flex items-center gap-1.5">
                 <div
                   className="h-2 w-2 rounded-xs"
-                  style={{ backgroundColor: colors[index] ?? colors[colors.length - 1] }}
+                  style={{
+                    backgroundColor: colors[index] ?? colors[colors.length - 1],
+                  }}
                 />
                 <span>{item.categoryName}</span>
               </div>
-              <span className="caption text-gray-700">{item.completedCount}건</span>
+              <span className="caption text-gray-700">
+                {item.completedCount}건
+              </span>
             </div>
           ))}
-
-          <div className="px flex items-center justify-center p-2.25">
-            <Button size="small">전체 요약보기</Button>
-          </div>
         </div>
       </div>
     </>
