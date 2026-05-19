@@ -6,26 +6,31 @@ import {
   useGetMonthlyEvents,
   useGetDailyEvents,
 } from "@/apis/generated/api-client";
-import { useState } from "react";
-import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  isWithinInterval,
+} from "date-fns";
 
 interface CalendarScheduleProps {
   mode: "monthly" | "weekly" | "daily";
   setMode: React.Dispatch<React.SetStateAction<"monthly" | "weekly" | "daily">>;
+  selectedDate: Date;
 }
 
 export default function CalendarSchedule({
   mode,
   setMode,
+  selectedDate,
 }: CalendarScheduleProps) {
-  const [currentDate] = useState(new Date());
-  const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
-  const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
+  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
+  const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
 
   const { data: monthlyEvents } = useGetMonthlyEvents(
     {
-      year: currentDate.getFullYear(),
-      month: currentDate.getMonth() + 1,
+      year: selectedDate.getFullYear(),
+      month: selectedDate.getMonth() + 1,
     },
     {
       query: {
@@ -35,7 +40,7 @@ export default function CalendarSchedule({
   );
   const { data: dailyEvents } = useGetDailyEvents(
     {
-      date: currentDate.toISOString().split("T")[0],
+      date: format(selectedDate, "yyyy-MM-dd"),
     },
     {
       query: {
@@ -43,7 +48,6 @@ export default function CalendarSchedule({
       },
     },
   );
-  console.log(monthlyEvents);
 
   const weeklyEvents =
     monthlyEvents?.filter((event) => {

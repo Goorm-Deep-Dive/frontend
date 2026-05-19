@@ -25,9 +25,13 @@ const CATEGORY_COLOR = {
   사무행정: "#006C76",
 } as const;
 
-export default function Calendar() {
+interface Props {
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+}
+
+export default function Calendar({ selectedDate, setSelectedDate }: Props) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const { data: monthlyEvents } = useGetMonthlyEvents({
     year: currentDate.getFullYear(),
@@ -61,7 +65,7 @@ export default function Calendar() {
           <button
             key={day.toString()}
             onClick={() => setSelectedDate(cloneDay)}
-            className="flex flex-col items-center"
+            className="flex cursor-pointer flex-col items-center"
           >
             <div
               className={`body flex size-10 items-center justify-center rounded-full ${
@@ -111,15 +115,21 @@ export default function Calendar() {
   return (
     <div>
       <div className="flex items-center justify-center gap-9">
-        <button onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
+        <button
+          onClick={() => setCurrentDate(subMonths(currentDate, 1))}
+          className="cursor-pointer"
+        >
           <ArrowLeftIcon width={12} height={12} className="text-gray-400" />
         </button>
 
         <span className="h4 text-gray-900">
-          {format(selectedDate, "M월 d일 EEEE", { locale: ko })}
+          {format(currentDate, "yyyy년 MM월", { locale: ko })}
         </span>
 
-        <button onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+        <button
+          onClick={() => setCurrentDate(addMonths(currentDate, 1))}
+          className="cursor-pointer"
+        >
           <ArrowRightIcon width={12} height={12} className="text-gray-400" />
         </button>
       </div>

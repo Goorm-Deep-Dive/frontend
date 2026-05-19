@@ -12,6 +12,7 @@ type Mode = "monthly" | "weekly" | "daily";
 
 export default function SchedulePage() {
   const [mode, setMode] = useState<Mode>("daily");
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
     <>
@@ -19,11 +20,18 @@ export default function SchedulePage() {
       <div className="mt-3 flex w-full flex-col gap-10.5">
         <div className="flex flex-col gap-10 px-5">
           <div className="flex w-full flex-col gap-2.5">
-            <Calendar />
+            <Calendar
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
             <CalendarTag />
           </div>
           <div className="flex flex-col gap-10">
-            <CalendarSchedule mode={mode} setMode={setMode} />
+            <CalendarSchedule
+              mode={mode}
+              setMode={setMode}
+              selectedDate={selectedDate}
+            />
             <CalendarNotSchedule />
           </div>
         </div>
