@@ -1,3 +1,5 @@
+"use client";
+
 import CalendarScheduleList from "./calendar-schedule-list";
 import CalendarButton from "./calendar-button";
 import PlusIcon from "@/components/icons/plus-icon";

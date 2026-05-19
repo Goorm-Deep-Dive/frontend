@@ -23,7 +23,7 @@
   --color-sementic-info: #006aff;
   --color-sementic-red: #ff3764;
   --color-sementic-red-bg: #fdede9;
-  --color-sementic-orange: #fFF6F1B;
+  --color-sementic-orange: #ff6f1b;
   --color-sementic-orange-bg: #ffefe7;
   --color-gr2-bg: linear-gradient(
     90deg,
@@ -105,7 +105,7 @@
   --color-sementic-red: var(--color-sementic-red);
   --color-sementic-red-bg: var(--color-sementic-red-bg);
   --color-sementic-orange: var(--color-sementic-orange);
-  --color-sementic-orange=bg: var(--color-sementic-green);
+  --color-sementic-orange-bg: var(--color-sementic-orange-bg);
 
   --color-navy: var(--color-navy);
   --color-beige: var(--color-beige);

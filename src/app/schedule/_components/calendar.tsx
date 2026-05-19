@@ -117,7 +117,7 @@ export default function Calendar() {
         </button>
 
         <span className="h4 text-gray-900">
-          {format(selectedDate, "M월 d일 EEEE", { locale: ko })}
+          {format(currentDate, "M월 d일 EEEE", { locale: ko })}
         </span>
 
         <button onClick={() => setCurrentDate(addMonths(currentDate, 1))}>

@@ -21,18 +21,11 @@ export default function CalendarEditPage() {
   const [selectedDate, setSelectedDate] = useState<Date>();
 
   const searchParams = useSearchParams();
-  const id = Number(searchParams.get("id"));
 
   const eventId = Number(searchParams.get("eventId"));
 
   const userProcedureChecklistId = Number(
     searchParams.get("userProcedureChecklistId"),
-  );
-
-  const { data: pendingTasks } = useGetPendingTasks();
-
-  const selectedTask = pendingTasks?.find(
-    (task) => task.userProcedureChecklistId === id,
   );
 
   const { mutate: updateCalendar } = useUpdatePendingTaskCalendar({
@@ -105,7 +98,7 @@ export default function CalendarEditPage() {
         <div className="mt-auto pt-10 pb-[calc(env(safe-area-inset-bottom)+20px)]">
           <button
             onClick={handleUpdateCalendar}
-            className="bg-primary-1 px- flex w-full items-center justify-center gap-1 rounded-lg py-3.5"
+            className="bg-primary-1 flex w-full items-center justify-center gap-1 rounded-lg py-3.5"
           >
             <AddCalendarIcon width={18} height={18} />
             <span className="h4 text-white">캘린더에 반영하기</span>

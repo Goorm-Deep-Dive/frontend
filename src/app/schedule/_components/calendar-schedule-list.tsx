@@ -1,3 +1,5 @@
+"use client";
+
 import ScheduleListIcon from "@/components/icons/schedule-list-icon";
 import ScheduleBadge from "./cahlendar-badge";
 import { format } from "date-fns";
