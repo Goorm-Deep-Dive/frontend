@@ -11,34 +11,30 @@ interface ChecklistSectionProps {
   index: number;
   listDate?: number; // D-30
   isDone?: boolean;
-  isClicked?: boolean;
-  onClick?: () => void;
+  priority?: string;
+  isEditMode?: boolean;
 }
 
 export default function ChecklistSection({
-  subTitle,
-  children,
-  onToggle,
-
   procedureId,
   userProcedureChecklistId,
   title,
   index,
   listDate,
   isDone,
-  isClicked,
-  onClick,
+  priority,
+  isEditMode = false,
 }: ChecklistSectionProps) {
   return (
-    <>
-      <ChecklistList
-        procedureId={procedureId}
-        userProcedureChecklistId={userProcedureChecklistId}
-        title={title}
-        index={index}
-        listDate={listDate}
-        isDone={isDone}
-      />
-    </>
+    <ChecklistList
+      procedureId={procedureId}
+      userProcedureChecklistId={userProcedureChecklistId}
+      title={title}
+      index={index}
+      listDate={listDate}
+      isDone={isDone}
+      priority={priority}
+      isEditMode={isEditMode}
+    />
   );
 }

@@ -12,6 +12,7 @@ interface Props {
   listDate?: number; // D-30
   isDone?: boolean;
   priority?: string;
+  isEditMode?: boolean;
 }
 
 export default function ChecklistList({
@@ -22,10 +23,13 @@ export default function ChecklistList({
   listDate,
   isDone,
   priority,
+  isEditMode = false,
 }: Props) {
   const router = useRouter();
 
   const handleClick = () => {
+    if (isEditMode) return;
+
     router.push(
       `/checklist/${procedureId}?userProcedureChecklistId=${userProcedureChecklistId}`,
     );
@@ -37,8 +41,14 @@ export default function ChecklistList({
   return (
     <div className="flex w-full items-center gap-2.5 rounded-lg border-2">
       <button
-        className="flex w-full justify-between rounded-lg px-5 py-2.5"
+        type="button"
+        className={cn(
+          "flex w-full justify-between rounded-lg px-5 py-2.5",
+          isEditMode ? "cursor-default" : "cursor-pointer",
+        )}
         onClick={handleClick}
+        disabled={isEditMode}
+        aria-disabled={isEditMode}
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -59,18 +69,19 @@ export default function ChecklistList({
           </span>
         </div>
 
-      <div className="flex items-center gap-4">
-        {showListDate ? (
-          <ChecklistBadge
-            priority={isDone ? "완료" : priority}
-            date={listDate}
-          />
-        ) : null}
-        <span className="flex items-center gap-2.5 whitespace-nowrap">
-          <span className="caption">자세히보기</span>
-          <ArrowRightIcon width={6} height={10} />
-        </span>
-      </div>
-    </button>
+        <div className="flex items-center gap-4">
+          {showListDate ? (
+            <ChecklistBadge
+              date={listDate}
+              priority={isDone ? "완료" : priority}
+            />
+          ) : null}
+          <span className="flex items-center gap-2.5 whitespace-nowrap">
+            <span className="caption">자세히보기</span>
+            <ArrowRightIcon width={6} height={10} />
+          </span>
+        </div>
+      </button>
+    </div>
   );
 }

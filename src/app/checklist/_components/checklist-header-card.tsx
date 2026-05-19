@@ -87,10 +87,8 @@ export default function ChecklistHeaderCard({
 
       {isClicked ? (
         <button
-          onClick={() => {
-            onSave();
-            onClick();
-          }}
+          type="button"
+          onClick={onSave}
           className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-200 py-2 text-gray-500"
         >
           <ListCutIcon className="fill-gray-200" />
@@ -99,6 +97,7 @@ export default function ChecklistHeaderCard({
       ) : (
         <div className="flex w-full gap-2.5">
           <button
+            type="button"
             onClick={onClick}
             className="label flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-gray-700 py-2 text-white"
           >
