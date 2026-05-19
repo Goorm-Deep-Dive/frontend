@@ -7,6 +7,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  formatDateFromDigits,
+  parseDateFromDigits,
+  sanitizeDateDigits,
+} from "@/components/common/date-input/parse-date-input";
 
 interface DateInputProps {
   value: string;
@@ -44,35 +49,30 @@ export default function DateInput({
     return true;
   };
 
-  const formatDate = (input: string) => {
-    const numbers = input.replace(/\D/g, "").slice(0, 8);
-    if (numbers.length < 5) {
-      return numbers;
+  const dateLimitOptions = { dateLimit, today };
+
+  const syncSelectedDate = (digits: string) => {
+    if (digits.length !== 8) {
+      onDateChange?.(undefined);
+      return;
     }
-    if (numbers.length < 7) {
-      return `${numbers.slice(0, 4)} - ${numbers.slice(4)}`;
+
+    const parsedDate = parseDateFromDigits(digits, dateLimitOptions);
+
+    if (parsedDate && isDateAllowed(parsedDate)) {
+      onDateChange?.(parsedDate);
+      return;
     }
-    return `${numbers.slice(0, 4)} - ${numbers.slice(4, 6)} - ${numbers.slice(6)}`;
+
+    onDateChange?.(undefined);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatDate(e.target.value);
+    const digits = sanitizeDateDigits(e.target.value, dateLimitOptions);
+    const formatted = formatDateFromDigits(digits);
 
     onChange(formatted);
-
-    const numbers = formatted.replace(/\D/g, "");
-
-    if (numbers.length === 8) {
-      const parsedDate = new Date(
-        Number(numbers.slice(0, 4)),
-        Number(numbers.slice(4, 6)) - 1,
-        Number(numbers.slice(6, 8)),
-      );
-
-      if (!isNaN(parsedDate.getTime()) && isDateAllowed(parsedDate)) {
-        onDateChange?.(parsedDate);
-      }
-    }
+    syncSelectedDate(digits);
   };
 
   const getDisabledDate = () => {
@@ -133,8 +133,9 @@ export default function DateInput({
 
                     onDateChange?.(selectedDate);
                     if (selectedDate) {
-                      const formatted = format(selectedDate, "yyyy-MM-dd");
-                      onChange(formatted);
+                      onChange(
+                        formatDateFromDigits(format(selectedDate, "yyyyMMdd")),
+                      );
                     }
                   }}
                   disabled={getDisabledDate()}
