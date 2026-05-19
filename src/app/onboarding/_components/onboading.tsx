@@ -6,8 +6,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import Splash from "./splash";
 
 const steps = [
+  "splash",
   "start",
   "step1",
   "step2",
@@ -18,12 +20,12 @@ const steps = [
 ] as const;
 
 type StepId = (typeof steps)[number];
+type IllustrationStepId = Exclude<StepId, "splash">;
 
 type IllustrationProps = SVGProps<SVGSVGElement>;
 
-/** 단계별 코드 스플리팅 — 현재 스텟 SVG만 로드 */
 const ONBOARDING_ILLUSTRATION_BY_STEP: Record<
-  StepId,
+  IllustrationStepId,
   ComponentType<IllustrationProps>
 > = {
   start: dynamic(() => import("./illustrations/onboarding-start-illustration")),
@@ -37,7 +39,12 @@ const ONBOARDING_ILLUSTRATION_BY_STEP: Record<
 
 export default function Onboarding() {
   const router = useRouter();
-  const [step, setStep] = useState<StepId>("start");
+  const [step, setStep] = useState<StepId>("splash");
+
+  if (step === "splash") {
+    return <Splash onNext={() => setStep("start")} />;
+  }
+
   const stepIndex = steps.indexOf(step);
   const Illustration = ONBOARDING_ILLUSTRATION_BY_STEP[step];
 
