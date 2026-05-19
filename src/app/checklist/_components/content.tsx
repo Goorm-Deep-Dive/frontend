@@ -312,7 +312,7 @@ export default function Content() {
                           index={index + 1}
                           listDate={item.remainingDays}
                           isDone={false}
-                          dueDateType={item.dueDateType}
+                          dueDateType="RELATIVE"
                           isEditMode
                         />
                       </div>
