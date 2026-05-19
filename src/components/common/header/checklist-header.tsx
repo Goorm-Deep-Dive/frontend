@@ -218,14 +218,6 @@ export default function ChecklistHeader({
             </div>
           </div>
         </div>
-
-        <button
-          type="button"
-          className="flex h-11 w-11 items-center justify-center pt-2 transition-transform active:scale-95"
-          aria-label="알림"
-        >
-          <Image src="/icons/header/bell.svg" alt="" width={44} height={44} />
-        </button>
       </header>
 
       <div className="h-[90px] min-h-[90px] w-full" aria-hidden="true" />
