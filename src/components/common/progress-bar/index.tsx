@@ -25,7 +25,9 @@ export default function ProgressBar({
         "before:shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]",
         className,
       )}
-      indicatorClassName={cn("bg-primary-1", indicatorClassName)}
+      indicatorClassName={cn(
+        indicatorClassName ? indicatorClassName : "bg-primary-1",
+      )}
       aria-label={`진행률 ${Math.round(normalizedValue)}%`}
     />
   );

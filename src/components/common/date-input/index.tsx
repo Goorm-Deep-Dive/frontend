@@ -1,12 +1,17 @@
 import { useState } from "react";
 import Image from "next/image";
-import { format } from "date-fns";
+import { format, isAfter, addDays, startOfDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  formatDateFromDigits,
+  parseDateFromDigits,
+  sanitizeDateDigits,
+} from "@/components/common/date-input/parse-date-input";
 
 interface DateInputProps {
   value: string;
@@ -28,44 +33,55 @@ export default function DateInput({
   const [isFocused, setIsFocused] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const formatDate = (input: string) => {
-    const numbers = input.replace(/\D/g, "").slice(0, 8);
-    if (numbers.length < 5) {
-      return numbers;
+  const today = startOfDay(new Date());
+
+  const isDateAllowed = (parsedDate: Date) => {
+    const day = startOfDay(parsedDate);
+
+    if (dateLimit === "future") {
+      return isAfter(day, today);
     }
-    if (numbers.length < 7) {
-      return `${numbers.slice(0, 4)} - ${numbers.slice(4)}`;
+
+    if (dateLimit === "past") {
+      return !isAfter(day, today);
     }
-    return `${numbers.slice(0, 4)} - ${numbers.slice(4, 6)} - ${numbers.slice(6)}`;
+
+    return true;
+  };
+
+  const dateLimitOptions = { dateLimit, today };
+
+  const syncSelectedDate = (digits: string) => {
+    if (digits.length !== 8) {
+      onDateChange?.(undefined);
+      return;
+    }
+
+    const parsedDate = parseDateFromDigits(digits, dateLimitOptions);
+
+    if (parsedDate && isDateAllowed(parsedDate)) {
+      onDateChange?.(parsedDate);
+      return;
+    }
+
+    onDateChange?.(undefined);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatDate(e.target.value);
+    const digits = sanitizeDateDigits(e.target.value, dateLimitOptions);
+    const formatted = formatDateFromDigits(digits);
 
     onChange(formatted);
-
-    const numbers = formatted.replace(/\D/g, "");
-
-    if (numbers.length === 8) {
-      const parsedDate = new Date(
-        Number(numbers.slice(0, 4)),
-        Number(numbers.slice(4, 6)) - 1,
-        Number(numbers.slice(6, 8)),
-      );
-
-      if (!isNaN(parsedDate.getTime())) {
-        onDateChange?.(parsedDate);
-      }
-    }
+    syncSelectedDate(digits);
   };
 
   const getDisabledDate = () => {
     if (dateLimit === "past") {
-      return { after: new Date() };
+      return { after: today };
     }
 
     if (dateLimit === "future") {
-      return { before: new Date() };
+      return { before: addDays(today, 1) };
     }
 
     return undefined;
@@ -111,10 +127,15 @@ export default function DateInput({
                   mode="single"
                   selected={date}
                   onSelect={(selectedDate) => {
+                    if (selectedDate && !isDateAllowed(selectedDate)) {
+                      return;
+                    }
+
                     onDateChange?.(selectedDate);
                     if (selectedDate) {
-                      const formatted = format(selectedDate, "yyyy-MM-dd");
-                      onChange(formatted);
+                      onChange(
+                        formatDateFromDigits(format(selectedDate, "yyyyMMdd")),
+                      );
                     }
                   }}
                   disabled={getDisabledDate()}
@@ -125,7 +146,6 @@ export default function DateInput({
                 className={`w-full rounded-lg py-3 ${date ? "bg-primary-1 px-13 text-white" : "body bg-gray-300 text-gray-900"}`}
                 onClick={() => {
                   if (!date) return;
-                  console.log(format(date, "yyyy-MM-dd"));
                   setOpen(false);
                 }}
               >

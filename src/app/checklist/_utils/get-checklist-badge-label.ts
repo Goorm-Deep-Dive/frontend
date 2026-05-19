@@ -15,7 +15,7 @@ export const getBadgeLabel = (dueDateType?: string) => {
 export const getRemainingDaysLabel = (remainingDays?: number) => {
   if (typeof remainingDays !== "number") return undefined;
   if (remainingDays > 0) return `D-${remainingDays}`;
-  if (remainingDays === 0) return "D-day";
+  if (remainingDays === 0) return "D-DAY";
 
-  return undefined;
+  return `D+${Math.abs(remainingDays)}`;
 };
