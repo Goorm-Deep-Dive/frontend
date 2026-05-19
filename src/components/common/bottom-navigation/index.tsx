@@ -42,11 +42,11 @@ export default function BottomNavigation() {
         style={{ height: "var(--bottom-nav-reserve)" }}
         aria-hidden
       />
-      <div className="fixed bottom-[calc(var(--bottom-nav-reserve))] left-1/2 z-20 flex w-full max-w-[var(--app-max-width)] -translate-x-1/2 justify-end pr-4">
+      <div className="pointer-events-none fixed bottom-[calc(var(--bottom-nav-reserve))] left-1/2 z-20 flex w-full max-w-[var(--app-max-width)] -translate-x-1/2 justify-end pr-4">
         <Link
           href="/chat"
           aria-label="AI 챗봇"
-          className="flex h-17.5 w-17.5 cursor-pointer flex-col items-center rounded-full bg-gray-200 px-2.5 pt-1.5 pb-2.5 shadow-[1px_1px_4px_rgba(0,0,0,0.25)]"
+          className="pointer-events-auto flex h-17.5 w-17.5 cursor-pointer flex-col items-center rounded-full bg-gray-200 px-2.5 pt-1.5 pb-2.5 shadow-[1px_1px_4px_rgba(0,0,0,0.25)]"
         >
           <Image src="/images/chat-bot.png" alt="" width={32} height={32} />
           <span className="label text-gray-700">AI 챗봇</span>

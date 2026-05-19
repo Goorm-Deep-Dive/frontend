@@ -27,9 +27,11 @@ const BADGE_STYLE = {
 } as const;
 
 export default function ChecklistBadge({ dueDateType, date }: Props) {
-  if (dueDateType === "RELATIVE") return null;
+  const label =
+    dueDateType === "RELATIVE"
+      ? getRemainingDaysLabel(date)
+      : getBadgeLabel(dueDateType);
 
-  const label = getBadgeLabel(dueDateType) ?? getRemainingDaysLabel(date);
   if (!label) return null;
 
   const badgeStyle =

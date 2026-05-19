@@ -14,52 +14,17 @@ import {
   useCreateOptionalProcedure,
   useDeleteProcedureChecklist,
 } from "@/apis/generated/api-client";
-import type { OptionalProcedureRes } from "@/apis/generated/model/optionalProcedureRes";
 import type { Procedure } from "@/apis/generated/model/procedure";
+import {
+  buildAvailableAddList,
+  mapCurrentItemToOptional,
+  type OptionalProcedureItem,
+} from "@/app/checklist/_utils/build-available-add-list";
 import { event } from "@/lib/gtag";
 import { useChecklistCategoryStore } from "@/store/useChecklistCategoryStore";
 
 type CurrentChecklistItem = Procedure & {
   isAdded: boolean;
-};
-
-type OptionalProcedure = {
-  categoryId: number;
-  categoryName: string;
-  priority: string;
-  procedureId: number;
-  procedureName: string;
-  remainingDays: number;
-};
-
-const mapOptionalProcedure = (
-  item: OptionalProcedureRes,
-): OptionalProcedure => ({
-  categoryId: item.categoryId ?? 0,
-  categoryName: item.categoryName ?? "",
-  priority: item.priority ?? "",
-  procedureId: item.procedureId ?? 0,
-  procedureName: item.procedureName ?? "",
-  remainingDays: item.remainingDays ?? 0,
-});
-
-const buildAddList = (
-  optionalProcedures: OptionalProcedureRes[] | undefined,
-  currentList: CurrentChecklistItem[],
-): OptionalProcedure[] => {
-  const currentProcedureIds = new Set(
-    currentList
-      .map((item) => item.procedureId)
-      .filter((id): id is number => typeof id === "number"),
-  );
-
-  return (optionalProcedures ?? [])
-    .filter(
-      (item) =>
-        typeof item.procedureId === "number" &&
-        !currentProcedureIds.has(item.procedureId),
-    )
-    .map(mapOptionalProcedure);
 };
 
 export default function Content() {
@@ -71,6 +36,9 @@ export default function Content() {
   >([]);
   const [pendingDeleteChecklistIds, setPendingDeleteChecklistIds] = useState<
     number[]
+  >([]);
+  const [removedDuringEdit, setRemovedDuringEdit] = useState<
+    OptionalProcedureItem[]
   >([]);
 
   const { data: profile } = useGetActiveDeceasedProfile();
@@ -88,11 +56,13 @@ export default function Content() {
     },
   );
 
-  const { data: optionalProcedures } = useGetOptionalProcedures({
-    query: {
-      enabled: typeof selectedCategoryId === "number" && selectedCategoryId > 0,
-    },
-  });
+  const { data: optionalProcedures, refetch: refetchOptionalProcedures } =
+    useGetOptionalProcedures({
+      query: {
+        enabled:
+          typeof selectedCategoryId === "number" && selectedCategoryId > 0,
+      },
+    });
 
   const procedures = proceduresRes?.procedures;
 
@@ -101,9 +71,27 @@ export default function Content() {
 
   const availableAddList = useMemo(() => {
     if (!isListEditClicked) return [];
+    if (typeof selectedCategoryId !== "number" || selectedCategoryId <= 0) {
+      return [];
+    }
 
-    return buildAddList(optionalProcedures, currentList);
-  }, [currentList, isListEditClicked, optionalProcedures]);
+    return buildAvailableAddList({
+      optionalProcedures,
+      currentList,
+      categoryId: selectedCategoryId,
+      categoryProcedures: procedures,
+      pendingDeleteChecklistIds,
+      removedDuringEdit,
+    });
+  }, [
+    currentList,
+    isListEditClicked,
+    optionalProcedures,
+    pendingDeleteChecklistIds,
+    procedures,
+    removedDuringEdit,
+    selectedCategoryId,
+  ]);
 
   const resetEditStateFromServer = useCallback(() => {
     const nextCurrentList: CurrentChecklistItem[] = (
@@ -116,6 +104,7 @@ export default function Content() {
     setCurrentList(nextCurrentList);
     setPendingAddProcedureIds([]);
     setPendingDeleteChecklistIds([]);
+    setRemovedDuringEdit([]);
   }, [proceduresRes?.procedures]);
 
   const handleEnterListEdit = () => {
@@ -123,7 +112,19 @@ export default function Content() {
     setIsListEditClicked(true);
   };
 
-  const handleAddChecklist = (item: OptionalProcedure) => {
+  const handleAddChecklist = (item: OptionalProcedureItem) => {
+    if (
+      currentList.some(
+        (currentItem) => currentItem.procedureId === item.procedureId,
+      )
+    ) {
+      return;
+    }
+
+    setRemovedDuringEdit((prev) =>
+      prev.filter((removed) => removed.procedureId !== item.procedureId),
+    );
+
     const originalProcedure = (procedures ?? []).find(
       (procedure) => procedure.procedureId === item.procedureId,
     );
@@ -149,7 +150,9 @@ export default function Content() {
       return;
     }
 
-    setPendingAddProcedureIds((prev) => [...prev, item.procedureId]);
+    setPendingAddProcedureIds((prev) =>
+      prev.includes(item.procedureId) ? prev : [...prev, item.procedureId],
+    );
 
     setCurrentList((prev) => [
       ...prev,
@@ -176,6 +179,22 @@ export default function Content() {
       setPendingAddProcedureIds((prev) =>
         prev.filter((id) => id !== item.procedureId),
       );
+
+      if (
+        typeof selectedCategoryId === "number" &&
+        selectedCategoryId > 0 &&
+        item.procedureId
+      ) {
+        setRemovedDuringEdit((prev) => {
+          if (
+            prev.some((removed) => removed.procedureId === item.procedureId)
+          ) {
+            return prev;
+          }
+
+          return [...prev, mapCurrentItemToOptional(item, selectedCategoryId)];
+        });
+      }
 
       return;
     }
@@ -210,10 +229,11 @@ export default function Content() {
         ),
       );
 
-      await refetch();
+      await Promise.all([refetch(), refetchOptionalProcedures()]);
 
       setPendingAddProcedureIds([]);
       setPendingDeleteChecklistIds([]);
+      setRemovedDuringEdit([]);
       setIsListEditClicked(false);
     } catch (error) {
       console.error(error);

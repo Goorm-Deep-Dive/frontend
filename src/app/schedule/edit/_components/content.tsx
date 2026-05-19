@@ -10,6 +10,7 @@ import {
   useUpdatePendingTaskCalendar,
 } from "@/apis/generated/api-client";
 import { useQueryClient } from "@tanstack/react-query";
+import { isAfter, startOfDay } from "date-fns";
 
 export default function CalendarEditContent() {
   const router = useRouter();
@@ -50,8 +51,12 @@ export default function CalendarEditContent() {
     },
   });
 
+  const isScheduledDateValid =
+    !!selectedDate &&
+    isAfter(startOfDay(selectedDate), startOfDay(new Date()));
+
   const handleUpdateCalendar = () => {
-    if (!selectedDate) return;
+    if (!isScheduledDateValid) return;
 
     updateCalendar({
       eventId,
@@ -98,7 +103,8 @@ export default function CalendarEditContent() {
           <button
             type="button"
             onClick={handleUpdateCalendar}
-            className="bg-primary-1 flex w-full items-center justify-center gap-1 rounded-lg py-3.5"
+            disabled={!isScheduledDateValid}
+            className="bg-primary-1 flex w-full items-center justify-center gap-1 rounded-lg py-3.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <AddCalendarIcon width={18} height={18} />
             <span className="h4 text-white">캘린더에 반영하기</span>
