@@ -128,7 +128,7 @@ export default function ChecklistModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="rounded-xl bg-white p-0">
+      <DialogContent className="max-h-[90vh] w-[calc(100%-32px)] max-w-[440px] overflow-y-auto rounded-xl bg-white p-0">
         <DialogTitle className="sr-only">{matchedData.title}</DialogTitle>
         <div className="max-w-[calc(var(--app-max-width) - 40px)] mx-auto flex w-full flex-col gap-3 px-5 pt-4">
           <div className="flex justify-end">
